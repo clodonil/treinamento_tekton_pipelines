@@ -1,4 +1,4 @@
-workshop_tekton_pipelines
+Workshop Pipelines com TekTon
 ==========
 
 ## Objetivo
