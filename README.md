@@ -1,10 +1,10 @@
-Workshop Pipelines com TekTon
+Workshop: Introdução ao TekTon
 ==========
 
 ## Objetivo
 
 ## Conteúdo
-* [1. Setup]()
+* [1. Setup](setup.md)
 * [2. Tasks]()
 * [3. Pipelines]()
 * [4. Workspaces]()
