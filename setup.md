@@ -44,7 +44,7 @@ Para utilizar o `kind` é bastante simples.
 
 Esses comandos instala o `kind` no linux.
 
-```linux
+```bash
 curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64
 chmod +x ./kind
 sudo mv ./kind /usr/local/bin/kind
@@ -61,5 +61,32 @@ sudo mv ./kubectl /usr/local/bin/kubectl
 ```
 
 ### 3. Criando o cluster
+
+Agora que temos o `kind` e o `kubectl` instalado, estamos preparado para criar o cluster de `kubernetes`.
+
+```bash
+kind create cluster --name tekton
+Creating cluster "tekton" ...
+ ✓ Ensuring node image (kindest/node:v1.21.1) 🖼
+ ✓ Preparing nodes 📦
+ ✓ Writing configuration 📜
+ ✓ Starting control-plane 🕹️
+ ✓ Installing CNI 🔌
+ ✓ Installing StorageClass 💾
+Set kubectl context to "kind-tekton"
+You can now use your cluster with:
+
+kubectl cluster-info --context kind-tekton
+
+Thanks for using kind! 😊
+```
+
+```bash
+Kubernetes control plane is running at https://127.0.0.1:45527
+CoreDNS is running at https://127.0.0.1:45527/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+
+To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
+```
+
 ### 4. Instalação do Tekton
 ### 5. Instalação de tools
