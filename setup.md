@@ -1,5 +1,8 @@
 # Setup 
 
+## Objetivo
+Ao final desse módulo você deve ter o ambiente preparado e com o `tekton` instalado juntamente com as ferramentas.
+
 ## Conteúdo:
 > 1. Pré-requisitos
 > 2. Kubernetes
