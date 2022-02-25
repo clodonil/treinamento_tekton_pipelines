@@ -89,4 +89,59 @@ To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
 ```
 
 ### 4. Instalação do Tekton
+
+Agora temos o cluster `kubernetes` instalado e integrado ao comando `kubectl` e assim podemos instalar os CDRs que compoem o `tekton`.
+
+O camando abaixo instala o motor do `tekton` e também o dashboard para visualizar as pipelines.
+
+```bash
+kubectl apply --filename https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
+kubectl apply --filename https://github.com/tektoncd/dashboard/releases/latest/download/tekton-dashboard-release.yaml
+```
+Podemos acompanhar se os pods do `tekton` estão rodando e prontos.
+
+```bash
+kubectl -n tekton-pipelines get pods
+NAME                                           READY   STATUS    RESTARTS   AGE
+tekton-dashboard-5d44ff59bd-cdg7l              1/1     Running   0          34s
+tekton-pipelines-controller-7b649d7747-q5zmx   1/1     Running   0          50s
+tekton-pipelines-webhook-684968f9c5-s8bg2      1/1     Running   0          50s
+```
+
+Certifique que o `tekton` está instalado e as API estão disponível para uso:
+
+```bash
+kubectl api-resources --api-group='tekton.dev'
+NAME                SHORTNAMES   APIVERSION            NAMESPACED   KIND
+clustertasks                     tekton.dev/v1beta1    false        ClusterTask
+conditions                       tekton.dev/v1alpha1   true         Condition
+pipelineresources                tekton.dev/v1alpha1   true         PipelineResource
+pipelineruns        pr,prs       tekton.dev/v1beta1    true         PipelineRun
+pipelines                        tekton.dev/v1beta1    true         Pipeline
+runs                             tekton.dev/v1alpha1   true         Run
+taskruns            tr,trs       tekton.dev/v1beta1    true         TaskRun
+tasks                            tekton.dev/v1beta1    true         Task
+```
 ### 5. Instalação de tools
+Também vamos precisar de algumas ferramentas durante o workshop.
+
+# Tekton CLI
+O tekton CLI é uma ferramenta de linha de comando para interagir com o `tekton` resources.
+
+Faça download do `tekton` cli e adicione no seu path:
+
+```bash
+curl -LO https://github.com/tektoncd/cli/releases/download/v0.21.0/tkn_0.21.0_Linux_x86_64.tar.gz
+sudo tar xvzf tkn_0.21.0_Linux_x86_64.tar.gz -C /usr/local/bin/ tkn
+```
+
+# Verificando o Tekton cli
+
+Vamos verificar se o `tkn` esta instalado e funcionando.
+
+```
+tkn version
+Client version: 0.21.0
+Pipeline version: v0.33.0
+Dashboard version: v0.24.1
+```
