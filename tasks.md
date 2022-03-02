@@ -60,7 +60,8 @@ A criação do manifesto `yaml` permite você trabalhar nativamente com o `kuber
 
 Exemplo do manifesto do `taskrun`.
 
-```yaml:src/task-exemplo1.yaml
+```yaml
+# src/task-exemplo1.yaml
 
 ```
 
