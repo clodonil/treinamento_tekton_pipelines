@@ -5,14 +5,71 @@ Criando Tasks
 Ao final deste modulo você será capaz de:
 * Entenda o que é uma Task
 * Entenda como clonar um projeto git e compilação usando o Task
-* Entenda onde as fontes clonadas residem, ou seja, Workspace
-* Crie uma tarefa que possa construir as fontes
+* Entenda como funciona os Workspaces
+* Crie uma task de build 
 * Como executar uma Tasks
-* Use o recurso de pipeline com TaskRun
+
 
 ## Conceito
 
+A `Task` é uma coleção de `Steps` que são organizados em ordem de execução como parte de pipeline de de `integração continua`. A `Task` é executado da mesma forma que um pod no cluster do Kubernetes.
+
+![dashboard](img/image2.png)
+
+Os `Steps` são executados sequencialmente conforme foram criados e cada um deles pode conter uma imagem de pod diferente. Basicamente um `step` deve receber uma entrada processar algo especifico e gerar um saída.
+
+### Task e TaskRun
+
 ## Tasks e Step
+
+Vamos executar o nossa primeira `Task` como exemplo, que contém 3 `Steps`. 
+
+
+```yaml:src/task-exemplo1.yaml
+
+```
+
+Criando a `Task`.
+
+```bash
+kubectl apply -f task-exemplo1.yaml
+```
+Você pode visualziar a `Task` criada de 2 formas diferentes. 
+
+Utilizando o comando `tkn`:
+```bash
+tkn task list
+NAME            DESCRIPTION   AGE
+task-exemplo1                 6 seconds ago 
+```
+A outra possibilidade é através do dashboard.
+
+![dashboard](img/image4.png)
+
+Para executar uma `Task` precisamos da criação do manifesto chamado `TaskRun`. O manifesto pode ser criado atráves de um arquivo `yaml` ou criado dinamicamente através do dashboard ou utilizando o cli `tkn`, conforme abaixo.
+
+```bash
+tkn task start task-exemplo1
+TaskRun started: task-exemplo1-run-dhcxj
+
+In order to track the TaskRun progress run:
+tkn taskrun logs task-exemplo1-run-dhcxj -f -n default
+```
+
+A criação do manifesto `yaml` permite você trabalhar nativamente com o `kubernetes`, sem a necessidade de instalação de outras ferramentas como o `tkn`.
+
+Exemplo do manifesto do `taskrun`.
+
+```yaml:src/taskrun-exemplo1.yaml
+
+```
+
+E para executar utilize o comando do `kubectl`:
+
+```bash
+kubectl apply -f taskrun-exemplo1.yaml
+taskrun.tekton.dev/taskrun-exemplo1 created
+```
 
 ## Parâmetros
 

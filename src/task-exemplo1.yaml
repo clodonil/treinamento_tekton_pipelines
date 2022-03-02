@@ -1,0 +1,29 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: task-exemplo1
+spec:
+  steps:
+    - name: step1
+      image: ubuntu      
+      script: |
+        #!/usr/bin/env bash
+        echo "Execunto Step1"
+        date
+        touch arquivo1.txt
+        echo "Finalizado"
+    - name: step2
+      image: ubuntu      
+      script: |
+        #!/usr/bin/env bash
+        echo "Execunto o Step2"
+        echo "Preenchendo o arquivo1" > arquivo1.txt
+        echo "Finalizado"
+    - name: step3
+      image: ubuntu      
+      script: |
+        #!/usr/bin/env bash
+        echo "Execunto o Step3"
+        ls
+        cat arquivo1.txt
+        echo "Finalizado"
