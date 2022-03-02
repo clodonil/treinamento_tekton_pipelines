@@ -70,6 +70,7 @@ Agora que temos o `kind` e o `kubectl` instalado, estamos preparado para criar o
 
 
 ```python:exemplos/tekton-cluster.conf
+
 ```
 Execute o comando abaixo para criação do cluster.
 
