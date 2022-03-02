@@ -65,10 +65,17 @@ sudo mv ./kubectl /usr/local/bin/kubectl
 
 ### 3. Criando o cluster
 
-Agora que temos o `kind` e o `kubectl` instalado, estamos preparado para criar o cluster de `kubernetes`.
+Agora que temos o `kind` e o `kubectl` instalado, estamos preparado para criar o cluster de `kubernetes`. Como vamos utilziar o dashboard do `tekton` exposto na porta `30000`, vamos criar o arquivo `tekton-cluster.conf` com todas as informações necessárias, conforme abaixo.
+
+
+
+```python:exemplos/tekton-cluster.conf
+
+```
+Execute o comando abaixo para criação do cluster.
 
 ```bash
-kind create cluster --name tekton
+kind create cluster --config tekton-cluster.conf
 Creating cluster "tekton" ...
  ✓ Ensuring node image (kindest/node:v1.21.1) 🖼
  ✓ Preparing nodes 📦
