@@ -16,7 +16,7 @@ A `Task` é uma coleção de `Steps` que são organizados em ordem de execução
 
 ![dashboard](img/image2.png)
 
-Os `Steps` são executados sequencialmente conforme foram criados e cada um deles pode conter uma imagem de pod diferente. Basicamente um `step` deve receber uma entrada processar algo especifico e gerar um saída.
+Os `Steps` são executados sequencialmente conforme foram criados e cada um deles pode conter uma imagem de pod diferente. Basicamente um `step` deve receber uma entrada, processar algo especifico e gerar um saída.
 
 ### Task e TaskRun
 Enquanto as `Task` define um `template` de execução de tarefas e passos, o `TaskRun` é uma execução de uma `Tasks`. O histórico de execução e os logs estão registrados no `TaskRun` para rastreabilidade.
@@ -63,7 +63,7 @@ spec:
         echo "Finalizado"
 ```
 
-A criação da `Task` no kubernetes, segue o mesmo padrão de aplicação de qualquer manifesto no cluster.
+A criação da `Task` no kubernetes, segue o mesmo padrão da aplicação de qualquer manifesto no cluster.
 
 Conforme realizado abaixo
 
@@ -113,7 +113,8 @@ kubectl apply -f taskrun-exemplo1.yaml
 taskrun.tekton.dev/taskrun-exemplo1 created
 ```
 
-## Entradas
+
+## Entradas (Input)
 
 
 ### Parâmetros
@@ -124,7 +125,12 @@ Os nomes dos parâmetros devem ser criados seguindo a seguinte regra:
 * Deve conter apenas caracteres alfanuméricos, hifens (-), sublinhados (_) e pontos (.).
 * Deve começar com uma letra ou um sublinhado (_).
 
-Além do nome deve ser definido o `type`, que pode ser um `array` ou uma `string`.
+Além do nome, deve ser definido o `type` do parâmetro que pode ser:
+* `array` : Uma lista de argumentos é passado para a `Tasks`;
+* `string`: Apenas um argumento é passado para a `Tasks`.
+
+Abaixo temos uma `Tasks` que recebe como entrada 2 parâmetros que são o `build-args` queé um `array` e o `buildImage` que é do tipo `string`.
+A ideia é criar uma `Tasks` que funciona como template para passagem de parâmetro para definir a imagem e os comandos que devem ser executados.
 
 ```yaml:src/task-exemplo2.yaml
 apiVersion: tekton.dev/v1beta1
@@ -146,6 +152,22 @@ spec:
       args: ["$(params.build-args[*])"]
 ```      
 
+Aplique essa `Tasks` utilizando o comando do `kubectl`.
+
+```bash
+kubectl apply -f task-exemplo2.yaml
+```
+
+Com o template da `Task`criado, vamos criar as `Tasksrun` para executar ações diferentes com a mesma `Tasks`.
+
+Na primeira execução, vamos criar a `TaskRun` de forma declarativa e definir como parâmetro os seguintes valores:
+
+* build-args: ('ls -l /')
+* buildImage: centos
+
+Vamos usar a imagem docker do `centos` e executar o comando `ls` dentro do container.
+
+
 ```yaml:src/taskrun-exemplo2.yaml
 apiVersion: tekton.dev/v1alpha1
 kind: TaskRun
@@ -162,25 +184,97 @@ spec:
   taskRef:
      name: task-exemplo2
 ```
+Pode aplicar o `Taskrun` e acompanhar a execução do modelo declarivo e acompanhar a execução.
+
+Na segunda execução, vamos criar a `Taskrun` pelo CLI (tkn) e passar os seguintes valores como parâmetros.
+
+* build-args: -c import sys; print("Ola Mundo"); print(sys.version)
+* buildImage: python
+
 
 ```bash
  tkn task  start task-exemplo2 -p buildImage='python' -p build-args='-c','import sys; print("Ola Mundo"); print(sys.version)'
 ```
 
-## Configurações
+Nessa execução, estamos utilizando uma imagem python para mostrar o  "Ola Mundo" e mostrar a versão.
 
-### StepTemplate
+Dessa forma vimos na prática como passar parâmetros para uma `Tasks`.
 
-### Timeout
+### Git Clone
 
-### Onerror
+## StepTemplate
+Um recurso muito interessante na `Tasks` para evitar repetição de código é o `StepTemplate`. Dessa forma podemos declarar as funções padrões para todos os `Steps`, evitando assim ficar repetindo código.
 
-### Sidecars
+Por exemplo, podemos declarar a imagem padrão dos `Steps` e também os recursos de cpu e memória.
 
-### Volumes
+```yaml:src/task-exemplo4.yaml
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: task-exemplo4
+spec:
+  stepTemplate:
+    image: ubuntu  
+    securityContext:
+      runAsNonRoot: false
+      runAsUser: 1001     
+    resources:
+        requests:
+          memory: 128Mi
+          cpu: 250m
+        limits:
+          memory: 512Mi
+          cpu: 300m
+  steps:
+    - name: step1
+      script: |
+        #!/usr/bin/env bash
+        echo "Execunto Step1"
+        cat /etc/os-release
+        echo "Finalizado"
+    - name: step2
+      image: centos
+      script: |
+        #!/usr/bin/env bash
+        echo "Execunto o Step2"
+        cat /etc/os-release
+        echo "Finalizado"
+```
 
-### Input e Output
+Nesse exemplo, todas os `Steps` que não definir uma imagem base, vai utilizar a imagem do `ubuntu`, a mesma coisa para memória e cpu.
 
-### Workspaces
+### Configurações
+
+Outras configurações importantes para serem utilizadas  na `Tasks`:
+* `Timeout` : Definir o tempo máximo de execução do `Step`
+
+Exemplo:
+```yaml
+  steps:
+    - name: build
+      timeout: 1h
+      image: centos  
+      script: |
+        #!/usr/bin/env bash
+        echo "Execunto o build"
+        sleep 120
+        cat /etc/os-release
+        echo "Finalizado"
+```        
+
+*  `Onerror`: Define o que acontece com o `Step`em caso de falha. Por padrão em caso de falha a execução é parada e os `Steps`seguintes não são executados. Para mudar esse comportamento podemos usar o `onerror`;
+**  `onError: continue` : Em caso de falha, a execução continua e para saber o status da execução é necessário consultar o exit code.
+**  `onerror: stopAndFail` : Em caso de falha, a execuçaõ é interrompida (padrão).
+ 
+
+*  Sidecars
+
+##  Volumes
+
+## Workspaces
+
+## Saídas (OutPut)
+
+
 
 ## Criando a tasks do Projeto
