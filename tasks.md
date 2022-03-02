@@ -12,7 +12,7 @@ Ao final deste modulo você será capaz de:
 
 ## Conceito
 
-A `Task` é uma coleção de `Steps` que são organizados em ordem de execução como parte de pipeline de de `integração continua`. A `Task` é executado da mesma forma que um pod no cluster do Kubernetes, onde cada `Step` se torna um contêiner em execução no pod..
+A `Task` é uma coleção de `Steps` que são organizados em ordem de execução como parte de pipeline de `integração continua`. A `Task` é executado da mesma forma que um pod no cluster do Kubernetes, onde cada `Step` se torna um contêiner em execução do pod.
 
 ![dashboard](img/image2.png)
 
@@ -28,7 +28,8 @@ Dessa forma uma `Task` pode ser generica suficiente para executar a mesma tarefa
 
 ## Tasks e Step
 
-Vamos executar o nossa primeira `Task` como exemplo, que contém 3 `Steps`. 
+Agora que já sabemos o que é `Task`, `Taskrun` e `Steps`, vamos executar o nossa primeira `Task`.
+Como primeiro exemplo, vamos criar um `Task` com o nome `task-exemplo1` que contém 3 `Steps`. Nesse exemplo, a `Task` não recebe nenhum parâmetro de entrada e não gera nenhum saída.
 
 
 ```yaml:src/task-exemplo1.yaml
@@ -62,24 +63,26 @@ spec:
         echo "Finalizado"
 ```
 
-Criando a `Task`.
+A criação da `Task` no kubernetes, segue o mesmo padrão de aplicação de qualquer manifesto no cluster.
+
+Conforme realizado abaixo
 
 ```bash
 kubectl apply -f task-exemplo1.yaml
 ```
 Você pode visualziar a `Task` criada de 2 formas diferentes. 
 
-Utilizando o comando `tkn`:
+* Utilizando o comando `tkn`:
 ```bash
 tkn task list
 NAME            DESCRIPTION   AGE
 task-exemplo1                 6 seconds ago 
 ```
-A outra possibilidade é através do dashboard.
+* Utilizando o dashboard.
 
 ![dashboard](img/image4.png)
 
-Para executar uma `Task` precisamos da criação do manifesto chamado `TaskRun`. O manifesto pode ser criado atráves de um arquivo `yaml` ou criado dinamicamente através do dashboard ou utilizando o cli `tkn`, conforme abaixo.
+Para executar uma `Task` precisamos da criação do manifesto chamado `TaskRun`. O manifesto pode ser criado atráves de um arquivo `yaml` ou criado dinamicamente através do dashboard ou utilizando o cli `tkn`.
 
 ```bash
 tkn task start task-exemplo1
@@ -110,7 +113,59 @@ kubectl apply -f taskrun-exemplo1.yaml
 taskrun.tekton.dev/taskrun-exemplo1 created
 ```
 
-## Parâmetros
+## Entradas
+
+
+### Parâmetros
+Para uma `Task`, pode ser especificado parâmetros de entradas, que são utilizados como flags de compilação ou para mudar o comportamento da `Task` conforme o seu valor.
+
+Os nomes dos parâmetros devem ser criados seguindo a seguinte regra:
+
+* Deve conter apenas caracteres alfanuméricos, hifens (-), sublinhados (_) e pontos (.).
+* Deve começar com uma letra ou um sublinhado (_).
+
+Além do nome deve ser definido o `type`, que pode ser um `array` ou uma `string`.
+
+```yaml:src/task-exemplo2.yaml
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: task-exemplo2-params
+spec:
+  params:
+    - name: build-args
+      type: array
+      description: Build argumentos
+    - name: buildImage
+      type: string
+      description: imagem para build
+      default: ubuntu
+  steps:
+    - name: step1
+      image: $(params.buildImage)
+      args: ["$(params.build-args[*])"]
+```      
+
+```yaml:src/taskrun-exemplo2.yaml
+apiVersion: tekton.dev/v1alpha1
+kind: TaskRun
+metadata:
+  name: taskrun-exemplo2
+spec:
+  params:
+    - name: build-args
+      value:
+        - 'ls'
+        - '- l /'
+    - name: buildImage
+      value: centos
+  taskRef:
+     name: task-exemplo2
+```
+
+```bash
+ tkn task  start task-exemplo2 -p buildImage='python' -p build-args='-c','import sys; print("Ola Mundo"); print(sys.version)'
+```
 
 ## Configurações
 
