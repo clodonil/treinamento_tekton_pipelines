@@ -69,7 +69,7 @@ Agora que temos o `kind` e o `kubectl` instalado, estamos preparado para criar o
 
 
 
-```python:exemplos/tekton-cluster.conf
+```yaml:exemplos/tekton-cluster.conf
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 name: tekton
