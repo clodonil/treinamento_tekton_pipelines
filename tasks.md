@@ -26,7 +26,34 @@ Vamos executar o nossa primeira `Task` como exemplo, que contém 3 `Steps`.
 
 
 ```yaml:src/task-exemplo1.yaml
-
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: task-exemplo1
+spec:
+  steps:
+    - name: step1
+      image: ubuntu      
+      script: |
+        #!/usr/bin/env bash
+        echo "Execunto Step1"
+        date
+        echo "Finalizado"
+    - name: step2
+      image: ubuntu      
+      script: |
+        #!/usr/bin/env bash
+        echo "Execunto o Step2"
+        echo "Preenchendo o arquivo1" > arquivo1.txt
+        ls
+        echo "Finalizado"
+    - name: step3
+      image: ubuntu      
+      script: |
+        #!/usr/bin/env bash
+        echo "Execunto o Step3"
+        uname -a
+        echo "Finalizado"
 ```
 
 Criando a `Task`.
@@ -60,9 +87,14 @@ A criação do manifesto `yaml` permite você trabalhar nativamente com o `kuber
 
 Exemplo do manifesto do `taskrun`.
 
-```yaml
-# src/task-exemplo1.yaml
-
+```yaml:src/taskrun-exemplo1.yaml
+apiVersion: tekton.dev/v1alpha1
+kind: TaskRun
+metadata:
+  name: taskrun-exemplo1
+spec:
+  taskRef:
+     name: task-exemplo1
 ```
 
 E para executar utilize o comando do `kubectl`:

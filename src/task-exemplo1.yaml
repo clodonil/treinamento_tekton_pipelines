@@ -10,7 +10,6 @@ spec:
         #!/usr/bin/env bash
         echo "Execunto Step1"
         date
-        touch arquivo1.txt
         echo "Finalizado"
     - name: step2
       image: ubuntu      
@@ -18,12 +17,12 @@ spec:
         #!/usr/bin/env bash
         echo "Execunto o Step2"
         echo "Preenchendo o arquivo1" > arquivo1.txt
+        ls
         echo "Finalizado"
     - name: step3
       image: ubuntu      
       script: |
         #!/usr/bin/env bash
         echo "Execunto o Step3"
-        ls
-        cat arquivo1.txt
+        uname -a
         echo "Finalizado"
