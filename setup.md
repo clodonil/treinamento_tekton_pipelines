@@ -100,13 +100,6 @@ kubectl cluster-info --context kind-tekton
 Thanks for using kind! 😊
 ```
 
-```bash
-Kubernetes control plane is running at https://127.0.0.1:45527
-CoreDNS is running at https://127.0.0.1:45527/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
-
-To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
-```
-
 ### 4. Instalação do Tekton
 
 Agora temos o cluster `kubernetes` instalado e integrado ao comando `kubectl` e assim podemos instalar os CDRs que compoem o `tekton`.
@@ -141,6 +134,18 @@ runs                             tekton.dev/v1alpha1   true         Run
 taskruns            tr,trs       tekton.dev/v1beta1    true         TaskRun
 tasks                            tekton.dev/v1beta1    true         Task
 ```
+
+E para finalizar vamos remover o `service` do dashboard que está no modelo de `ClusterIP` e criar um novo do tipo `NodePort`.
+
+```bash
+kubectl -n tekton-pipelines delete service tekton-dashboard
+kubectl -n tekton-pipelines create service nodeport tekton-dashboard --tcp=9097:9097 --node-port=30000
+```
+
+Dashboard deve estar acessível no endereço: `localhost:30000`:
+
+![dashboard](img/image1.png)
+
 ### 5. Instalação de tools
 Também vamos precisar de algumas ferramentas durante o workshop.
 
