@@ -263,8 +263,8 @@ Exemplo:
 ```        
 
 *  `Onerror`: Define o que acontece com o `Step`em caso de falha. Por padrão em caso de falha a execução é parada e os `Steps`seguintes não são executados. Para mudar esse comportamento podemos usar o `onerror`;
-**  `onError: continue` : Em caso de falha, a execução continua e para saber o status da execução é necessário consultar o exit code.
-**  `onerror: stopAndFail` : Em caso de falha, a execuçaõ é interrompida (padrão).
+ *  `onError: continue` : Em caso de falha, a execução continua e para saber o status da execução é necessário consultar o exit code.
+ *  `onerror: stopAndFail` : Em caso de falha, a execuçaõ é interrompida (padrão).
  
 
 *  Sidecars
