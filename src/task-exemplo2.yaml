@@ -1,0 +1,17 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: task-exemplo2
+spec:
+  params:
+    - name: build-args
+      type: array
+      description: Build argumentos
+    - name: buildImage
+      type: string
+      description: imagem para build
+      default: ubuntu
+  steps:
+    - name: step1
+      image: $(params.buildImage)
+      args: ["$(params.build-args[*])"]

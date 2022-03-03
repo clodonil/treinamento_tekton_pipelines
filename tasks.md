@@ -9,7 +9,6 @@ Ao final deste modulo você será capaz de:
 * Crie uma task de build 
 * Como executar uma Tasks
 
-
 ## Conceito
 
 A `Task` é uma coleção de `Steps` que são organizados em ordem de execução como parte de pipeline de `integração continua`. A `Task` é executado da mesma forma que um pod no cluster do Kubernetes, onde cada `Step` se torna um contêiner em execução do pod.
@@ -264,17 +263,72 @@ Exemplo:
 
 *  `Onerror`: Define o que acontece com o `Step`em caso de falha. Por padrão em caso de falha a execução é parada e os `Steps`seguintes não são executados. Para mudar esse comportamento podemos usar o `onerror`;
  > *  `onError: continue` : Em caso de falha, a execução continua e para saber o status da execução é necessário consultar o exit code.
- > *  `onerror: stopAndFail` : Em caso de falha, a execuçaõ é interrompida (padrão).
+ > *  `onerror: stopAndFail` : Em caso de falha, a execução dos `Steps` seguintes  é interrompida (padrão).
  
+## Volumes
+Para um `Task` pode ser definido um ou mais `volumes` para manipulação de dados entre os `Steps`.
 
-*  Sidecars
+Por exemplo, podemos usar `volumes` para fazer o seguinte:
 
-##  Volumes
+* Monte um kubernetes `Secret`;
+* Crie um volume `emptyDir` para armazenar cache de dados para multi `Steps`;
+* Monte um Kubernetes `ConfigMap`;
+
+No exemplo abaixo, é criado na `Tasks` o volume `emptyDir` para compartilhar dados entre o step1 e o step2.
+
+```yaml:src/task-exemplo5.yaml
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: task-exemplo5
+spec:
+  steps:
+    - name: step1
+      image: centos
+      script: |
+        #!/usr/bin/env bash
+        curl https://www.google.com > /var/my-volume/site1.txt
+      volumeMounts:
+        - name: my-volume
+          mountPath: /var/my-volume
+    - name: step2
+      image: ubuntu
+      script: |
+        #!/usr/bin/env bash
+        cat /etc/my-volume/site1.txt
+        ls -l /etc/my-volume  
+      volumeMounts:
+        - name: my-volume
+          mountPath: /etc/my-volume
+  volumes:
+    - name: my-volume
+      emptyDir: {}
+```
 
 ## Workspaces
 
+
+## Sidecars
+
 ## Saídas (OutPut)
 
-
-
 ## Criando a tasks do Projeto
+
+Para o desenvolvimento do nosso projeto vamos precisar criar 6 `Tasks`:
+
+* `Source`: Essa `Task` vai ter apenas um `Step`, que é o `git-clone`, que basicamente vai fazer o clone do projeto do github e enviar para o workspace.
+* `CI-QA` : Essa `Task` vai ter 2 `steps` que são o teste unitário e o `sonarqube`
+* `CI-Security`: Essa `Task` vai ter 2 `steps`, sendo um para verificação da segurança do código e da segurança do container.
+* `CI-Build`: Essa `Task` vai ter 3 `steps`, sendo um para build do código, outro para empacotamento e o último para publicação da imagem no dockerhub.
+* `Tests`: Essa `Task` vai ter 2 `steps`, sendo um para validação a performance da aplicação e outro para realizar o teste de integração.
+* `Deploy`: Essa `Task` vai ter apenas um `steps` para realização do deploy simples do container no cluster kubernetes.
+
+![task](img/image6.png)`
+
+
+### Ferramentas
+
+* [horusec](https://horusec.io/site/): Ferramanta de SAST para verificação de segurança do código fonte.
+* [trivy](https://www.aquasec.com/products/trivy/): Ferramenta de segurança de container.
+* [k6](https://k6.io/): Ferramenta de teste de performance.
+* [Karate](https://github.com/karatelabs/karate): Ferramenta de teste de integração de API

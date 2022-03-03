@@ -1,0 +1,14 @@
+apiVersion: tekton.dev/v1alpha1
+kind: TaskRun
+metadata:
+  name: taskrun-exemplo2
+spec:
+  params:
+    - name: build-args
+      value:
+        - 'ls'
+        - '- l /'
+    - name: buildImage
+      value: centos
+  taskRef:
+     name: task-exemplo2
