@@ -306,11 +306,141 @@ spec:
 ```
 
 ## Workspaces
+Workspaces permitem especificar um ou mais `volumes` nas Task necessários durante a execução.
 
+Os parâmetros para especificar um Workspace são:
+
+* `name`: Esse campo é requirido, é o nome da Workspace;
+* `description`: Descrição do uso da workspacd
+* `readOnly`: Um campo `boolean` que define que o Workspace vai ser apenas para leitura (não permite gravar). Por padrão é falso.
+* `optional`: Um campo `boolean` que indica que a Taskrun pode omitir a declaração da workspace. Por padrão é falso.
+* `mountPath`: É o path a onde o workspace vai estar localizado no disco. Se um path não foi atribuido o padrão é/workspace/<name>.
+
+Como exemplo da utilização do Workspace, vamos criar um volume do tipo `PersistentVolumeClaim` com o tamanho de 1Gi. Aplique essa configuração utilizando o `kubectl apply -f pv-exemplo8.yaml`
+
+```yaml:src/pv-exemplo8.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mypvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+```
+Com o volume criado, vamos criar a `Tasks`, que basicamente tem a função de criar arquivos dentro do Workspace.
+
+```yaml:src/task-exemplo8.yaml
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: task-exemplo8
+spec:
+  workspaces:
+    - name: myworkspace
+      optional: true
+      description: The folder where we write the message to
+      mountPath: /dados
+  steps:
+    - name: step1
+      image: ubuntu
+      script: |
+        #!/usr/bin/env bash
+        touch /dados/file-$(date "+%Y.%m.%d-%H.%M.%S")
+        echo "Finalizado"
+    - name: step2
+      image: ubuntu
+      script: |
+        #!/usr/bin/env bash
+        ls -l /dados
+        echo "Finalizado"
+
+```
+
+Para executar a `tasks` é necessário passar o nome do workspace e o volume.
+
+```bash
+ tkn task start task-exemplo8  -w name=myworkspace,claimName=mypvc
+```
 
 ## Sidecars
+Em uma `Task` é possível especificar o campo de `sidecars`, que basicamente instância um container ao lado dos `steps` que pode fornecer funções auxiliares.
+Você pode utilizar o `sidecars` para:
+* Utilizar Docker in Docker;
+* Executar um servidor de API simulado que seu aplicativo pode acessar durante o testes;
 
-## Saídas (OutPut)
+O `Sidecars` é iniciado antes dos `Steps` e excluidos após a conclusão da execução das tasks.
+
+Como exemplo, vamos executar uma image de um servidor web (ex: nginx) no `sidecars`, simulando aplicação, e no `Step` vamos executar o k6 para teste de performance.
+
+```yaml
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: task-exemplo6
+spec:
+  params:
+     - name: image
+       type: string
+  steps:
+    - name: test-carga
+      image: loadimpact/k6
+      script: |
+        cat <<EOF >>test.js
+        import http from 'k6/http';
+        import { sleep } from 'k6';
+        export default function () {
+            http.get('http://localhost');
+            sleep(1);
+        }
+        EOF
+        k6 run test.js 
+  sidecars:
+    - image: $(params.image)
+      name: server
+```
+
+## Results
+
+Uma `Task` é capaz de emitir resultados em formato de `string` que podem ser visualizados pelos usuários e passados ​​para outras tarefas em um pipeline.
+Ao ser declarado um `result`, o path do arquivo é criado automaticamente.
+É importante observar que o `Tekton` não realiza nenhum processamento no conteúdo dos `results`, eles são emitidos literalmente de sua `Task`, incluindo quaisquer caracteres de espaço em branco à esquerda ou à direita.
+
+Para exemplificar o uso do `results` vamos utilizar o mesmo exemplo utilizado no `sidecars` e vamos exportar o resultado do report do k6.
+
+```yaml
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: task-exemplo7
+spec:
+  params:
+     - name: image
+       type: string
+  results:
+     - name: k6-report
+       description: Resultado do teste de performance
+  steps:
+    - name: test-carga
+      image: loadimpact/k6
+      script: |
+        cat <<EOF >>test.js
+        import http from 'k6/http';
+        import { sleep } from 'k6';
+        export default function () {
+            http.get('http://localhost');
+            sleep(1);
+        }
+        EOF
+        k6 run --out json=test.json --summary-trend-stats="min,avg,med,p(99),p(99.9),max,count" --summary-time-unit=ms test.js 
+        grep 'Point' test.json | head -n 1| tee $(results.k6-report.path)
+
+  sidecars:
+    - image: $(params.image)
+      name: server
+```
 
 ## Criando a tasks do Projeto
 
