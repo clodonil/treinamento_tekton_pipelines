@@ -328,6 +328,7 @@ Para o desenvolvimento do nosso projeto vamos precisar criar 6 `Tasks`:
 
 ### Ferramentas
 
+* [SonarCloud](https://sonarcloud.io/): Sonar para analise de qualidade. 
 * [horusec](https://horusec.io/site/): Ferramanta de SAST para verificação de segurança do código fonte.
 * [trivy](https://www.aquasec.com/products/trivy/): Ferramenta de segurança de container.
 * [k6](https://k6.io/): Ferramenta de teste de performance.
