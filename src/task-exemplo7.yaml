@@ -1,0 +1,29 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: task-exemplo7
+spec:
+  params:
+     - name: image
+       type: string
+  results:
+     - name: k6-report
+       description: Resultado do teste de performance
+  steps:
+    - name: test-carga
+      image: loadimpact/k6
+      script: |
+        cat <<EOF >>test.js
+        import http from 'k6/http';
+        import { sleep } from 'k6';
+        export default function () {
+            http.get('http://localhost');
+            sleep(1);
+        }
+        EOF
+        k6 run --out json=test.json --summary-trend-stats="min,avg,med,p(99),p(99.9),max,count" --summary-time-unit=ms test.js 
+        grep 'Point' test.json | head -n 1| tee $(results.k6-report.path)
+
+  sidecars:
+    - image: $(params.image)
+      name: server
