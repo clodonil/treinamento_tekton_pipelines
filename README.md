@@ -6,10 +6,11 @@ Workshop: Introdução ao TekTon
 ## Conteúdo
 * [1. Introdução](introducao.md)
 * [1. Setup](setup.md)
-* [2. Tasks](tasks.md)
-* [3. Pipelines]()
-* [4. Workspaces]()
-* [5. Bundles]() 
+* [2. O que você precisa saber das Tasks](tasks.md)
+* [2.1 Desenvolvendo as Tasks]()
+* [3. O que você precisa saber das Pipelines]()
+* [3.1 Desenvolvimento das pipelines]()
+* [5. Versionando os templates com Bundles]() 
 * [6. Trigger]()
 * [7. Métricas]()
 
