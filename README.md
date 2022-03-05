@@ -4,15 +4,16 @@ Workshop: Introdução ao TekTon
 ## Objetivo
 
 ## Conteúdo
-* [1. Introdução](introducao.md)
-* [1. Preparando o ambiente](setup.md)
-* [2. O que você precisa saber das Tasks](tasks.md)
-* [2.1 Desenvolvendo as Tasks]()
-* [3. O que você precisa saber das Pipelines]()
-* [3.1 Desenvolvimento das pipelines]()
-* [5. Versionando os templates com Bundles]() 
-* [6. Trigger]()
-* [7. Métricas]()
+* [1. O que vamos fazer?](projeto.md)
+* [2. O que é tekton?](introducao.md)
+* [3. Preparando o ambiente](setup.md)
+* [4. O que você precisa saber das Tasks](tasks.md)
+* [4.1 Desenvolvendo as Tasks](tasks-dev.md)
+* [5. O que você precisa saber das Pipelines]()
+* [6.1 Desenvolvimento das pipelines]()
+* [7. Versionando os templates com Bundles]() 
+* [8. Trigger]()
+* [9. Métricas]()
 
 ## Contribuindo
 1. Primeiramente realize um `Fork` do projeto;
