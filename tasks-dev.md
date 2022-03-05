@@ -46,7 +46,7 @@ Para desenvolvimento da pipeline vamos precisar de 3 `workspace`:
 * sharedlibrary: Nesse workspace vai conter os comandos necessários para execução das tasks;
 * cache: Esse workspace vai ser utilizado como cache para armazenar as dependências das aplicações.
 
-Os manifesto dos volumes foram criados no arquivo [proj/workspaces.yaml](proj/workspaces.yaml).
+Os manifesto dos volumes foram criados no arquivo [proj/pv-workspaces.yaml](proj/pv-workspaces.yaml).
 
 ```bash
 kubectl apply -f pv-workspaces.yaml
