@@ -97,6 +97,12 @@ kubectl apply -f task-sharedlibrary.yaml
     * `TestUnit` : Executa o teste unitário;
     * `Sonar`: Executa a cobertura de qualidade do código;
 
+* [SonarCloud](https://sonarcloud.io/): Sonar para analise de qualidade. 
+
+```bash
+kubectl create secret generic sonar --from-literal=SONAR_TOKEN='e2fd9312a36a9ec063e6a200e1b9a8a9a2fb5e74'
+```    
+
 ![build](img/image11.png)
 
 ### Criando a Tasks `CI-Security`
@@ -121,5 +127,9 @@ kubectl apply -f task-sharedlibrary.yaml
  Essa Task vai ter 2 `steps`:
     * `Performance`: Teste de performance da aplicação utilizando o `K6`.
     * `Integration`: Teste de API com o Karate
+
+* [k6](https://k6.io/): Ferramenta de teste de performance.
+* [Karate](https://github.com/karatelabs/karate): Ferramenta de teste de integração de API
+
 ### Criando a Tasks `Deploy`
  Essa Task vai ter apenas um `steps` para realização do deploy simples do container no cluster kubernetes.

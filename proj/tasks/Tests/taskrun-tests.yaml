@@ -1,0 +1,18 @@
+apiVersion: tekton.dev/v1alpha1
+kind: TaskRun
+metadata:
+  name: taskrun-tests
+spec:
+  workspaces:
+    - name: source
+      persistentVolumeClaim:
+         claimName: app-source
+    - name: sharedlibrary
+      persistentVolumeClaim:
+         claimName: sharedlibrary
+  params:
+    - name: app-image
+      value: "nginx"        
+            
+  taskRef:
+     name: tests

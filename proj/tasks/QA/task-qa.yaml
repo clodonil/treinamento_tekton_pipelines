@@ -17,14 +17,28 @@ spec:
 
   stepTemplate:
     workingDir: /workspace/source
+    volumeMounts:
+      - name: coverage
+        mountPath: /coverage
 
   steps:
     - name: unit-testing
       image: $(params.runtime)
       script: |
-        runtime=$(echo "$(params.runtime)" | cut -d : -f 1)                
-        [ -f "pipeline/unittest.sh" ] && sh pipeline/unittest.sh || sh $(workspaces.workspace.path)/CI/$runtime/tests/unittest.sh 
+        runtime=$(params.runtime)               
+        [ -f "pipeline/unittest.sh" ] && sh pipeline/unittest.sh || sh $(workspaces.sharedlibrary.path)/CI/$runtime/tests/unittest.sh 
     - name: sonar
+      env:
+        - name: SONAR_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: sonar
+              key: SONAR_TOKEN
       image: ubuntu
       script: |
-        sh $(workspaces.task-ws.path)/CI/$(inputs.params.runtime)/sonar/sonar.sh
+        echo $SONAR_TOKEN
+        sh $(workspaces.sharedlibrary.path)/CI/$(params.runtime)/sonar/sonar.sh
+
+  volumes:
+    - name: coverage
+      emptyDir: {}     
