@@ -131,5 +131,10 @@ kubectl create secret generic sonar --from-literal=SONAR_TOKEN='e2fd9312a36a9ec0
 * [k6](https://k6.io/): Ferramenta de teste de performance.
 * [Karate](https://github.com/karatelabs/karate): Ferramenta de teste de integração de API
 
+
+![build](img/image12.png)
+
 ### Criando a Tasks `Deploy`
  Essa Task vai ter apenas um `steps` para realização do deploy simples do container no cluster kubernetes.
+
+![build](img/image13.png)
