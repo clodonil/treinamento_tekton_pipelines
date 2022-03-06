@@ -96,6 +96,9 @@ kubectl apply -f task-sharedlibrary.yaml
  Essa Task vai ter 2 `steps`:
     * `TestUnit` : Executa o teste unitário;
     * `Sonar`: Executa a cobertura de qualidade do código;
+
+![build](img/image11.png)
+
 ### Criando a Tasks `CI-Security`
  Essa Task vai ter 2 `steps`:
 
