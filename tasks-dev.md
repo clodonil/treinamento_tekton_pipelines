@@ -98,8 +98,12 @@ kubectl apply -f task-sharedlibrary.yaml
     * `Sonar`: Executa a cobertura de qualidade do código;
 ### Criando a Tasks `CI-Security`
  Essa Task vai ter 2 `steps`:
-    * `Horusec`: Ferramenta de Sast para verificar a segurança do código;
-    * `Trivy`: Ferramenta para analisar a segurança do container;
+
+* [horusec](https://horusec.io/site/): Ferramanta de SAST para verificação de segurança do código fonte.
+* [trivy](https://www.aquasec.com/products/trivy/): Ferramenta de segurança de container.
+
+
+![build](img/image10.png)    
 ### Criando a Tasks `CI-Build`
  Essa Task vai ter 3 `steps`:
     * `Build`: Realiza o build da aplicação.
@@ -108,7 +112,7 @@ kubectl apply -f task-sharedlibrary.yaml
 
 
 
-![build](img/image9.png)`
+![build](img/image9.png)
 
 ### Criando a Tasks `Tests`
  Essa Task vai ter 2 `steps`:

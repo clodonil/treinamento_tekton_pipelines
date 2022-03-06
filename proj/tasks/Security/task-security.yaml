@@ -1,0 +1,40 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: security
+spec:
+  workspaces:
+    - name: sharedlibrary
+      description: Pasta com os comandos de execucao da pipeline
+      readOnly: true                
+    - name: source
+      description: Pasta com os fontes da aplicacao
+
+  stepTemplate:
+    workingDir: /workspace/source
+    image: docker
+    volumeMounts:
+      - name: dind-socket
+        mountPath: /var/run/
+  steps:
+    - name: horusec
+      script: |      
+           sh $(workspaces.sharedlibrary.path)/CI/common/sast/sast.sh
+    - name: trivy
+      script: |
+           sh $(workspaces.sharedlibrary.path)/CI/common/container-security/trivy.sh
+  sidecars:
+    - image: docker:18.05-dind
+      name: server
+      securityContext:
+        privileged: true
+      volumeMounts:
+        - mountPath: /var/lib/docker
+          name: dind-storage
+        - mountPath: /var/run/
+          name: dind-socket
+  volumes:
+    - name: dind-storage
+      emptyDir: {}
+    - name: dind-socket
+      emptyDir: {}
