@@ -79,6 +79,9 @@ A cada alteração no repositório da sharedlibrary no git, é necessário atual
 
 Para esse projeto, vamos criar apenas uma `TaskRun` para atualizar o `workspace`.
 
+
+https://github.com/clodonil/workshop_tekton_pipelines/blob/task-dev/proj/tasks/Source/taskrun-sharedlibrary.yaml
+
 ```yaml:proj/tasks/Source/task-sharedlibrary.yaml
 
 ```
@@ -102,6 +105,11 @@ kubectl apply -f task-sharedlibrary.yaml
     * `Build`: Realiza o build da aplicação.
     * `Package`: Faz o empacotamento da aplicação em uma imagem docker, gerando o artefato final;
     * `Publish`: Pública a imagem no dockerhub;
+
+
+
+![build](img/image9.png)`
+
 ### Criando a Tasks `Tests`
  Essa Task vai ter 2 `steps`:
     * `Performance`: Teste de performance da aplicação utilizando o `K6`.
