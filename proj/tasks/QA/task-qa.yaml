@@ -1,0 +1,30 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: quality
+spec:
+  params:
+    - name: appname
+      description: Nome da Imagem
+    - name: runtime
+      description: Runtime da aplicacao           
+  workspaces:
+    - name: sharedlibrary
+      description: Pasta com os comandos de execucao da pipeline
+      readOnly: true                
+    - name: source
+      description: Pasta com os fontes da aplicacao
+
+  stepTemplate:
+    workingDir: /workspace/source
+
+  steps:
+    - name: unit-testing
+      image: $(params.runtime)
+      script: |
+        runtime=$(echo "$(params.runtime)" | cut -d : -f 1)                
+        [ -f "pipeline/unittest.sh" ] && sh pipeline/unittest.sh || sh $(workspaces.workspace.path)/CI/$runtime/tests/unittest.sh 
+    - name: sonar
+      image: ubuntu
+      script: |
+        sh $(workspaces.task-ws.path)/CI/$(inputs.params.runtime)/sonar/sonar.sh
