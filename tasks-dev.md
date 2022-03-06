@@ -48,7 +48,7 @@ Para desenvolvimento da pipeline vamos precisar de 3 `workspace`:
 
 Os manifesto dos volumes foram criados no arquivo [proj/pv-workspaces.yaml](proj/pv-workspaces.yaml).
 
-```bash
+```bash:proj/pv-workspaces.yaml
 kubectl apply -f pv-workspaces.yaml
 persistentvolumeclaim/app-source created
 persistentvolumeclaim/sharedlibrary created
@@ -59,12 +59,35 @@ persistentvolumeclaim/cache created
 ## Tasks
 O nosso próximo passo vamos criar as `Tasks` necessario para o desenvolvimento da pipeline.
 
+
 ### Criando a Tasks `Source`
 Essa Task vai ter um `Step`, que basicamente vai fazer o clone do projeto do git;
 
 `tkn hub install task git-clone`
-
 `kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/git-clone/0.5/git-clone.yaml`
+
+```yaml:proj/Source/taskrun-source.yaml
+```
+![sourcerun](img/image8.png)`
+
+
+#### SharedLibary
+
+A SharedLibary é um repositório que contém os comandos que são executados na pipelines, tornando a solução de pipeline com mais segurança e governança.
+
+A cada alteração no repositório da sharedlibrary no git, é necessário atualizar o `workspace` para a pipelines obter os novos comandos. Para esse controle, o ideal é ter um pipeline apenas para gerenciar a sharedlibrary.
+
+Para esse projeto, vamos criar apenas uma `TaskRun` para atualizar o `workspace`.
+
+```yaml:proj/tasks/Source/task-sharedlibrary.yaml
+
+```
+
+Populando a `sharedlibrary`
+
+```bash
+kubectl apply -f task-sharedlibrary.yaml
+```
 
 ### Criando a Takss `CI-QA`
  Essa Task vai ter 2 `steps`:

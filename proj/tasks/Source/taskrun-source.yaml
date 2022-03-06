@@ -1,0 +1,16 @@
+apiVersion: tekton.dev/v1alpha1
+kind: TaskRun
+metadata:
+  name: taskrun-source
+spec:
+  workspaces:
+    - name: output
+      persistentVolumeClaim:
+         claimName: app-source
+  params:
+    - name: revision
+      value: master
+    - name: url
+      value: 'https://github.com/clodonil/apphello'
+  taskRef:
+     name: git-clone
