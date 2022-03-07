@@ -14,13 +14,13 @@ Para o desenvolvimento do nosso projeto vamos precisar criar **6** `Tasks`:
 ![task](img/image6.png)
 
 * `Source`: Essa Task vai ter um `Step`, que basicamente vai fazer o clone do projeto do git;
-* `CI-QA` : Essa Task vai ter 2 `steps`:
+* `Quality` : Essa Task vai ter 2 `steps`:
     * `TestUnit` : Executa o teste unitario;
     * `Sonar`: Executa a cobertura de qualidade do código;
-* `CI-Security`: Essa Task vai ter 2 `steps`:
+* `Security`: Essa Task vai ter 2 `steps`:
     * `Horusec`: Ferramenta de Sast para verificar a segurança do código;
     * `Trivy`: Ferramenta para analisar a segurança do container;
-* `CI-Build`: Essa Task vai ter 3 `steps`:
+* `Build`: Essa Task vai ter 3 `steps`:
     * `Build`: Realiza o build da aplicação.
     * `Package`: Faz o empacotamento da aplicação em uma imagem docker, gerando o artefato final;
     * `Publish`: Pública a imagem no dockerhub;
@@ -141,30 +141,88 @@ Para fazer o download/atualização da `sharedlibrary` para o workspace precisam
 kubectl apply -f task-sharedlibrary.yaml
 ```
 
-### Criando a Takss `CI-QA`
+### Criando a Tasks `Quality`
+
+A próxima Task que vamos criar é a `quality`, que está relacionada a qualidade do código.
+
+A Task em como entrada:
+* `runtime`: Parâmetro que contém a tecnologia utilizada na aplicação
+* `appname`: Parâmetro que contém o nome da aplicação
+* `source`: Workspace que contém o código fonte da aplicação
+* `sharedlibrary`: Workspace que contém os comandos para serem executados na pipeline.
 
 ![build](img/image11.png)
-Essa Task vai ter 2 `steps`:
+
+Teremos **2** `steps`:
     * `TestUnit` : Executa o teste unitário;
     * `Sonar`: Executa a cobertura de qualidade do código;
+
+
+```python
+  params:
+    - name: appname
+      description: Nome da Imagem
+    - name: runtime
+      description: Runtime da aplicacao           
+  workspaces:
+    - name: sharedlibrary
+      description: Pasta com os comandos de execucao da pipeline
+      readOnly: true                
+    - name: source
+      description: Pasta com os fontes da aplicacao
+```
+
+```
+  stepTemplate:
+    workingDir: /workspace/source
+    volumeMounts:
+      - name: coverage
+        mountPath: /coverage
+
+  volumes:
+    - name: coverage
+      emptyDir: {}    
+```
+
+```
+    - name: unit-testing
+      image: $(params.runtime)
+      script: |
+        runtime=$(params.runtime)               
+        [ -f "pipeline/unittest.sh" ] && sh pipeline/unittest.sh || sh $(workspaces.sharedlibrary.path)/CI/$runtime/tests/unittest.sh 
+
+```   
+    - name: sonar
+      env:
+        - name: SONAR_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: sonar
+              key: SONAR_TOKEN
+      image: ubuntu
+      script: |
+        echo $SONAR_TOKEN
+        sh $(workspaces.sharedlibrary.path)/CI/$(params.runtime)/sonar/sonar.sh
+
 
 * [SonarCloud](https://sonarcloud.io/): Sonar para analise de qualidade. 
 
 ```bash
-kubectl create secret generic sonar --from-literal=SONAR_TOKEN='e2fd9312a36a9ec063e6a200e1b9a8a9a2fb5e74'
+kubectl create secret generic sonar --from-literal=SONAR_TOKEN=$TOKEN
 ```    
 
 
 
-### Criando a Tasks `CI-Security`
+### Criando a Tasks `Security`
  Essa Task vai ter 2 `steps`:
 
 * [horusec](https://horusec.io/site/): Ferramanta de SAST para verificação de segurança do código fonte.
 * [trivy](https://www.aquasec.com/products/trivy/): Ferramenta de segurança de container.
 
 
-![build](img/image10.png)    
-### Criando a Tasks `CI-Build`
+![build](img/image10.png)   
+
+### Criando a Tasks `Build`
  Essa Task vai ter 3 `steps`:
     * `Build`: Realiza o build da aplicação.
     * `Package`: Faz o empacotamento da aplicação em uma imagem docker, gerando o artefato final;
