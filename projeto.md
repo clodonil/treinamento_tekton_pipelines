@@ -29,7 +29,7 @@ A pipeline deve ter os comandos padrões de build, tests e deploy. Entretanto ca
 | `unittest` |pipeline/unittest.sh | [/CI/`runtime`/tests/unittest.sh](https://github.com/clodonil/tekton-sharedlibrary/blob/main/CI/python/build/build.sh) |
 | `performace` | pipeline/tests/performance/performance.sh  | [TESTS/performance/performance.sh](https://github.com/clodonil/tekton-sharedlibrary/blob/main/TESTS/performance/performance.sh)  |
 | `integration`| pipeline/tests/integration/integration.sh  | [TESTS/integration/integration.sh](https://github.com/clodonil/tekton-sharedlibrary/blob/main/TESTS/integration/integration.sh) |
-| `deploy`|pipeline/deploy.sh | /CD/deploy.sh |
+| `deploy`|pipeline/deploy.sh | [/CD/deploy.sh](https://github.com/clodonil/tekton-sharedlibrary/blob/main/CD/deploy.sh) |
 
 
 
