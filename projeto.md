@@ -36,3 +36,4 @@ A pipeline deve ter os comandos padrões de build, tests e deploy. Entretanto ca
 * [Node]()
 * [Goland]()
 * [Maven]()
+* [SharedLibrary](https://github.com/clodonil/tekton-sharedlibrary)
