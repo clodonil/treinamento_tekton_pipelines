@@ -151,45 +151,52 @@ A Task em como entrada:
 * `source`: Workspace que contém o código fonte da aplicação
 * `sharedlibrary`: Workspace que contém os comandos para serem executados na pipeline.
 
-![build](img/image11.png)
-
 Teremos **2** `steps`:
    * `TestUnit` : Executa o teste unitário;
    * `Sonar`: Executa a cobertura de qualidade do código;
 
+![build](img/image11.png)
+
+Agora que entendemos a estrutura das Tasks de qualidade, vamos entender como podemos desenvolver.
+
+Primeiramente vamos definir as entradas, conforme o diagrama, seguindo o padrão do `yaml`. 
+
+> Importante, na definição do workspace da sharedlibrary, o mesmo deve ser disponibilizao apenas como leitura (readonly), por questão de segurança da pipeline.
 
 ```python
-  params:
-    - name: appname
-      description: Nome da Imagem
-    - name: runtime
-      description: Runtime da aplicacao           
-  workspaces:
-    - name: sharedlibrary
-      description: Pasta com os comandos de execucao da pipeline
-      readOnly: true                
-    - name: source
-      description: Pasta com os fontes da aplicacao
+params:
+  - name: appname
+    description: Nome da Imagem
+  - name: runtime
+    description: Runtime da aplicacao           
+workspaces:
+  - name: sharedlibrary
+    description: Pasta com os comandos de execucao da pipeline
+    readOnly: true                
+  - name: source
+    description: Pasta com os fontes da aplicacao
 ```
+Antes de criar os `steps`, vamos criar o template. Isso é importante para não ficar duplicando linha de código no arquivo e caso seja necessário alterar, podemos fazer isso em um único local.
+O template define o diretório de trabalho (`workingdir`), como sendo o diretório do código fonte, e também um volume que vai ser montando em todas os `steps` no diretório /coverage.
+Esse volume é do tipo `emptyDir` e vai ser utilizado para a tasks de testunit enviar o reporte de cobertura para o step do sonar.
 
-```
-  stepTemplate:
-    workingDir: /workspace/source
-    volumeMounts:
-      - name: coverage
-        mountPath: /coverage
-
-  volumes:
+```python
+stepTemplate:
+  workingDir: /workspace/source
+  volumeMounts:
     - name: coverage
-      emptyDir: {}    
+      mountPath: /coverage
+volumes:
+  - name: coverage
+    emptyDir: {}    
 ```
 
-```
-    - name: unit-testing
-      image: $(params.runtime)
-      script: |
-        runtime=$(params.runtime)               
-        [ -f "pipeline/unittest.sh" ] && sh pipeline/unittest.sh || sh $(workspaces.sharedlibrary.path)/CI/$runtime/tests/unittest.sh 
+```python
+- name: unit-testing
+  image: $(params.runtime)
+  script: |
+    runtime=$(params.runtime)               
+    [ -f "pipeline/unittest.sh" ] && sh pipeline/unittest.sh || sh $(workspaces.sharedlibrary.path)/CI$runtime/tests/unittest.sh 
 
 ```   
     - name: sonar
