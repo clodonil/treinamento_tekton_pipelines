@@ -20,7 +20,7 @@ A pipeline deve ter as seguintes caracteristicas:
 
 A pipeline deve ter os comandos padrões de build, tests e deploy. Entretanto caso o desenvolver desejar ele pode sobrescrever esses comandos, através da criação de um arquivo simples no seu repositório:
 
-|stages| Repositório App |SharedLibrary|
+|stages| Repositório App |[SharedLibrary](https://github.com/clodonil/tekton-sharedlibrary)|
 |-------|------|-------------|
 |`build` | pipeline/build.sh |/CI/`runtime`/build/build.sh|
 | `unittest` |pipeline/unittest.sh | /CI/`runtime`/tests/unittest.sh |
@@ -36,4 +36,4 @@ A pipeline deve ter os comandos padrões de build, tests e deploy. Entretanto ca
 * [Node]()
 * [Goland]()
 * [Maven]()
-* [SharedLibrary](https://github.com/clodonil/tekton-sharedlibrary)
+*
