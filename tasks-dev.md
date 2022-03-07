@@ -2,15 +2,20 @@ Desenvolvendo as Tasks
 ================
 ## Objetivo
 
-Ao final desse módulo você deve ter criados todos as tasks necessárias para o desenvolvimento da pipeline.
+Ao final deste modulo você será capaz de:
+* Ter criado as tasks necessárias da pipeline;
+* Ter validado cada tasks e seus passos;
+* Ter utilizado a sharedlibrary;
 
 ## Criando a tasks do Projeto
 
-Para o desenvolvimento do nosso projeto vamos precisar criar 6 `Tasks`:
+Para o desenvolvimento do nosso projeto vamos precisar criar **6** `Tasks`:
+
+![task](img/image6.png)
 
 * `Source`: Essa Task vai ter um `Step`, que basicamente vai fazer o clone do projeto do git;
 * `CI-QA` : Essa Task vai ter 2 `steps`:
-    * `TestUnit` : Executa o teste unitário;
+    * `TestUnit` : Executa o teste unitario;
     * `Sonar`: Executa a cobertura de qualidade do código;
 * `CI-Security`: Essa Task vai ter 2 `steps`:
     * `Horusec`: Ferramenta de Sast para verificar a segurança do código;
@@ -24,10 +29,12 @@ Para o desenvolvimento do nosso projeto vamos precisar criar 6 `Tasks`:
     * `Integration`: Teste de API com o Karate
 * `Deploy`: Essa Task vai ter apenas um `steps` para realização do deploy simples do container no cluster kubernetes.
 
-![task](img/image6.png)`
+
 
 
 ## Ferramentas
+
+Nas Tasks vamos utilizar as seguintes ferramentas:
 
 * [SonarCloud](https://sonarcloud.io/): Sonar para analise de qualidade. 
 * [horusec](https://horusec.io/site/): Ferramanta de SAST para verificação de segurança do código fonte.
@@ -38,13 +45,12 @@ Para o desenvolvimento do nosso projeto vamos precisar criar 6 `Tasks`:
 
 ## Workspace
 
-Para desenvolvimento da pipeline vamos precisar de 3 `workspace`:
+Para desenvolvimento da pipeline vamos precisar de **2** `workspace`:
 
 ![workspace](img/image7.png)`
 
 * app-source: Nesse workspace vai armazenar o código fonte durante a execução;
 * sharedlibrary: Nesse workspace vai conter os comandos necessários para execução das tasks;
-* cache: Esse workspace vai ser utilizado como cache para armazenar as dependências das aplicações.
 
 Os manifesto dos volumes foram criados no arquivo [proj/pv-workspaces.yaml](proj/pv-workspaces.yaml).
 
@@ -52,22 +58,52 @@ Os manifesto dos volumes foram criados no arquivo [proj/pv-workspaces.yaml](proj
 kubectl apply -f pv-workspaces.yaml
 persistentvolumeclaim/app-source created
 persistentvolumeclaim/sharedlibrary created
-persistentvolumeclaim/cache created
 ```
-## Populando 
 
 ## Tasks
 O nosso próximo passo vamos criar as `Tasks` necessario para o desenvolvimento da pipeline.
 
-
 ### Criando a Tasks `Source`
-Essa Task vai ter um `Step`, que basicamente vai fazer o clone do projeto do git;
 
-`tkn hub install task git-clone`
-`kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/git-clone/0.5/git-clone.yaml`
+A Task `Source` vai ser responsável por realizar o clone do projeto do git. Podemos criar essa Task manualmente, entretanto o Tekton disponibiliza o [Tekton-Hub](https://hub.tekton.dev/) que já possui um catalago de Tasks disponibilizada pela comunidade.
+
+E para realisar o clone do projeto, vamos utilizar a Task [git-clone](https://hub.tekton.dev/tekton/task/git-clone) disponibilizado no Tekton-Hub.
+
+Para instalar essa Task, podemos utilizar o CLI:
+
+```
+tkn hub install task git-clone
+```
+Ou podemos utilizar o `kubectl` passando o endereço do git-clone.
+
+```
+kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/git-clone/0.5/git-clone.yaml
+```
+
+Ambos tem o mesmo resultado.
+
+Com  Task instalada, vamos criar a `Taskrun` para realizar o clone do repositório do projeto. 
 
 ```yaml:proj/Source/taskrun-source.yaml
+apiVersion: tekton.dev/v1alpha1
+kind: TaskRun
+metadata:
+  name: taskrun-source
+spec:
+  workspaces:
+    - name: output
+      persistentVolumeClaim:
+         claimName: app-source
+  params:
+    - name: revision
+      value: master
+    - name: url
+      value: 'https://github.com/clodonil/apphello'
+  taskRef:
+     name: git-clone
 ```
+Podemos acompanhar a execução da Taskrun no dashboard do Tekton ou via CLi (tkn).
+
 ![sourcerun](img/image8.png)`
 
 
@@ -80,20 +116,35 @@ A cada alteração no repositório da sharedlibrary no git, é necessário atual
 Para esse projeto, vamos criar apenas uma `TaskRun` para atualizar o `workspace`.
 
 
-https://github.com/clodonil/workshop_tekton_pipelines/blob/task-dev/proj/tasks/Source/taskrun-sharedlibrary.yaml
-
 ```yaml:proj/tasks/Source/task-sharedlibrary.yaml
-
+apiVersion: tekton.dev/v1alpha1
+kind: TaskRun
+metadata:
+  name: taskrun-sharedlibrary
+spec:
+  workspaces:
+    - name: output
+      persistentVolumeClaim:
+         claimName: sharedlibrary
+  params:
+    - name: revision
+      value: main
+    - name: url
+      value: 'https://github.com/clodonil/tekton-sharedlibrary'
+  taskRef:
+     name: git-clone
 ```
 
-Populando a `sharedlibrary`
+Para fazer o download/atualização da `sharedlibrary` para o workspace precisamos executar a Taskrun. Esse processo deve ser feito toda vez que tiver alteração na `sharedlibrary`.
 
 ```bash
 kubectl apply -f task-sharedlibrary.yaml
 ```
 
 ### Criando a Takss `CI-QA`
- Essa Task vai ter 2 `steps`:
+
+![build](img/image11.png)
+Essa Task vai ter 2 `steps`:
     * `TestUnit` : Executa o teste unitário;
     * `Sonar`: Executa a cobertura de qualidade do código;
 
@@ -103,7 +154,7 @@ kubectl apply -f task-sharedlibrary.yaml
 kubectl create secret generic sonar --from-literal=SONAR_TOKEN='e2fd9312a36a9ec063e6a200e1b9a8a9a2fb5e74'
 ```    
 
-![build](img/image11.png)
+
 
 ### Criando a Tasks `CI-Security`
  Essa Task vai ter 2 `steps`:
