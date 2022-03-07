@@ -154,8 +154,8 @@ A Task em como entrada:
 ![build](img/image11.png)
 
 Teremos **2** `steps`:
-    * `TestUnit` : Executa o teste unitário;
-    * `Sonar`: Executa a cobertura de qualidade do código;
+   * `TestUnit` : Executa o teste unitário;
+   * `Sonar`: Executa a cobertura de qualidade do código;
 
 
 ```python
