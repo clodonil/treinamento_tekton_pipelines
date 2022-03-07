@@ -7,6 +7,17 @@ Introdução ao Tekton
 
 Como uma estrutura nativa do Kubernetes, o Tekton ajuda a modernizar a entrega contínua, fornecendo especificações do setor para pipelines, fluxos de trabalho e outros elementos essenciais, tornando a implementação em vários provedores de cloud ou ambientes híbridos mais rápida e fácil.
 
+## Benificios de utilizar o Tekton
+
+* Customizable. Tekton entities are fully customizable, allowing for a high degree of flexibility. Platform engineers can define a highly detailed catalog of building blocks for developers to use in a wide variety of scenarios.
+
+* Reusable. Tekton entities are fully portable, so once defined, anyone within the organization can use a given pipeline and reuse its building blocks. This allows developers to quickly build complex pipelines without “reinventing the wheel.”
+
+* Expandable. Tekton Catalog is a community-driven repository of Tekton building blocks. You can quickly create new and expand existing pipelines using pre-made components from the Tekton Catalog.
+
+* Standardized. Tekton installs and runs as an extension on your Kubernetes cluster and uses the well-established Kubernetes resource model. Tekton workloads execute inside Kubernetes containers.
+
+* Scalable. To increase your workload capacity, you can simply add nodes to your cluster. Tekton scales with your cluster without the need to redefine your resource allocations or any other modifications to your pipelines.
 
 ## Componentes do Tekton
 
@@ -20,34 +31,28 @@ Construir pipelines de CI/CD é um empreendimento de longo alcance, então a Tek
 
 * **`Dashboard`:** Dashboard é uma interface gráfica baseada na web para pipelines Tekton que exibe informações sobre a execução de seus pipelines.
 
-**`Catálogo`:** O catálogo é um repositório de blocos de construção Tekton de alta qualidade e contribuídos pela comunidade (tarefas, pipelines e assim por diante) prontos para uso em seus próprios pipelines.
+* **`Catálogo`:** O catálogo é um repositório de blocos de construção Tekton de alta qualidade e contribuídos pela comunidade (tarefas, pipelines e assim por diante) prontos para uso em seus próprios pipelines.
 
 * **`Hub`: Hub é uma interface gráfica baseada na web para acessar o catálogo Tekton.
 
 * **`Operator`:** Operator é um padrão Kubernetes Operator que permite instalar, atualizar, atualizar e remover projetos Tekton em um cluster Kubernetes.
 
-* **`Chains`:** Chains é um controlador Kubernetes Custom Resource Definition (CRD) que permite gerenciar a segurança da cadeia de suprimentos no Tekton. Atualmente é um trabalho em andamento.
-
-* **`Results`:** Os resultados visam ajudar os usuários a agrupar logicamente o histórico de carga de trabalho de CI/CD e separar o armazenamento de resultados de longo prazo do controlador de pipeline.
 
 
+# Terminologias
+
+![conceitos](https://tekton.dev/docs/concepts/concept-tasks-pipelines.png)
+
+* **`Step`:** A step is the most basic entity in a CI/CD workflow, such as running some unit tests for a Python web app or compiling a Java program. Tekton performs each step with a provided container image.
+
+* **`Task`:** A task is a collection of steps in a specific order. Tekton runs a task in the form of a Kubernetes pod, where each step becomes a running container in the pod.
+
+* **`Pipelines`:**spinn A pipeline is a collection of tasks in a specific order. Tekton collects all tasks, connects them in a directed acyclic graph (DAG), and executes the graph in sequence. In other words, it creates a number of Kubernetes pods and ensures that each pod completes running successfully as desired.
 An open-source framework for createing reusable CI/CD systems
 
-Started off as Knative Build Project
 
-Runs on Kubernetes
+![run](https://tekton.dev/docs/concepts/concept-runs.png)
 
-Uses CRDs to extend Kubernetes
+* **`PipelineRun`:** A PipelineRun, as its name implies, is a specific execution of a pipeline.
 
-GitOps: The new cloud native Operating Model
-
-1. The entire system is described declaratively
-2. The canonical desired system state is versioned in git
-3.Approved changes are automatically applied to the system (commit/PT/MT etc)
-4. Software agents to ensure correctness and alert on divergence
-
-## Projeto de Pipelines
-
-* Template para multilinguagem
-* Com suporte de SharedLibrary
-* Cache de build
+* **`TaskRun`:** A TaskRun is a specific execution of a task. TaskRuns are also available when you choose to run a task outside a pipeline, with which you may view the specifics of each step execution in a task.
