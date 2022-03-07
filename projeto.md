@@ -10,7 +10,7 @@ A proposta é criar uma pipeline utilizando `TekTon` para publicação de APIs q
 
 A pipeline deve ter as seguintes caracteristicas:
 
-* Desenvolvimento em Template; 
+* Desenvolvimento em Template `yaml`; 
 * SharedLibrary exterminalizado para fácil manutenção;
 * Controle de versão dos templates;
 * Possibilidade de build/testes e deploy customizado
@@ -25,10 +25,10 @@ A pipeline deve ter os comandos padrões de build, tests e deploy. Entretanto ca
 
 |stages| Repositório App |[SharedLibrary](https://github.com/clodonil/tekton-sharedlibrary)|
 |-------|------|-------------|
-|`build` | pipeline/build.sh |/CI/`runtime`/build/build.sh|
-| `unittest` |pipeline/unittest.sh | /CI/`runtime`/tests/unittest.sh |
-| `performace` | pipeline/tests/performance/performance.sh  | TESTS/performance/performance.sh  |
-| `integration`| pipeline/tests/integration/integration.sh  | TESTS/integration/integration.sh |
+|`build` | pipeline/build.sh |[/CI/`runtime`/build/build.sh](https://github.com/clodonil/tekton-sharedlibrary/blob/main/CI/python/build/build.sh)|
+| `unittest` |pipeline/unittest.sh | [/CI/`runtime`/tests/unittest.sh](https://github.com/clodonil/tekton-sharedlibrary/blob/main/CI/python/build/build.sh) |
+| `performace` | pipeline/tests/performance/performance.sh  | [TESTS/performance/performance.sh](https://github.com/clodonil/tekton-sharedlibrary/blob/main/TESTS/performance/performance.sh)  |
+| `integration`| pipeline/tests/integration/integration.sh  | [TESTS/integration/integration.sh](https://github.com/clodonil/tekton-sharedlibrary/blob/main/TESTS/integration/integration.sh) |
 | `deploy`|pipeline/deploy.sh | /CD/deploy.sh |
 
 
