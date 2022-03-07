@@ -10,11 +10,10 @@ A proposta é criar uma pipeline utilizando `TekTon` para publicação de APIs q
 
 A pipeline deve ter as seguintes caracteristicas:
 
-* Mesmo Template para linguagem (runtime) diferentes 
-* SharedLibrary exterminalizado para fácil manutenção
-* Controle de versão dos templates
-* Possibilidade de build/testes customizado
-* Possibilidade de Deploy customizado
+* Desenvolvimento em Template; 
+* SharedLibrary exterminalizado para fácil manutenção;
+* Controle de versão dos templates;
+* Possibilidade de build/testes e deploy customizado
 
 
 ![projeto](img/image14.png)
