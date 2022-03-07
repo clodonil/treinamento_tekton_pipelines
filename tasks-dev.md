@@ -123,6 +123,18 @@ kubectl create secret generic sonar --from-literal=SONAR_TOKEN='e2fd9312a36a9ec0
 
 ![build](img/image9.png)
 
+```bash
+kubectl create secret docker-registry dockerhub \
+  --docker-server=$DOCKER_REGISTRY_SERVER \
+  --docker-username=$DOCKER_USER \
+  --docker-password=$DOCKER_PASSWORD \
+  --docker-email=$DOCKER_EMAIL
+  ```
+
+```bash
+kubectl patch serviceaccount default -p '{"secrets": [{"name": "dockerhub"}]}'
+```
+
 ### Criando a Tasks `Tests`
  Essa Task vai ter 2 `steps`:
     * `Performance`: Teste de performance da aplicação utilizando o `K6`.
