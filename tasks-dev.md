@@ -190,7 +190,8 @@ volumes:
   - name: coverage
     emptyDir: {}    
 ```
-
+Agora vamos definir os `steps`. 
+O primeiro é o teste unitário. A imagem utilizada é 
 ```python
 - name: unit-testing
   image: $(params.runtime)
