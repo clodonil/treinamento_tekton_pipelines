@@ -6,7 +6,7 @@ Ao final desse módulo você deve ter o ambiente preparado e com o `tekton` inst
 ## Pipeline de deploy API
 
 
-![projeto](img/image13.png)
+![projeto](img/image14.png)
 
 
 A pipeline deve ter as seguintes caracteristicas:
