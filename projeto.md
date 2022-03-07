@@ -1,12 +1,12 @@
 # Proposta do Projeto 
 
 ## Objetivo
-Ao final desse módulo você deve ter o ambiente preparado e com o `tekton` instalado juntamente com as ferramentas.
+
+Apresentar a proposta de desenvolvimento da pipeline utilizando a tecnologia `TekTon`.
 
 ## Pipeline de deploy API
 
-
-![projeto](img/image14.png)
+A proposta é criar uma pipeline utilizando `TekTon` para publicação de APIs que tenha  `Segurança`, `Qualidade` e `Governança`.
 
 A pipeline deve ter as seguintes caracteristicas:
 
@@ -15,6 +15,10 @@ A pipeline deve ter as seguintes caracteristicas:
 * Controle de versão dos templates
 * Possibilidade de build/testes customizado
 * Possibilidade de Deploy customizado
+
+
+![projeto](img/image14.png)
+
 
 ## Stages Customizados
 
@@ -36,4 +40,4 @@ A pipeline deve ter os comandos padrões de build, tests e deploy. Entretanto ca
 * [Node]()
 * [Goland]()
 * [Maven]()
-*
+
