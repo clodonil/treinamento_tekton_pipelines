@@ -33,10 +33,12 @@ A pipeline deve ter os comandos padrões de build, tests e deploy. Entretanto ca
 
 
 
-## Urls das APIs
+## APIs
 
-* [Python]()
-* [Node]()
-* [Goland]()
-* [Maven]()
+Segue o link das aplicações que será utilizada para build durante o desenvolvimento da pipeline.
+
+* [Hello World - Python]()
+* [Hello World - Node]()
+* [Hello World - Goland]()
+* [Hello World - Maven]()
 
