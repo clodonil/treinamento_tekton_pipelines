@@ -21,7 +21,7 @@ A pipeline deve ter as seguintes caracteristicas:
 
 ## Stages Customizados
 
-A pipeline deve ter os comandos padrões de build, tests e deploy. Entretanto caso o desenvolver desejar ele pode sobrescrever esses comandos, através da criação de um arquivo simples no seu repositório:
+A pipeline deve ter os comandos padrões de build, tests e deploy. Entretanto caso o desenvolver desejar ele pode sobrescrever esses comandos, através de um arquivo simples no seu repositório:
 
 |stages| Repositório App |[SharedLibrary](https://github.com/clodonil/tekton-sharedlibrary)|
 |-------|------|-------------|
