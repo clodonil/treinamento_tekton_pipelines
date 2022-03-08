@@ -47,16 +47,15 @@ Aqui estão os principais componentes que você obtém com o Tekton:
 
 ![conceitos](https://tekton.dev/docs/concepts/concept-tasks-pipelines.png)
 
-* **`Step`:** A step is the most basic entity in a CI/CD workflow, such as running some unit tests for a Python web app or compiling a Java program. Tekton performs each step with a provided container image.
+* **`Step`:** Uma Step é a entidade mais básica em um fluxo de trabalho de CI/CD, como executar o teste unitário para um aplicativo Web Python ou compilar um programa Java. O Tekton executa cada Step com uma imagem de contêiner fornecida.
 
-* **`Task`:** A task is a collection of steps in a specific order. Tekton runs a task in the form of a Kubernetes pod, where each step becomes a running container in the pod.
+* **`Task`:** Uma Task é uma coleção de Step em uma ordem específica. O Tekton executa uma Tasl na forma de um pod do Kubernetes, onde cada Step se torna um contêiner em execução no pod.
 
-* **`Pipelines`:**spinn A pipeline is a collection of tasks in a specific order. Tekton collects all tasks, connects them in a directed acyclic graph (DAG), and executes the graph in sequence. In other words, it creates a number of Kubernetes pods and ensures that each pod completes running successfully as desired.
-An open-source framework for createing reusable CI/CD systems
+* **`Pipelines`:**  Um pipeline é uma coleção de Tasks em uma ordem específica. O Tekton reune e organiza todas as Tasks, conecta-as em um gráfico acíclico direcionado (DAG) e executa o gráfico em sequência. Em outras palavras, ele cria vários pods do Kubernetes e garante que cada pod conclua a execução com êxito conforme desejado.
 
 
 ![run](https://tekton.dev/docs/concepts/concept-runs.png)
 
-* **`PipelineRun`:** A PipelineRun, as its name implies, is a specific execution of a pipeline.
+* **`PipelineRun`:** Um PipelineRun, como o próprio nome indica, é uma execução específica de um pipeline.
 
-* **`TaskRun`:** A TaskRun is a specific execution of a task. TaskRuns are also available when you choose to run a task outside a pipeline, with which you may view the specifics of each step execution in a task.
+* **`TaskRun`:** TaskRun é uma execução específica de uma Tasks. TaskRuns também estão disponíveis quando você opta por executar uma tarefa fora de um pipeline, com o qual você pode visualizar as especificidades de cada execução.
