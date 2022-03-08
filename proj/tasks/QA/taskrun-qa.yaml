@@ -1,0 +1,19 @@
+apiVersion: tekton.dev/v1alpha1
+kind: TaskRun
+metadata:
+  name: taskrun-quality
+spec:
+  workspaces:
+    - name: source
+      persistentVolumeClaim:
+         claimName: app-source
+    - name: sharedlibrary
+      persistentVolumeClaim:
+         claimName: sharedlibrary
+  params:
+    - name: appname
+      value: 'newapp'
+    - name: runtime
+      value: 'python'
+  taskRef:     
+     name: quality

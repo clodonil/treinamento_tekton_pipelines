@@ -1,0 +1,15 @@
+apiVersion: tekton.dev/v1alpha1
+kind: TaskRun
+metadata:
+  name: taskrun-security
+spec:
+  workspaces:
+    - name: source
+      persistentVolumeClaim:
+         claimName: app-source
+    - name: sharedlibrary
+      persistentVolumeClaim:
+         claimName: sharedlibrary
+
+  taskRef:
+     name: security
