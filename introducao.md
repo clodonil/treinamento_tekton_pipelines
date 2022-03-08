@@ -23,21 +23,23 @@ O `Tekton` oferece os seguintes benefícios para desenvolvimento de pipelines de
 
 ## Componentes do Tekton
 
-Construir pipelines de CI/CD é um empreendimento de longo alcance, então a Tekton fornece ferramentas para cada etapa do caminho. Aqui estão os principais componentes que você obtém com o Tekton:
+Constuir pipeline de CI/CD com segurança, qualidade, governança e que gere escala de desenvolvimento, não é uma tarefa simples. Para tornar esse caminho mais tranquilo, a Tekton disponibiliza um conjunto de componetes.
 
-* **`Pipeline`**: Pipeline define um conjunto de recursos personalizados do Kubernetes que atuam como blocos de construção que você usa para montar seus pipelines de CI/CD.
+Aqui estão os principais componentes que você obtém com o Tekton:
 
-* **`Triggers`:** Triggers é um recurso personalizado do Kubernetes que permite criar pipelines com base em informações extraídas de cargas úteis de eventos. Por exemplo, você pode acionar a instanciação e a execução de um pipeline sempre que uma solicitação de mesclagem for aberta em um repositório Git.
+* **[`Pipeline`](https://github.com/tektoncd/pipeline/blob/main/docs/README.md)**: Pipeline define um conjunto de recursos personalizados do Kubernetes que atuam como tasks que você usa para montar seus pipelines de CI/CD.
 
-* **`CLI`:** A CLI fornece uma interface de linha de comando chamada tkn que permite interagir com o Tekton a partir do seu terminal.
+* **[`Triggers`]https://github.com/tektoncd/triggers/blob/main/README.md):** Triggers é um recurso personalizado do Kubernetes que permite instanciar pipelines com base em eventos. Por exemplo, você pode executar uma pipeline sempre que um PR seja aprovado em um repositório Git.
 
-* **`Dashboard`:** Dashboard é uma interface gráfica baseada na web para pipelines Tekton que exibe informações sobre a execução de seus pipelines.
+* **[`CLI`](https://github.com/tektoncd/cli/blob/main/README.md):** A CLI fornece uma interface de linha de comando chamada `tkn` que permite interagir com o Tekton a partir do seu terminal.
 
-* **`Catálogo`:** O catálogo é um repositório de blocos de construção Tekton de alta qualidade e contribuídos pela comunidade (tarefas, pipelines e assim por diante) prontos para uso em seus próprios pipelines.
+* **[`Dashboard`](https://github.com/tektoncd/dashboard/blob/main/README.md):** Dashboard é uma interface gráfica baseada na web que exibe informações sobre a execução.
 
-* **`Hub`: Hub é uma interface gráfica baseada na web para acessar o catálogo Tekton.
+* **[`Catálogo`](https://github.com/tektoncd/catalog/blob/v1beta1/README.md):** O catálogo é um repositório de Tasks de alta qualidade e mantido pela comunidade .
 
-* **`Operator`:** Operator é um padrão Kubernetes Operator que permite instalar, atualizar, atualizar e remover projetos Tekton em um cluster Kubernetes.
+* **[`Hub`](https://github.com/tektoncd/hub/blob/main/README.md): Hub é uma interface gráfica baseada na web para acessar o catálogo Tekton.
+
+* **[`Operator`](https://github.com/tektoncd/operator/blob/main/README.md):** Operator é um padrão Kubernetes que permite instalar, atualizar e remover projetos Tekton em um cluster Kubernetes.
 
 
 
