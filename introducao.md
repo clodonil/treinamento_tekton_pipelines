@@ -11,15 +11,15 @@ Tekton faz parte da [CD Foundation](https://cd.foundation/) , é um projeto da [
 
 O `Tekton` oferece os seguintes benefícios para desenvolvimento de pipelines de CI/CD.
 
-* Customizable. Tekton entities are fully customizable, allowing for a high degree of flexibility. Platform engineers can define a highly detailed catalog of building blocks for developers to use in a wide variety of scenarios.
+* **`Customizável``:** Tekton possuie recursos totalmente personalizáveis, permitindo um alto grau de flexibilidade. O time de DevOps podem definir um catálogo altamente detalhado de soluções para os desenvolvedores usarem em uma ampla variedade de cenários.
 
-* Reusable. Tekton entities are fully portable, so once defined, anyone within the organization can use a given pipeline and reuse its building blocks. This allows developers to quickly build complex pipelines without “reinventing the wheel.”
+* **`Reutilizável`:** Os recursos criados pelo Tekton são totalmente portáteis, portanto, uma vez definidas, qualquer pessoa dentro da empresa pode usar um determinado pipeline e reutilizar parte da pipeline. Isso permite que os desenvolvedores construam rapidamente pipelines complexos sem “reinventar a roda”.
 
-* Expandable. Tekton Catalog is a community-driven repository of Tekton building blocks. You can quickly create new and expand existing pipelines using pre-made components from the Tekton Catalog.
+* **`Expansível`:** O Tekton possue um respositório de catalago mantido pela comunidade. Você pode criar rapidamente novos pipelines e expandir os existentes usando componentes pré-fabricados do catalago.
 
-* Standardized. Tekton installs and runs as an extension on your Kubernetes cluster and uses the well-established Kubernetes resource model. Tekton workloads execute inside Kubernetes containers.
+* **`Padronizado`:** O Tekton é instalado e executado como uma extensão (operator) em seu cluster Kubernetes e usa o modelo de recursos do Kubernetes bem estabelecido. Os workload do Tekton são executadas dentro de contêineres do Kubernetes.
 
-* Scalable. To increase your workload capacity, you can simply add nodes to your cluster. Tekton scales with your cluster without the need to redefine your resource allocations or any other modifications to your pipelines.
+* **`Escalável`:**.Para aumentar sua capacidade de carga de trabalho, você pode simplesmente adicionar nós ao cluster. O Tekton é dimensionado com seu cluster sem a necessidade de redefinir suas alocações de recursos ou quaisquer outras modificações em seus pipelines.
 
 ## Componentes do Tekton
 
