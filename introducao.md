@@ -29,7 +29,7 @@ Aqui estão os principais componentes que você obtém com o Tekton:
 
 * **[`Pipeline`](https://github.com/tektoncd/pipeline/blob/main/docs/README.md)**: Pipeline define um conjunto de recursos personalizados do Kubernetes que atuam como tasks que você usa para montar seus pipelines de CI/CD.
 
-* **[`Triggers`]https://github.com/tektoncd/triggers/blob/main/README.md):** Triggers é um recurso personalizado do Kubernetes que permite instanciar pipelines com base em eventos. Por exemplo, você pode executar uma pipeline sempre que um PR seja aprovado em um repositório Git.
+* **[`Triggers`](https://github.com/tektoncd/triggers/blob/main/README.md):** Triggers é um recurso personalizado do Kubernetes que permite instanciar pipelines com base em eventos. Por exemplo, você pode executar uma pipeline sempre que um PR seja aprovado em um repositório Git.
 
 * **[`CLI`](https://github.com/tektoncd/cli/blob/main/README.md):** A CLI fornece uma interface de linha de comando chamada `tkn` que permite interagir com o Tekton a partir do seu terminal.
 
@@ -37,7 +37,7 @@ Aqui estão os principais componentes que você obtém com o Tekton:
 
 * **[`Catálogo`](https://github.com/tektoncd/catalog/blob/v1beta1/README.md):** O catálogo é um repositório de Tasks de alta qualidade e mantido pela comunidade .
 
-* **[`Hub`](https://github.com/tektoncd/hub/blob/main/README.md): Hub é uma interface gráfica baseada na web para acessar o catálogo Tekton.
+* **[`Hub`](https://github.com/tektoncd/hub/blob/main/README.md):** Hub é uma interface gráfica baseada na web para acessar o catálogo Tekton.
 
 * **[`Operator`](https://github.com/tektoncd/operator/blob/main/README.md):** Operator é um padrão Kubernetes que permite instalar, atualizar e remover projetos Tekton em um cluster Kubernetes.
 
