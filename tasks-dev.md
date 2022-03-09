@@ -176,7 +176,7 @@ workspaces:
   - name: source
     description: Pasta com os fontes da aplicacao
 ```
-Antes de criar os `steps`, vamos criar o template. Isso é importante para não ficar duplicando linha de código no arquivo e caso seja necessário alterar, podemos fazer isso em um único local.
+Antes de criar os `steps`, vamos criar o Steptemplate. Isso é importante para não ficar duplicando linha de código no arquivo e caso seja necessário alterar, podemos fazer isso em um único local.
 O template define o diretório de trabalho (`workingdir`), como sendo o diretório do código fonte, e também um volume que vai ser montando em todas os `steps` no diretório /coverage.
 Esse volume é do tipo `emptyDir` e vai ser utilizado para a tasks de testunit enviar o reporte de cobertura para o step do sonar.
 
@@ -191,15 +191,26 @@ volumes:
     emptyDir: {}    
 ```
 Agora vamos definir os `steps`. 
-O primeiro é o teste unitário. A imagem utilizada é 
+
+O primeiro step é o teste unitário. A imagem utilizada no step é definida no parâmetro `runtime`. Esse step pode ser customizado pelo desenvolver.
+
+```bash
+[ -f "pipeline/unittest.sh" ] && sh pipeline/unittest.sh || sh $(workspaces.sharedlibrary.path)/CI$runtime/tests/unittest.sh 
+```
+Essa linha verifica se o arquivo `pipeline/unittest.sh` existe no repositório e executa. Caso contrato executa o script que esta no sharedlibrary.  
+
 ```python
 - name: unit-testing
   image: $(params.runtime)
   script: |
     runtime=$(params.runtime)               
     [ -f "pipeline/unittest.sh" ] && sh pipeline/unittest.sh || sh $(workspaces.sharedlibrary.path)/CI$runtime/tests/unittest.sh 
+```
+O segundo step é o sonar para analise de qualidade do código. Para isso vamos utilizar o site [SonarCloud](https://sonarcloud.io/).
 
-```   
+É necessário criar uma conta no site e um projeto 
+
+```python   
     - name: sonar
       env:
         - name: SONAR_TOKEN
@@ -209,28 +220,78 @@ O primeiro é o teste unitário. A imagem utilizada é
               key: SONAR_TOKEN
       image: ubuntu
       script: |
-        echo $SONAR_TOKEN
         sh $(workspaces.sharedlibrary.path)/CI/$(params.runtime)/sonar/sonar.sh
+```
 
-
-* [SonarCloud](https://sonarcloud.io/): Sonar para analise de qualidade. 
+Crie um secret para armazenar o Token criado no site [SonarCloud](https://sonarcloud.io/).
 
 ```bash
 kubectl create secret generic sonar --from-literal=SONAR_TOKEN=$TOKEN
 ```    
 
-
+[Link do Task de QA](proj/tasks/QA/task-qa.yaml)
 
 ### Criando a Tasks `Security`
+
  Essa Task vai ter 2 `steps`:
 
+
+
+
+
+![build](img/image10.png)
+
+
+```yaml
+workspaces:
+  - name: sharedlibrary
+    description: Pasta com os comandos de execucao da pipeline
+    readOnly: true                
+  - name: source
+    description: Pasta com os fontes da aplicacao
+```
+
+```yaml
+stepTemplate:
+  workingDir: /workspace/source
+  image: docker
+  volumeMounts:
+    - name: dind-socket
+      mountPath: /var/run/
+```
 * [horusec](https://horusec.io/site/): Ferramanta de SAST para verificação de segurança do código fonte.
+
+> docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/src/horusec horuszup/horusec-cli:latest horusec start -p /src/horusec -P $(pwd)
+
+```yaml
+steps:
+  - name: horusec
+    script: |      
+         sh $(workspaces.sharedlibrary.path)/CI/common/sast/sast.sh
+```
+
 * [trivy](https://www.aquasec.com/products/trivy/): Ferramenta de segurança de container.
 
+> docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/Library/Caches:/root/.cache/ aquasec/trivy:0.20.2 appbuid:latest
 
-![build](img/image10.png)   
+
+```yaml
+- name: trivy
+  script: |
+       sh $(workspaces.sharedlibrary.path)/CI/common/container-security/trivy.sh
+```
+
+```yaml
+sidecars:
+  - image: docker:18.05-dind
+    name: server
+    securityContext:
+      privileged: true
+```
+
 
 ### Criando a Tasks `Build`
+
  Essa Task vai ter 3 `steps`:
     * `Build`: Realiza o build da aplicação.
     * `Package`: Faz o empacotamento da aplicação em uma imagem docker, gerando o artefato final;
