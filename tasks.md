@@ -199,8 +199,6 @@ Nessa execução, estamos utilizando uma imagem python para mostrar o  "Ola Mund
 
 Dessa forma vimos na prática como passar parâmetros para uma `Tasks`.
 
-### Git Clone
-
 ## StepTemplate
 Um recurso muito interessante na `Tasks` para evitar repetição de código é o `StepTemplate`. Dessa forma podemos declarar as funções padrões para todos os `Steps`, evitando assim ficar repetindo código.
 
