@@ -284,9 +284,9 @@ sidecars:
 ### Criando a Tasks `Build`
 
  Essa Task vai ter 3 `steps`:
-    * `Build`: Realiza o build da aplicação.
-    * `Package`: Faz o empacotamento da aplicação em uma imagem docker, gerando o artefato final;
-    * `Publish`: Pública a imagem no dockerhub;
+ * `Build`: Realiza o build da aplicação.
+ * `Package`: Faz o empacotamento da aplicação em uma imagem docker, gerando o artefato final;
+ * `Publish`: Pública a imagem no dockerhub;
 
 
 
