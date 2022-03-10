@@ -145,7 +145,7 @@ kubectl apply -f task-sharedlibrary.yaml
 
 A próxima Task que vamos criar é a `quality`, que está relacionada a qualidade do código.
 
-A Task em como entrada:
+A Task tem como entrada:
 * `runtime`: Parâmetro que contém a tecnologia utilizada na aplicação
 * `appname`: Parâmetro que contém o nome da aplicação
 * `source`: Workspace que contém o código fonte da aplicação
@@ -229,27 +229,25 @@ Crie um secret para armazenar o Token criado no site [SonarCloud](https://sonarc
 kubectl create secret generic sonar --from-literal=SONAR_TOKEN=$TOKEN
 ```    
 
-[Link do Task de QA](proj/tasks/QA/task-qa.yaml)
+* [Link do Task de QA](proj/tasks/QA/task-qa.yaml)
+* [Link do Taskrun de QA](proj/tasks/QA/taskrun-qa.yaml)
 
 ### Criando a Tasks `Security`
 
- Essa Task vai ter 2 `steps`:
+A próxima Task que vamos criar é a `Security`, que está relacionada a segurança do código e do container.
 
+A Task tem como entrada:
+* `source`: Workspace que contém o código fonte da aplicação
+* `sharedlibrary`: Workspace que contém os comandos para serem executados na pipeline.
 
-
+Teremos **2** `steps`:
+   * `horusec` : Executa o teste unitário;
+   * `trivy`: Executa a cobertura de qualidade do código;
 
 
 ![build](img/image10.png)
 
 
-```yaml
-workspaces:
-  - name: sharedlibrary
-    description: Pasta com os comandos de execucao da pipeline
-    readOnly: true                
-  - name: source
-    description: Pasta com os fontes da aplicacao
-```
 
 ```yaml
 stepTemplate:
@@ -263,23 +261,13 @@ stepTemplate:
 
 > docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/src/horusec horuszup/horusec-cli:latest horusec start -p /src/horusec -P $(pwd)
 
-```yaml
-steps:
-  - name: horusec
-    script: |      
-         sh $(workspaces.sharedlibrary.path)/CI/common/sast/sast.sh
-```
+
 
 * [trivy](https://www.aquasec.com/products/trivy/): Ferramenta de segurança de container.
 
 > docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/Library/Caches:/root/.cache/ aquasec/trivy:0.20.2 appbuid:latest
 
 
-```yaml
-- name: trivy
-  script: |
-       sh $(workspaces.sharedlibrary.path)/CI/common/container-security/trivy.sh
-```
 
 ```yaml
 sidecars:
@@ -288,6 +276,9 @@ sidecars:
     securityContext:
       privileged: true
 ```
+
+* [Link do Task de Security](proj/tasks/Security/task-security.yaml)
+* [Link do Taskrun de Security](proj/tasks/Security/taskrun-security.yaml)
 
 
 ### Criando a Tasks `Build`
@@ -313,6 +304,11 @@ kubectl create secret docker-registry dockerhub \
 kubectl patch serviceaccount default -p '{"secrets": [{"name": "dockerhub"}]}'
 ```
 
+
+* [Link do Task de Build](proj/tasks/Build/task-build.yaml)
+* [Link do Taskrun de Build](proj/tasks/Build/taskrun-build.yaml)
+
+
 ### Criando a Tasks `Tests`
  Essa Task vai ter 2 `steps`:
     * `Performance`: Teste de performance da aplicação utilizando o `K6`.
@@ -324,7 +320,13 @@ kubectl patch serviceaccount default -p '{"secrets": [{"name": "dockerhub"}]}'
 
 ![build](img/image12.png)
 
+* [Link do Task de Test](proj/tasks/Tests/task-tests.yaml)
+* [Link do Taskrun de Test](proj/tasks/Tests/taskrun-tests.yaml)
+
 ### Criando a Tasks `Deploy`
  Essa Task vai ter apenas um `steps` para realização do deploy simples do container no cluster kubernetes.
 
 ![build](img/image13.png)
+
+* [Link do Task de Deploy](proj/tasks/Deploy/task-deploy.yaml)
+* [Link do Taskrun de Deploy](proj/tasks/Deploy/taskrun-deploy.yaml)
