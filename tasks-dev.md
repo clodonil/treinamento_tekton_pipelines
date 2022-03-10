@@ -161,7 +161,7 @@ Agora que entendemos a estrutura das Tasks de qualidade, vamos entender como pod
 
 Primeiramente vamos definir as entradas, conforme o diagrama, seguindo o padrão do `yaml`. 
 
-> Importante, na definição do workspace da sharedlibrary, o mesmo deve ser disponibilizao apenas como leitura (readonly), por questão de segurança da pipeline.
+> Importante, na definição do workspace da sharedlibrary, o mesmo deve ser disponibilizado apenas como leitura (readonly), por questão de segurança da pipeline.
 
 ```python
 params:
@@ -244,6 +244,7 @@ Teremos **2** `steps`:
    * `horusec` : Executa o teste unitário;
    * `trivy`: Executa a cobertura de qualidade do código;
 
+Nessa Task a solução do `horusec` e do `trivy` são disponibilizados via container e para execução usamos uma sidecard para iniciar o serviço do docker.
 
 ![build](img/image10.png)
 
