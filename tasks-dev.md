@@ -248,7 +248,7 @@ Nessa Task a solução do `horusec` e do `trivy` são disponibilizados via conta
 
 ![build](img/image10.png)
 
-
+No template dos steps estamos definindo que será utilizado a imagem `docker` e o socket do docker será montado no `/var/run`.
 
 ```yaml
 stepTemplate:
@@ -258,17 +258,14 @@ stepTemplate:
     - name: dind-socket
       mountPath: /var/run/
 ```
-* [horusec](https://horusec.io/site/): Ferramanta de SAST para verificação de segurança do código fonte.
+Para executar o [horusec](https://horusec.io/site/), basicamente executamos um comando docker, utilizando a imagem do `horusec` passando o código fonte do projeto.
 
 > docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/src/horusec horuszup/horusec-cli:latest horusec start -p /src/horusec -P $(pwd)
 
-
-
-* [trivy](https://www.aquasec.com/products/trivy/): Ferramenta de segurança de container.
-
+A execução do [trivy](https://www.aquasec.com/products/trivy/), segue a mesma lógica.
 > docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $HOME/Library/Caches:/root/.cache/ aquasec/trivy:0.20.2 appbuid:latest
 
-
+A configuração do sidecars com a imagem do docker é fundamental para a execução do steps. O sidecars faz o papel do docker server.
 
 ```yaml
 sidecars:
@@ -278,20 +275,54 @@ sidecars:
       privileged: true
 ```
 
+Nos links abaixo você pode acessar o `Task` completa de segurança.
+
 * [Link do Task de Security](proj/tasks/Security/task-security.yaml)
 * [Link do Taskrun de Security](proj/tasks/Security/taskrun-security.yaml)
 
 
 ### Criando a Tasks `Build`
 
+A próxima Task que vamos criar é a `Build`, que está relacionada compilação, empacotamento do software em container e publicação.
+
+A Task tem como entrada:
+* `runtime`: Parâmetro que contém a tecnologia utilizada na aplicação
+* `appname`: Parâmetro que contém o nome da aplicação
+* `tagimage`: Parâmetro que contém o nome da tag da imagem docker criada
+* `source`: Workspace que contém o código fonte da aplicação
+* `sharedlibrary`: Workspace que contém os comandos para serem executados na pipeline.
+
  Essa Task vai ter 3 `steps`:
  * `Build`: Realiza o build da aplicação.
  * `Package`: Faz o empacotamento da aplicação em uma imagem docker, gerando o artefato final;
  * `Publish`: Pública a imagem no dockerhub;
 
-
-
 ![build](img/image9.png)
+
+O step de build suporta customização. Se o desenvolver criar o arquivo `pipeline/build.sh` no repositório do código fonte e lá definir as regras de  build, a pipeline vai dar prioridade para o uild definido pelo desenvolvedor.
+A imagem de container utilizada no build é a mesma definida na variável de `runtime`, portanto é definido dinâmicamente, conforme a tecnologia.
+
+```yaml
+- name: build
+  image: $(params.runtime)
+  script: |
+    runtime=$(params.runtime)
+    ls -l
+    echo "Runtime: $runtime"        
+    [ -f "pipeline/build.sh" ] && sh pipeline/build.sh || sh $(workspaces.sharedlibrary.path)/CI/$runtimbuild/build.sh 
+```
+
+Já os steps de `package` e `publich` utilizam a imagem `quay.io/buildah/upstream:latest` que é uma ferramenta de build de container.
+
+A Task de build deve retornar o nome da imagem gerada.
+
+```yaml
+results:
+   - name: image
+     description: Nome da imagem criada
+```
+
+O `Publish` da imagem docker será feito no [docker hub](https://hub.docker.com/), portanto é necessário criar uma `secret` com os dados de login. Se você não tiver uma conta no dockerhub é necessário criar uma.
 
 ```bash
 kubectl create secret docker-registry dockerhub \
@@ -299,35 +330,89 @@ kubectl create secret docker-registry dockerhub \
   --docker-username=$DOCKER_USER \
   --docker-password=$DOCKER_PASSWORD \
   --docker-email=$DOCKER_EMAIL
-  ```
+```
+Fazendo o `Patch` do secret com o service account utilizada pelo tekton.
 
 ```bash
 kubectl patch serviceaccount default -p '{"secrets": [{"name": "dockerhub"}]}'
 ```
-
+Nos links abaixo você pode acessar o `Task` completa.
 
 * [Link do Task de Build](proj/tasks/Build/task-build.yaml)
 * [Link do Taskrun de Build](proj/tasks/Build/taskrun-build.yaml)
 
 
 ### Criando a Tasks `Tests`
+
+A próxima Task que vamos criar é a `Tests`, que está relacionada execução de teste de performance e de integração.
+
+A Task tem como entrada:
+* `app-image`: Parâmetro que o nome da imagem docker da aplicação
+* `source`: Workspace que contém o código fonte da aplicação
+* `sharedlibrary`: Workspace que contém os comandos para serem executados na pipeline.
+
  Essa Task vai ter 2 `steps`:
     * `Performance`: Teste de performance da aplicação utilizando o `K6`.
     * `Integration`: Teste de API com o Karate
 
-* [k6](https://k6.io/): Ferramenta de teste de performance.
-* [Karate](https://github.com/karatelabs/karate): Ferramenta de teste de integração de API
-
-
 ![build](img/image12.png)
+
+Nessa Task, vamos executar como sidecars aplicação compilada e nos steps vamos executar as ferramentas de testes. Os testes podem ser customizado pelo desenvolvedor ou pode utilizar o padrão entregue pela pipeline.
+
+No primeiro step vamos utilizar o [k6](https://k6.io/), que basicamente é uma ferramenta de teste de performance.
+
+```yaml
+- name: performance
+  image: loadimpact/k6
+  script: |
+    [ -f pipeline/tests/performance/performance.sh ] && sh pipeline/tests/performance/performance.sh || sh(workspaces.sharedlibrary.path)/TESTS/performance/performance.sh
+```
+
+No segundo step vamos utilizar o [Karate](https://github.com/karatelabs/karate), que é uma ferramenta de contrato de API.
+
+```yaml
+- name: integration   
+  image: ptrthomas/karate-chrome   
+  script: | 
+     [ -f pipeline/tests/integration/integration.sh ] && sh pipeline/tests/integration/integration.sh || sh $(workspaces.sharedlibrary.path)/TESTS/integration/integration.sh
+```
+
+A declaração do sidecars para executar aplicação.
+
+```yaml
+sidecars:
+  - image: $(params.app-image)
+    name: app
+    resources:
+       requests:
+         memory: 1Gi
+         cpu: 500m
+       limits:
+         memory: 2Gi
+         cpu: 800m
+```
+
+Nos links abaixo você pode acessar o `Task` completa.
 
 * [Link do Task de Test](proj/tasks/Tests/task-tests.yaml)
 * [Link do Taskrun de Test](proj/tasks/Tests/taskrun-tests.yaml)
 
 ### Criando a Tasks `Deploy`
- Essa Task vai ter apenas um `steps` para realização do deploy simples do container no cluster kubernetes.
+
+E a última Task que vamos criar é a `Deploy`, que faz a entrega do sofware no kubernetes.
+
+A Task tem como entrada:
+* `appname`: Parâmetro que contém o nome da aplicação
+* `appimage`: Parâmetro que o nome da imagem docker da aplicação
+* `source`: Workspace que contém o código fonte da aplicação
+* `sharedlibrary`: Workspace que contém os comandos para serem executados na pipeline.
+
+
+Essa Task vai ter apenas um `steps` para realização do deploy simples do container no cluster kubernetes. Sabendo que ela pode ser customizada pelo desenvolvedor, caso precise de um deploy como  `blue/green` ou `canary`.
 
 ![build](img/image13.png)
+
+Nos links abaixo você pode acessar o `Task` completa.
 
 * [Link do Task de Deploy](proj/tasks/Deploy/task-deploy.yaml)
 * [Link do Taskrun de Deploy](proj/tasks/Deploy/taskrun-deploy.yaml)
