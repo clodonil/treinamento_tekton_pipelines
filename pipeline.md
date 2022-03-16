@@ -20,20 +20,22 @@ Os `Steps` são executados sequencialmente conforme foram criados e cada um dele
 ### Pipeline e PipelineRun
 Enquanto as `Task` define um `template` de execução de tarefas e passos, o `TaskRun` é uma execução de uma `Tasks`. O histórico de execução e os logs estão registrados no `TaskRun` para rastreabilidade.
 
-![taskrun](img/image5.png)
+![template](img/image16.png)
+
+![template](img/image15.png)
 
 Dessa forma uma `Task` pode ser generica suficiente para executar a mesma tarefa para diferentes linguagens com regras de execução e históricos de execução individualizada para cada `TaskRun`.
 
 
 ## Entradas
 ### Parameters
-### From
 ### Workspaces
+### From
 
 ## Runafter
 ## Timeout
-### Retry
-### Volumes
+## Retry
+## Volumes
 ## Custom Tasks
 ## Finally
 

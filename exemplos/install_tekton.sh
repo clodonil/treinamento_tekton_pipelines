@@ -10,7 +10,7 @@ if [ ! -z "$cluster_exist" ]; then
   read resp
   if [ $resp = 'y' ]; then
      echo "Deletando o kubernetes"
-     kind delete cluster --config  -q
+     kind delete cluster --name $cluster_name  -q
   fi
 fi   
 
