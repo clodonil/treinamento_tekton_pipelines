@@ -29,6 +29,8 @@ Dessa forma uma `Task` pode ser generica suficiente para executar a mesma tarefa
 
 ## Entradas
 ### Parameters
+![template](img/image17.png)
+
 ### Workspaces
 ### From
 
