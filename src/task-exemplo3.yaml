@@ -1,0 +1,56 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: task1
+spec:
+  steps:
+    - name: step1
+      image: ubuntu      
+      script: |
+        #!/usr/bin/env bash
+        echo "Execunto a task1"
+        date
+        echo "Finalizado"
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: task2
+spec:
+  steps:
+    - name: step2
+      image: ubuntu      
+      script: |
+        #!/usr/bin/env bash
+        echo "Execunto a task2"
+        date
+        echo "Finalizado"
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: task3
+spec:
+  steps:
+    - name: step1
+      image: ubuntu      
+      script: |
+        #!/usr/bin/env bash
+        echo "Execunto task3"
+        date
+        echo "Finalizado"
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: task4
+spec:
+  steps:
+    - name: step1
+      image: ubuntu      
+      script: |
+        #!/usr/bin/env bash
+        echo "Execunto task4"
+        date
+        echo "Finalizado"
+

@@ -9,11 +9,11 @@ Workshop: Introdução ao TekTon
 * [3. Preparando o ambiente](setup.md)
 * [4. O que você precisa saber das Tasks](tasks.md)
 * [4.1 Desenvolvendo as Tasks](tasks-dev.md)
-* [5. O que você precisa saber das Pipelines]()
-* [6.1 Desenvolvimento das pipelines]()
+* [5. O que você precisa saber das Pipelines](pipeline.md)
+* [6.1 Desenvolvimento das pipelines](pipeline-dev.md)
 * [7. Versionando os templates com Bundles]() 
 * [8. Trigger]()
-* [9. Métricas]()
+* [9. Observability](observability.md)
 
 ## Contribuindo
 1. Primeiramente realize um `Fork` do projeto;

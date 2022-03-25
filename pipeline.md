@@ -87,10 +87,64 @@ Execução da pipeline.
 ![template](img/image18.png)
 
 ### Workspaces
-### From
+
 
 
 ## Runafter
+
+A configuração de `Runafter` permite criar fluxo de execução em ordem específica na pipeline. Com ele você que uma `Task` só pode ser executada após outra ter finalizado.
+
+No exemplo abaixo, temos uma a task2 e task3 sendo executado após a execução da task1 e a task4 vai começar a execução após a finalização da task 2 e 3.
+
+![fluxo](img/image19.png)
+
+Um exemplo de código que realiza essa implementação (src/pipeline/pipeline-exemplo2.yaml)[.src/pipeline/pipeline-exemplo2.yaml].
+
+```yaml
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: pipeline-exemplo1
+spec:
+  tasks:
+    - name: task1
+      taskRef:
+        name: task1
+
+    - name: task2
+      taskRef:
+        name: task2
+      runAfter:
+         - task1    
+
+    - name: task3
+      taskRef:
+        name: task3
+      runAfter:
+         - task1    
+
+    - name: task4
+      taskRef:
+        name: task4
+      runAfter:
+         - task2
+         - task3  
+```
+
+Para executar esse exemplo:
+
+```bash
+kubectl apply -f src/task-exemplo3.yaml
+kubectl apply -f src/pipeline/pipeline-exemplo2.yaml
+```
+
+## From
+
+Se Taskvocê Pipelineprecisar usar a saída de um anterior como entrada, use o parâmetro Task opcional para especificar uma lista de que deve ser executado antes de que requer suas saídas como entrada. Quando seu destino é executado, apenas a versão desejada produzida pelo último nesta lista é usada. O desta saída de saída deve corresponder ao da entrada especificada no que o ingere.fromTasksTaskTaskPipelineResourceTasknamePipelineResourcenamePipelineResourceTask
+
+No exemplo abaixo, o deploy-app Taskingere a saída do build-app Tasknamed my-imagecomo sua entrada. Portanto, o build-app Taskserá executado antes do deploy-app Taskindependentemente da ordem em que eles Tasksforem declarados no Pipeline.
+
+![fluxo](img/image20.png)
 ## Timeout
 ## Retry
 ## Volumes
