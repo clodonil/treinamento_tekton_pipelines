@@ -3,24 +3,22 @@ Criando Pipelines
 ## Objetivo
 
 Ao final deste modulo você será capaz de:
-* Entenda o que é uma Task
-* Entenda como clonar um projeto git e compilação usando o Task
-* Entenda como funciona os Workspaces
-* Crie uma task de build 
-* Como executar uma Tasks
+* Entenda como estruturar uma pipeline no Tekton
+* Entenda como criar pipelines parametrizável 
+
 
 ## Conceito
 
-A `Task` é uma coleção de `Steps` que são organizados em ordem de execução como parte de pipeline de `integração continua`. A `Task` é executado da mesma forma que um pod no cluster do Kubernetes, onde cada `Step` se torna um contêiner em execução do pod.
+No Tekton, uma pipeline é uma coleção de task organizada por ordem específica de execução como parte da entrega de software. As tasks podem ser executadas em paralelo ou sequencial.
 
-![dashboard](img/image2.png)
-
-Os `Steps` são executados sequencialmente conforme foram criados e cada um deles pode conter uma imagem de pod diferente. Basicamente um `step` deve receber uma entrada, processar algo especifico e gerar um saída.
 
 ### Pipeline e PipelineRun
-Enquanto as `Task` define um `template` de execução de tarefas e passos, o `TaskRun` é uma execução de uma `Tasks`. O histórico de execução e os logs estão registrados no `TaskRun` para rastreabilidade.
+Enquanto as `Pipeline` define um `template` com o fluxo definido da pipeline, o `PipelineRun` é uma execução de uma `Pipeline`. O histórico de execução e os logs estão registrados no `PipelineRun` para rastreabilidade.
 
 ![template](img/image16.png)
+
+
+
 
 ![template](img/image15.png)
 
@@ -29,10 +27,12 @@ Dessa forma uma `Task` pode ser generica suficiente para executar a mesma tarefa
 
 ## Entradas
 ### Parameters
+
 ![template](img/image17.png)
 
 ### Workspaces
 ### From
+
 
 ## Runafter
 ## Timeout
