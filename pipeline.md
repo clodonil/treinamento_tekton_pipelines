@@ -42,7 +42,7 @@ Esse parâmetro pode ser utilizado como entrada em uma `Tasks` conforme o exempl
 
 ![template](img/image17.png)
 
-No arquivo [src/pipeline1.yaml](src/pipeline-exemplo1.yaml), temos um exemplo funcional da pipeline e como receber o parâmetro e passar para a `Tasks`.
+No arquivo [src/pipeline/pipeline-exemplo1.yaml](./src/pipeline/pipeline-exemplo1.yaml), temos um exemplo funcional da pipeline e como receber o parâmetro e passar para a `Tasks`.
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
