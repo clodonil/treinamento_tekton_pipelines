@@ -70,7 +70,7 @@ spec:
       taskRef:
         name:   task-exemplo2
 ```
-Para esse exemplo funcionar, é necessário criar as tasks [src/task-exemplo1](src/task-exemplo1) e [src/task-exemplo1](src/task-exemplo2.).
+Para esse exemplo funcionar, é necessário criar as tasks [src/task-exemplo1](./src/task-exemplo1) e [src/task-exemplo2](./src/task-exemplo2.).
 
 ```bash
 kubectl apply -f src/task-exemplo1.yaml
