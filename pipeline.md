@@ -138,16 +138,69 @@ kubectl apply -f src/task-exemplo3.yaml
 kubectl apply -f src/pipeline/pipeline-exemplo2.yaml
 ```
 
-## From
+## Params e Result
 
-Se Taskvocê Pipelineprecisar usar a saída de um anterior como entrada, use o parâmetro Task opcional para especificar uma lista de que deve ser executado antes de que requer suas saídas como entrada. Quando seu destino é executado, apenas a versão desejada produzida pelo último nesta lista é usada. O desta saída de saída deve corresponder ao da entrada especificada no que o ingere.fromTasksTaskTaskPipelineResourceTasknamePipelineResourcenamePipelineResourceTask
-
-No exemplo abaixo, o deploy-app Taskingere a saída do build-app Tasknamed my-imagecomo sua entrada. Portanto, o build-app Taskserá executado antes do deploy-app Taskindependentemente da ordem em que eles Tasksforem declarados no Pipeline.
+Durante o fluxo da pipeline é normal uma `Task` precisar utilizar a saída de outra `Task` processada anteriormente. 
+A melhor forma de fazer isso é utilizar o recurso `result` de uma `Task` e informar como parâmetro de entrada na `Task` seguinte.
 
 ![fluxo](img/image20.png)
+
+
+A sintaxe para utilizar o `result` na pipeline é a seguinte:
+
+> $(**tasks**.nome_task.**results**.variável)
+
+No exemplo abaixo temos uma pipeline com controle de fluxo igual ao exemplo anterior, entretanto a saída de um `result` entra como entrada de parâmetro na `Task` seguinte. 
+
+```yaml
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: pipeline-exemplo1
+spec:
+  tasks:
+    - name: task1
+      taskRef:
+        name: task1
+
+    - name: task2
+      params:
+         - name: parametro  
+           value: "$(tasks.task1.results.saida)"  
+      taskRef:
+        name: task2
+      
+      
+    - name: task3
+      params:
+         - name: parametro  
+           value: "$(tasks.task1.results.saida)"  
+      taskRef:
+        name: task3
+      runAfter:
+         - task1    
+
+    - name: task4
+      params:
+         - name: parametro  
+           value: "$(tasks.task2.results.saida) $(tasks.task3.results.saida)"  
+      taskRef:
+        name: task4
+      runAfter:
+         - task2
+         - task3  
+```
+
+Para executar esse exemplo:
+
+```bash
+kubectl apply -f src/task-exemplo3.yaml
+kubectl apply -f src/pipeline/pipeline-exemplo3.yaml
+```
 ## Timeout
 ## Retry
 ## Volumes
 ## Custom Tasks
+
 ## Finally
 

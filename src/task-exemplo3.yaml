@@ -3,6 +3,8 @@ kind: Task
 metadata:
   name: task1
 spec:
+  results:
+     - name: saida
   steps:
     - name: step1
       image: ubuntu      
@@ -11,12 +13,19 @@ spec:
         echo "Execunto a task1"
         date
         echo "Finalizado"
+        echo "passou pela task1" > $(results.saida.path)
+
 ---
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: task2
 spec:
+  params:
+    - name: parametro
+      default: 'default'
+  results:
+     - name: saida
   steps:
     - name: step2
       image: ubuntu      
@@ -25,12 +34,19 @@ spec:
         echo "Execunto a task2"
         date
         echo "Finalizado"
+        echo "$(params.parametro)"
+        echo "$(params.parametro) Task2" > $(results.saida.path)
 ---
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: task3
 spec:
+  params:
+    - name: parametro
+      default: 'default'
+  results:
+     - name: saida
   steps:
     - name: step1
       image: ubuntu      
@@ -39,12 +55,18 @@ spec:
         echo "Execunto task3"
         date
         echo "Finalizado"
+        echo "$(params.parametro)"
+        echo "$(params.parametro) Task3" > $(results.saida.path)
+
 ---
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: task4
 spec:
+  params:
+    - name: parametro
+      default: 'default'
   steps:
     - name: step1
       image: ubuntu      
@@ -53,4 +75,5 @@ spec:
         echo "Execunto task4"
         date
         echo "Finalizado"
+        echo "$(params.parametro)"
 

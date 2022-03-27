@@ -1,0 +1,37 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: pipeline-exemplo1
+spec:
+  tasks:
+    - name: task1
+      taskRef:
+        name: task1
+
+    - name: task2
+      params:
+         - name: parametro  
+           value: "$(tasks.task1.results.saida)"  
+      taskRef:
+        name: task2
+      
+      
+    - name: task3
+      params:
+         - name: parametro  
+           value: "$(tasks.task1.results.saida)"  
+      taskRef:
+        name: task3
+      runAfter:
+         - task1    
+
+    - name: task4
+      params:
+         - name: parametro  
+           value: "$(tasks.task2.results.saida) $(tasks.task3.results.saida)"  
+      taskRef:
+        name: task4
+      runAfter:
+         - task2
+         - task3  
+
