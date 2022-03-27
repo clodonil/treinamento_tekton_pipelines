@@ -1,0 +1,11 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: pipeline-exemplo5
+spec:
+  tasks:
+    - name: task-retries
+      retries: 3
+      taskRef:
+        name: task-exemplo9
+

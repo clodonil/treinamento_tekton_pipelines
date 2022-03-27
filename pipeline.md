@@ -198,9 +198,91 @@ kubectl apply -f src/task-exemplo3.yaml
 kubectl apply -f src/pipeline/pipeline-exemplo3.yaml
 ```
 ## Timeout
+Durante a criação da pipeline é possível definir o tempo máximo de execução `timeout`. Esse recurso é interessante para não deixar uma `Tasks` executando infinitamente.
+
+Lembrando que na configuração da `Task` também é possível configurar o `timeout` e aconselhamos deixar a configuração do `timeout` diretamente na `Task`.
+Para o recurso de `Custom Tasks` faz todo o sentido a configuração do `timeout` na pipeline.
+
+No exemplo abaixo (src/pipeline/pipeline-exemplo4.yaml)[.src/pipeline/pipeline-exemplo4.yaml] temos uma pipeline com a configuração `timeout`:
+
+```yaml
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: pipeline-exemplo4
+spec:
+  tasks:
+    - name: task1
+      timeout: "1h"
+      taskRef:
+        name:   task1
+    - name: task2
+      timeout: "1h"
+      taskRef:
+        name:   task2
+```
+Para executar esse exemplo:
+
+```bash
+kubectl apply -f src/task-exemplo3.yaml
+kubectl apply -f src/pipeline/pipeline-exemplo4.yaml
+```
+
 ## Retry
+
+O recurso `Retry` você especifica para o `Tekton` quantas vezes deve tentar novamente a execução de uma `Task` em caso de falha.
+
+Esse recurso é interessante para as tasks que podem ter interferência de conexão de rede ou qualquer dependência externa, tais como fazer download de pacotes e libs ou de uma image docker. 
+
+Dentro da `Tasks`, utilizando a variável `$(context.task.retry-count)`, é possível saber quantas `Retry`foram executados e com isso determinar regras de escalonamento de execução.
+
+No próximo exemplo vamos utilizar uma `Task`,(src/task-exemplo9.yaml)[.src/task-exemplo9.yaml] , que verifica quantos `Retry` foram executados e na 3 tentativa é finalizada com sucesso.
+
+```yaml
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: task-exemplo9
+spec:
+  steps:
+    - name: step1
+      image: ubuntu
+      script: |
+        #!/usr/bin/env bash
+        echo "Numero de tentativas: $(context.task.retry-count)"
+        if [ "$(context.task.retry-count)" == "3" ]; then
+           echo "Apos $(context.task.retry-count) tentativas finalizando com sucesso."
+        else
+           exit 1   
+        fi
+```
+Já no desenvolvimento da pipeline,(src/pipeline/pipeline-exemplo5.yaml)[.src/pipeline/pipeline-exemplo5.yaml] , é bastante simples, adicionamos o recurso de `retries` e número de tentativas desejadas.
+
+```yaml
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: pipeline-exemplo5
+spec:
+  tasks:
+    - name: task-retries
+      retries: 3
+      taskRef:
+        name: task-exemplo9
+```
+
+Para executar esse exemplo:
+
+```bash
+kubectl apply -f src/task-exemplo9.yaml
+kubectl apply -f src/pipeline/pipeline-exemplo5.yaml
+```
+No Dashboard é possível verificar o número de tentativas.
+
+![retry](img/image21.png)
+
 ## Volumes
 ## Custom Tasks
-
+## Whe
 ## Finally
 

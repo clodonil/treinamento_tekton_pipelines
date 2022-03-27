@@ -1,0 +1,14 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: pipeline-exemplo4
+spec:
+  tasks:
+    - name: task1
+      timeout: "1h"
+      taskRef:
+        name:   task1
+    - name: task2
+      timeout: "1h"
+      taskRef:
+        name:   task2
