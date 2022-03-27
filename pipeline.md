@@ -236,7 +236,7 @@ Esse recurso é interessante para as tasks que podem ter interferência de conex
 
 Dentro da `Tasks`, utilizando a variável `$(context.task.retry-count)`, é possível saber quantas `Retry`foram executados e com isso determinar regras de escalonamento de execução.
 
-No próximo exemplo vamos utilizar uma `Task`,(src/task-exemplo9.yaml)[.src/task-exemplo9.yaml] , que verifica quantos `Retry` foram executados e na 3 tentativa é finalizada com sucesso.
+No próximo exemplo vamos utilizar uma `Task`, (src/task-exemplo9.yaml)[.src/task-exemplo9.yaml] , que verifica quantos `Retry` foram executados e na 3 tentativa é finalizada com sucesso.
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
@@ -256,7 +256,7 @@ spec:
            exit 1   
         fi
 ```
-Já no desenvolvimento da pipeline,(src/pipeline/pipeline-exemplo5.yaml)[.src/pipeline/pipeline-exemplo5.yaml] , é bastante simples, adicionamos o recurso de `retries` e número de tentativas desejadas.
+Já no desenvolvimento da pipeline, (src/pipeline/pipeline-exemplo5.yaml)[.src/pipeline/pipeline-exemplo5.yaml] , é bastante simples, adicionamos o recurso de `retries` e número de tentativas desejadas.
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
