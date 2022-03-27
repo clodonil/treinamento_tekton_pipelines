@@ -439,3 +439,29 @@ spec:
     - image: $(params.image)
       name: server
 ```
+
+## onError
+
+Uma `Task` pode finalizar com sucesso ou com falha. No fluxo de uma pipeline, uma `Tasks` com falha determina a paralização de toda a pipeline. Para casos especificos, podemos configurar o `onError` para determinar que mesmo com falha a `Tasks` deve ser finaliaza com sucesso para continuar a execução da pipeline.
+
+Segue o exemplo de configuração do `onError`:
+
+```yaml
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: task-exemplo1
+spec:
+  steps:
+    - name: step1
+      onError: continue
+      image: ubuntu      
+      script: |
+        #!/usr/bin/env bash
+        echo "Execunto Step1"
+        echo "Finalizado"
+```
+
+No Dashboard é possível verificar o status da execução da tasks:
+
+![onError](img/image23.png)

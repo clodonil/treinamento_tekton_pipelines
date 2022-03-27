@@ -1,0 +1,28 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: notificacao
+spec:
+  params:
+    - name: status-task1
+    - name: status-all
+  steps:
+    - name: step1
+      image: ubuntu      
+      script: |
+        #!/usr/bin/env bash
+        echo "Status da task1: $(params.status-task1)"
+        echo "Status de todas as tasks: $(params.status-all)"
+
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: limpeza
+spec:
+  steps:
+    - name: step1
+      image: ubuntu      
+      script: |
+        #!/usr/bin/env bash
+           echo 'Todos os recursos limpos com sucesso'

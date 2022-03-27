@@ -36,6 +36,9 @@ spec:
         echo "Finalizado"
         echo "$(params.parametro)"
         echo "$(params.parametro) Task2" > $(results.saida.path)
+        if [ "$(params.parametro" == "erro" ]; then
+           exit 1
+        if
 ---
 apiVersion: tekton.dev/v1beta1
 kind: Task

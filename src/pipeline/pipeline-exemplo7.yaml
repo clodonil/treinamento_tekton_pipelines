@@ -1,0 +1,29 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: pipeline-exemplo7
+spec:
+  tasks:
+    - name: task1
+      taskRef:
+        name: task1
+    - name: task2
+      params:
+        - name: parametro
+          value: erro
+      taskRef:
+        name: task2
+  finally:
+    - name: notificacao
+      params:
+         - name: status-task1
+           value: "$(tasks.task1.status)"
+         - name: status-all
+           value: "$(tasks.status)"
+      taskRef:
+        name: notificacao
+    - name: limpeza
+      taskRef:
+        name: limpeza
+
+

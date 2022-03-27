@@ -1,5 +1,6 @@
-Criando Pipelines
+ O que você precisa saber das Pipelines
 ================
+
 ## Objetivo
 
 Ao final deste modulo você será capaz de:
@@ -148,7 +149,7 @@ A melhor forma de fazer isso é utilizar o recurso `result` de uma `Task` e info
 
 A sintaxe para utilizar o `result` na pipeline é a seguinte:
 
-> $(**tasks**.nome_task.**results**.variável)
+> $(tasks.<task-name>.results.<result-name>)
 
 No exemplo abaixo temos uma pipeline com controle de fluxo igual ao exemplo anterior, entretanto a saída de um `result` entra como entrada de parâmetro na `Task` seguinte. 
 
@@ -281,8 +282,122 @@ No Dashboard é possível verificar o número de tentativas.
 
 ![retry](img/image21.png)
 
-## Volumes
-## Custom Tasks
-## Whe
+## Result
+
+A Pipelinepode emitir Resultsseus próprios por vários motivos - um sistema externo pode precisar lê-los quando o Pipeline estiver concluído, eles podem resumir os mais importantes Results do Pipeline's Tasks, ou podem simplesmente ser usados ​​para expor mensagens não críticas geradas durante a execução do Pipeline.
+
+A Pipeline's Resultspode ser composto por um ou vários Task Resultsemitidos no decorrer da Pipeline'sexecução. A Pipeline Resultpode se referir ao seu Tasks' Resultsusando uma variável do formato $(tasks.<task-name>.results.<result-name>).
+
+Depois que a Pipelinefor executado, o PipelineRunserá preenchido com o Results emitido pelo Pipeline. Estes serão gravados no PipelineRun's status.pipelineResultscampo.
+
+No exemplo abaixo, o Pipelineespecifica uma resultsentrada com o nome sumque faz referência ao outputValue Resultemitido pelo calculate-sum Task.
+
+```yaml
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: pipeline-exemplo6
+spec:
+  tasks:
+    - name: task1
+      taskRef:
+        name: task1
+    - name: task2
+      taskRef:
+        name: task2
+    - name: task3
+      taskRef:
+        name: task3
+    - name: task4
+      taskRef:
+        name: task4
+  results:
+    - name: task1
+      description: resultado da task1
+      value: $(tasks.task1.results.saida)
+    - name: task2
+      description: resultado da task2
+      value: $(tasks.task2.results.saida)
+    - name: task3
+      description: resultado da task3
+      value: $(tasks.task3.results.saida)
+```
+Para executar esse exemplo:
+
+```bash
+kubectl apply -f src/task-exemplo3.yaml
+kubectl apply -f src/pipeline/pipeline-exemplo6.yaml
+```
+
+Para verificar o `Result` da pipeline utilize o `tkn`.  Substitua o `pipeline-exemplo6-run-1648347657260-r-thg5s` pelo id de execução da pipeline.
+
+```bash
+tkn pipelinerun  describe pipeline-exemplo6-run-1648347657260-r-thg5s
+```
+
+
+## When
+
 ## Finally
 
+O `Tekton` permite adicionar uma lista de `Tasks` ao final da pipeline. Todas as `Tasks` configuradas no `Finally` são executadas em paralelo independente do resultado da pipeline. Portanto mesmo uma pipeline sendo finalizada com falha, as `Tasks` declarada no `Finally` são executadas.
+
+Algumas variáveis interessante para utilizar no `Finally` como entrada de parâmetro para as `Tasks`:
+
+* **$(tasks.task1.status)**: Retorna o status de execução da task1;
+* **$(tasks.status)**: Retorna o status de execução de todas as tasks;
+* **$(tasks.task1.results.saida)**: Utiliza o `result` da task1;
+
+Os recursos de parâmetros e workspace também estão disponíveis no `Finally`.
+
+
+```yaml
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: pipeline-exemplo7
+spec:
+  tasks:
+    - name: task1
+      taskRef:
+        name: task1
+    - name: task2
+      params:
+        - name: parametro
+          value: erro
+      taskRef:
+        name: task2
+  finally:
+    - name: notificacao
+      params:
+         - name: status-task1
+           value: "$(tasks.task1.status)"
+         - name: status-all
+           value: "$(tasks.status)"
+      taskRef:
+        name: notificacao
+    - name: limpeza
+      taskRef:
+        name: limpeza
+
+
+
+```
+Para executar esse exemplo:
+
+```bash
+kubectl apply -f src/task-exemplo3.yaml
+kubectl apply -f src/pipeline/pipeline-exemplo7.yaml
+```
+
+No Dashboard é possível verificar a execução do `finally`.
+
+![finally](img/image22.png)
+
+## Custom Tasks
+
+Até agora vimos um padrão da pipeline chamar uma `Tasks` que executa um pod no kubernetes para execução de uma série de comandos. Sabemos que esse modelo atende muitos casos de uso, entretanto tem muitos outros que não necessita da execução de um pod ou a execução de um pod não é adquado.
+
+Por exemplo, imagine uma execução de um `Tasks` que envolve aprovação de uma GMUD. Essa aprovação pode acontecer em 1 minuto ou pode levar dias. Não faz sentido deixar um pod executando todo esse tempo.
+
+Para esses casos que a execução de um pod não faz sentido, podemos utilizar o `Custom Tasks`.

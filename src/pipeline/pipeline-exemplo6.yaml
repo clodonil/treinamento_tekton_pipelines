@@ -1,0 +1,34 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: pipeline-exemplo6
+spec:
+  tasks:
+    - name: task1
+      taskRef:
+        name: task1
+
+    - name: task2
+      taskRef:
+        name: task2
+      
+      
+    - name: task3
+      taskRef:
+        name: task3
+
+    - name: task4
+      taskRef:
+        name: task4
+
+  results:
+    - name: task1
+      description: resultado da task1
+      value: $(tasks.task1.results.saida)
+    - name: task2
+      description: resultado da task2
+      value: $(tasks.task2.results.saida)
+    - name: task3
+      description: resultado da task3
+      value: $(tasks.task3.results.saida)
+
