@@ -297,7 +297,7 @@ kubectl apply -f src/pipeline/pipeline-exemplo5.yaml
 E para executar a pipeline, podemos utilizar o comando `tkn`:
 
 ```bash
-tkn pipeline  start pipeline-exemplo4
+tkn pipeline  start pipeline-exemplo5
 ```
 
 No Dashboard é possível verificar o número de tentativas.
