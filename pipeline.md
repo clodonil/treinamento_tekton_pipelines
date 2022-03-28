@@ -76,12 +76,12 @@ Para esse exemplo funcionar, é necessário criar as tasks [src/task-exemplo1.ya
 ```bash
 kubectl apply -f src/task-exemplo1.yaml
 kubectl apply -f src/task-exemplo2.yaml
-kubectl apply -f src/pipeline-exemplo1.yaml
+kubectl apply -f src/pipeline/pipeline-exemplo1.yaml
 ```
 E para executar a pipeline, podemos utilizar o comando `tkn`:
 
 ```bash
- tkn pipeline  start pipeline-exemplo1 -p IMAGE='centos' -p command='ls','-l /'
+tkn pipeline  start pipeline-exemplo1 -p IMAGE='centos' -p command='ls','-l /'
 ```
 Execução da pipeline.
 
@@ -105,7 +105,7 @@ Um exemplo de código que realiza essa implementação (src/pipeline/pipeline-ex
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: pipeline-exemplo1
+  name: pipeline-exemplo2
 spec:
   tasks:
     - name: task1
@@ -138,7 +138,11 @@ Para executar esse exemplo:
 kubectl apply -f src/task-exemplo3.yaml
 kubectl apply -f src/pipeline/pipeline-exemplo2.yaml
 ```
+E para executar a pipeline, podemos utilizar o comando `tkn`:
 
+```bash
+tkn pipeline  start pipeline-exemplo2
+```
 ## Params e Result
 
 Durante o fluxo da pipeline é normal uma `Task` precisar utilizar a saída de outra `Task` processada anteriormente. 
@@ -157,7 +161,7 @@ No exemplo abaixo temos uma pipeline com controle de fluxo igual ao exemplo ante
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: pipeline-exemplo1
+  name: pipeline-exemplo3
 spec:
   tasks:
     - name: task1
@@ -197,7 +201,13 @@ Para executar esse exemplo:
 ```bash
 kubectl apply -f src/task-exemplo3.yaml
 kubectl apply -f src/pipeline/pipeline-exemplo3.yaml
+
+E para executar a pipeline, podemos utilizar o comando `tkn`:
+
+```bash
+tkn pipeline  start pipeline-exemplo3
 ```
+
 ## Timeout
 Durante a criação da pipeline é possível definir o tempo máximo de execução `timeout`. Esse recurso é interessante para não deixar uma `Tasks` executando infinitamente.
 
@@ -228,7 +238,11 @@ Para executar esse exemplo:
 kubectl apply -f src/task-exemplo3.yaml
 kubectl apply -f src/pipeline/pipeline-exemplo4.yaml
 ```
+E para executar a pipeline, podemos utilizar o comando `tkn`:
 
+```bash
+tkn pipeline  start pipeline-exemplo4
+```
 ## Retry
 
 O recurso `Retry` você especifica para o `Tekton` quantas vezes deve tentar novamente a execução de uma `Task` em caso de falha.
@@ -278,6 +292,13 @@ Para executar esse exemplo:
 kubectl apply -f src/task-exemplo9.yaml
 kubectl apply -f src/pipeline/pipeline-exemplo5.yaml
 ```
+
+E para executar a pipeline, podemos utilizar o comando `tkn`:
+
+```bash
+tkn pipeline  start pipeline-exemplo4
+```
+
 No Dashboard é possível verificar o número de tentativas.
 
 ![retry](img/image21.png)
@@ -328,6 +349,11 @@ Para executar esse exemplo:
 kubectl apply -f src/task-exemplo3.yaml
 kubectl apply -f src/pipeline/pipeline-exemplo6.yaml
 ```
+E para executar a pipeline, podemos utilizar o comando `tkn`:
+
+```bash
+tkn pipeline  start pipeline-exemplo6
+```
 
 Para verificar o `Result` da pipeline utilize o `tkn`.  Substitua o `pipeline-exemplo6-run-1648347657260-r-thg5s` pelo id de execução da pipeline.
 
@@ -337,6 +363,9 @@ tkn pipelinerun  describe pipeline-exemplo6-run-1648347657260-r-thg5s
 
 
 ## When
+
+
+Existem muitos cenários em que whenas expressões podem ser realmente úteis. Algumas delas são: - Verificando se o nome de um branch git corresponde - Verificando se o Resultde um anterior Taské o esperado - Verificando se um arquivo git foi alterado nos commits anteriores - Verificando se existe uma imagem no registro - Verificando se o o nome de um trabalho de CI corresponde - Verificando se um espaço de trabalho opcional foi fornecido
 
 ## Finally
 
@@ -387,7 +416,13 @@ Para executar esse exemplo:
 
 ```bash
 kubectl apply -f src/task-exemplo3.yaml
+kubectl apply -f src/task-exemplo10.yaml
 kubectl apply -f src/pipeline/pipeline-exemplo7.yaml
+```
+E para executar a pipeline, podemos utilizar o comando `tkn`:
+
+```bash
+tkn pipeline  start pipeline-exemplo7
 ```
 
 No Dashboard é possível verificar a execução do `finally`.
