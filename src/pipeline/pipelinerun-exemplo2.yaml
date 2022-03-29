@@ -1,0 +1,14 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  name: pipelinerun-exemplo2
+spec:
+  params  :
+    - name: IMAGE
+      value: centos
+    - name: command
+      value:
+         - ls
+         - -l /
+  pipelineRef:
+    name: pipeline-exemplo1

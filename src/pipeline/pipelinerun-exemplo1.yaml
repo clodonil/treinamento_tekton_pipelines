@@ -1,0 +1,7 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  name: pipelinerun-exemplo1
+spec:
+  pipelineRef:
+    name: pipeline-exemplo1

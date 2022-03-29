@@ -1,0 +1,11 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  name: pipelinerun-exemplo3
+spec:
+  workspaces:
+    - name: pipeline-ws
+      persistentVolumeClaim:
+        claimName: mypvc 
+  pipelineRef:
+    name: pipeline-exemplo9

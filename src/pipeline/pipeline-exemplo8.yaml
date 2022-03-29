@@ -1,0 +1,20 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: pipeline-exemplo8
+spec:
+  params:
+     - name: branch
+  tasks:
+    - name: build
+      taskRef:
+        name: task1
+    - name: deploy
+      when:
+         - input: "$(params.branch)"
+           operator: in
+           values: ["master"]     
+      taskRef:
+        name: task2
+
+

@@ -89,7 +89,39 @@ Execução da pipeline.
 
 ### Workspaces
 
+Igualmente a parâmetros, a pipeline pode definir a declaração que `Workspaces` que podem ser passadas para as `Tasks`.
 
+No exemplo abaixo, a pipeline define o workspace `pipeline-ws` que é passada para a task `task-exemplo8` com o nome `myworkspace`.
+
+```yaml
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: pipeline-exemplo9
+spec:
+  workspaces:
+    - name: pipeline-ws
+  tasks:
+    - name: build
+      workspaces:
+        - name: myworkspace
+          workspace: pipeline-ws    
+      taskRef:
+        name: task-exemplo8
+```
+
+Para executar esse exemplo:
+
+```bash
+kubectl apply -f src/pv-exemplo8.yaml
+kubectl apply -f src/task-exemplo8.yaml
+kubectl apply -f src/pipeline/pipeline-exemplo9.yaml
+```
+E para executar a pipeline, podemos utilizar o comando `tkn`:
+
+```bash
+tkn pipeline  start pipeline-exemplo9 -w name=pipeline-ws,claimName=mypvc --showlog
+```
 
 ## Runafter
 
@@ -141,7 +173,7 @@ kubectl apply -f src/pipeline/pipeline-exemplo2.yaml
 E para executar a pipeline, podemos utilizar o comando `tkn`:
 
 ```bash
-tkn pipeline  start pipeline-exemplo2
+tkn pipeline  start pipeline-exemplo2 --showlog
 ```
 ## Params e Result
 
@@ -206,7 +238,7 @@ kubectl apply -f src/pipeline/pipeline-exemplo3.yaml
 E para executar a pipeline, podemos utilizar o comando `tkn`:
 
 ```bash
-tkn pipeline  start pipeline-exemplo3
+tkn pipeline  start pipeline-exemplo3 --showlog
 ```
 
 ## Timeout
@@ -242,7 +274,7 @@ kubectl apply -f src/pipeline/pipeline-exemplo4.yaml
 E para executar a pipeline, podemos utilizar o comando `tkn`:
 
 ```bash
-tkn pipeline  start pipeline-exemplo4
+tkn pipeline  start pipeline-exemplo4 --showlog
 ```
 ## Retry
 
@@ -291,7 +323,7 @@ Para executar esse exemplo:
 
 ```bash
 kubectl apply -f src/task-exemplo9.yaml
-kubectl apply -f src/pipeline/pipeline-exemplo5.yaml
+kubectl apply -f src/pipeline/pipeline-exemplo5.yaml --showlog
 ```
 
 E para executar a pipeline, podemos utilizar o comando `tkn`:
@@ -353,7 +385,7 @@ kubectl apply -f src/pipeline/pipeline-exemplo6.yaml
 E para executar a pipeline, podemos utilizar o comando `tkn`:
 
 ```bash
-tkn pipeline  start pipeline-exemplo6
+tkn pipeline  start pipeline-exemplo6 --showlog
 ```
 
 Para verificar o `Result` da pipeline utilize o `tkn`.  Substitua o `pipeline-exemplo6-run-1648347657260-r-thg5s` pelo id de execução da pipeline.
@@ -365,8 +397,62 @@ tkn pipelinerun  describe pipeline-exemplo6-run-1648347657260-r-thg5s
 
 ## When
 
+O recurso `when` determina atráves de uma expressão se uma `Task` pode ser executada ou não. Existem muitos casos de uso que podemos utilizar o `when`.
 
-Existem muitos cenários em que whenas expressões podem ser realmente úteis. Algumas delas são: - Verificando se o nome de um branch git corresponde - Verificando se o Resultde um anterior Taské o esperado - Verificando se um arquivo git foi alterado nos commits anteriores - Verificando se existe uma imagem no registro - Verificando se o o nome de um trabalho de CI corresponde - Verificando se um espaço de trabalho opcional foi fornecido
+Um exemplo é um template de pipeline que verifica se a branch é `feature` e faz apenas o CI, já os testes e o deploy não são executados. Se for executado da branch `develop`, faz o CI, deploy em `Des` e os testes. Se for 
+executado da branch `master`, executa todo o fluxo da pipeline finalizando o deploy em `Prod`.
+
+A expressão do `when` é bastante simples. O input pode ser um parâmetro ou um `result`, o operador e o values que determinar o valor aguardado.
+
+```python
+when:
+  - input: "$(params.branch)"
+    operator: in
+    values: ["master"]
+```
+
+Se todas as expressões `when`forem avaliadas como verdadeira, a `Task` será executado. Se qualquer uma das expressões for avaliada como falso, a Task não será executado.
+
+A expressão `when` suporta apenas 2 operadores:
+
+* **in**:  Contém
+* **notin**: Não contém
+
+No exemplo abaixo estamos recebemos como parâmentro a variável branch e verificando se ela é `master`. Se for será executado a `Task` de deploy.
+
+```yaml
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: pipeline-exemplo8
+spec:
+  params:
+     - name: branch
+  tasks:
+    - name: build
+      taskRef:
+        name: task1
+    - name: deploy
+      when:
+         - input: "$(params.branch)"
+           operator: in
+           values: ["master"]     
+      taskRef:
+        name: task2
+```
+
+Para executar esse exemplo:
+
+```bash
+kubectl apply -f src/task-exemplo3.yaml
+kubectl apply -f src/pipeline/pipeline-exemplo8.yaml
+```
+E para executar a pipeline, podemos utilizar o comando `tkn`:
+
+```bash
+tkn pipeline  start pipeline-exemplo8 -p branch=feature --showlog
+tkn pipeline  start pipeline-exemplo8 -p branch=master --showlog
+```
 
 ## Finally
 
@@ -423,7 +509,7 @@ kubectl apply -f src/pipeline/pipeline-exemplo7.yaml
 E para executar a pipeline, podemos utilizar o comando `tkn`:
 
 ```bash
-tkn pipeline  start pipeline-exemplo7
+tkn pipeline  start pipeline-exemplo7 --showlog
 ```
 
 No Dashboard é possível verificar a execução do `finally`.
@@ -437,3 +523,57 @@ Até agora vimos um padrão da pipeline chamar uma `Tasks` que executa um pod no
 Por exemplo, imagine uma execução de um `Tasks` que envolve aprovação de uma GMUD. Essa aprovação pode acontecer em 1 minuto ou pode levar dias. Não faz sentido deixar um pod executando todo esse tempo.
 
 Para esses casos que a execução de um pod não faz sentido, podemos utilizar o `Custom Tasks`.
+
+## PipelineRun
+
+Até esse momento iniciamos a pipeline utilizando o `tkn` que cria o `PipelineRun` dinamicamente. Entretanto podemos criar o manifesto do `PipelinRun` e executar utilizando o `kubectl`.
+
+Abaixo temos um exemplo [src/pipeline/pipelinerun.yaml](src/pipeline/pipelinerun.yaml) simples do `pipelinerun` 
+
+```yaml
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  name: pipelinerun-exemplo
+spec:
+  pipelineRef:
+    name: pipeline-exemplo1
+```
+A `PipelineRun` pode ser executado da seguinte forma para inicializar a pipeline:
+
+```bash
+ kubectl apply -f src/pipeline/pipelinerun-exemplo1.yaml
+ ```
+Também podemos passar parâmetros no `pipelineRun`, conforme o exemplo abaixo:
+  
+```yaml
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  name: pipelinerun-exemplo2
+spec:
+  params  :
+    - name: IMAGE
+      value: centos
+    - name: command
+      value:
+         - ls
+         - -l /
+  pipelineRef:
+    name: pipeline-exemplo1
+```
+Além de parâmetros podemos passar as `workspaces`.
+
+```yaml
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  name: pipelinerun-exemplo3
+spec:
+  workspaces:
+    - name: pipeline-ws
+      persistentVolumeClaim:
+        claimName: mypvc 
+  pipelineRef:
+    name: pipeline-exemplo9
+```
