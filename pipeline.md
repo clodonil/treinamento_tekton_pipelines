@@ -526,7 +526,7 @@ Para esses casos que a execução de um pod não faz sentido, podemos utilizar o
 
 Até esse momento iniciamos a pipeline utilizando o `tkn` que cria o `PipelineRun` dinamicamente. Entretanto podemos criar o manifesto do `PipelinRun` e executar utilizando o `kubectl`.
 
-Abaixo temos um exemplo [src/pipeline/pipelinerun.yaml](src/pipeline/pipelinerun.yaml) simples do `pipelinerun` 
+Abaixo temos um exemplo [src/pipeline/pipelinerun-exemplo1.yaml](./src/pipeline/pipelinerun-exemplo1.yaml) simples do `pipelinerun` 
 
 ```yaml
 apiVersion: tekton.dev/v1alpha1
@@ -542,7 +542,7 @@ A `PipelineRun` pode ser executado da seguinte forma para inicializar a pipeline
 ```bash
  kubectl apply -f src/pipeline/pipelinerun-exemplo1.yaml
  ```
-Também podemos passar parâmetros no `pipelineRun`, conforme o exemplo abaixo:
+Também podemos passar parâmetros no `pipelineRun`, conforme o exemplo [src/pipeline/pipelinerun-exemplo2.yaml](./src/pipeline/pipelinerun-exemplo2.yaml) abaixo:
   
 ```yaml
 apiVersion: tekton.dev/v1alpha1
@@ -560,7 +560,7 @@ spec:
   pipelineRef:
     name: pipeline-exemplo1
 ```
-Além de parâmetros podemos passar as `workspaces`.
+Além de parâmetros podemos passar as `workspaces`, conforme o exemplo [src/pipeline/pipelinerun-exemplo3.yaml](./src/pipeline/pipelinerun-exemplo3.yaml) .
 
 ```yaml
 apiVersion: tekton.dev/v1alpha1
