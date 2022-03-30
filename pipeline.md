@@ -189,7 +189,7 @@ A sintaxe para utilizar o `result` na pipeline é a seguinte:
 
 > $(tasks.<task-name>.results.<result-name>)
 
-No exemplo abaixo temos uma pipeline com controle de fluxo igual ao exemplo anterior, entretanto a saída de um `result` entra como entrada de parâmetro na `Task` seguinte. 
+No exemplo abaixo temos uma pipeline [src/pipeline/pipeline-exemplo3.yaml](./src/pipeline/pipeline-exemplo3.yaml) com controle de fluxo igual ao exemplo anterior, entretanto a saída de um `result` entra como entrada de parâmetro na `Task` seguinte. 
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
@@ -244,12 +244,12 @@ tkn pipeline  start pipeline-exemplo3 --showlog
 ```
 
 ## Timeout
+
 Durante a criação da pipeline é possível definir o tempo máximo de execução `timeout`. Esse recurso é interessante para não deixar uma `Tasks` executando infinitamente.
 
-Lembrando que na configuração da `Task` também é possível configurar o `timeout` e aconselhamos deixar a configuração do `timeout` diretamente na `Task`.
-Para o recurso de `Custom Tasks` faz todo o sentido a configuração do `timeout` na pipeline.
+Lembrando que na configuração da `Task` também é possível configurar o `timeout` e aconselhamos deixar a configuração do `timeout` diretamente na `Task`. Para o recurso de `Custom Tasks` faz todo o sentido a configuração do `timeout` na pipeline.
 
-No exemplo abaixo (src/pipeline/pipeline-exemplo4.yaml)[.src/pipeline/pipeline-exemplo4.yaml] temos uma pipeline com a configuração `timeout`:
+No exemplo abaixo [src/pipeline/pipeline-exemplo4.yaml](.src/pipeline/pipeline-exemplo4.yaml) temos uma pipeline com a configuração `timeout`:
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
@@ -286,7 +286,7 @@ Esse recurso é interessante para as tasks que podem ter interferência de conex
 
 Dentro da `Tasks`, utilizando a variável `$(context.task.retry-count)`, é possível saber quantas `Retry`foram executados e com isso determinar regras de escalonamento de execução.
 
-No próximo exemplo vamos utilizar uma `Task`, (src/task-exemplo9.yaml)[.src/task-exemplo9.yaml] , que verifica quantos `Retry` foram executados e na 3 tentativa é finalizada com sucesso.
+No próximo exemplo vamos utilizar uma `Task`, [src/task-exemplo9.yaml](.src/task-exemplo9.yaml) , que verifica quantos `Retry` foram executados e na 3 tentativa é finalizada com sucesso.
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
@@ -306,7 +306,7 @@ spec:
            exit 1   
         fi
 ```
-Já no desenvolvimento da pipeline, (src/pipeline/pipeline-exemplo5.yaml)[.src/pipeline/pipeline-exemplo5.yaml] , é bastante simples, adicionamos o recurso de `retries` e número de tentativas desejadas.
+Já no desenvolvimento da pipeline, [src/pipeline/pipeline-exemplo5.yaml](.src/pipeline/pipeline-exemplo5.yaml) , é bastante simples, adicionamos o recurso de `retries` e número de tentativas desejadas.
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
@@ -331,7 +331,7 @@ kubectl apply -f src/pipeline/pipeline-exemplo5.yaml --showlog
 E para executar a pipeline, podemos utilizar o comando `tkn`:
 
 ```bash
-tkn pipeline  start pipeline-exemplo5
+tkn pipeline  start pipeline-exemplo5 --showlog
 ```
 
 No Dashboard é possível verificar o número de tentativas.
@@ -340,13 +340,11 @@ No Dashboard é possível verificar o número de tentativas.
 
 ## Result
 
-A Pipelinepode emitir Resultsseus próprios por vários motivos - um sistema externo pode precisar lê-los quando o Pipeline estiver concluído, eles podem resumir os mais importantes Results do Pipeline's Tasks, ou podem simplesmente ser usados ​​para expor mensagens não críticas geradas durante a execução do Pipeline.
+A `Pipeline` pode emitir `Results` como string de saída da pipeline após todss as `Tasks` tenham sido concluída. O `Result` pode ser utilizado para consulta de usuário ou para consulta sistêmico. 
 
-A Pipeline's Resultspode ser composto por um ou vários Task Resultsemitidos no decorrer da Pipeline'sexecução. A Pipeline Resultpode se referir ao seu Tasks' Resultsusando uma variável do formato $(tasks.<task-name>.results.<result-name>).
+No `Result` pode ser informado o status de alguma `Taks`, pode informar o result retornada de uma `Task` ou qualquer string desejada.
 
-Depois que a Pipelinefor executado, o PipelineRunserá preenchido com o Results emitido pelo Pipeline. Estes serão gravados no PipelineRun's status.pipelineResultscampo.
-
-No exemplo abaixo, o Pipelineespecifica uma resultsentrada com o nome sumque faz referência ao outputValue Resultemitido pelo calculate-sum Task.
+No exemplo abaixo [src/pipeline/pipeline-exemplo6.yaml](.src/pipeline/pipeline-exemplo6.yaml) temos uma pipeline com a configuração `result`:
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
@@ -401,10 +399,10 @@ tkn pipelinerun  describe pipeline-exemplo6-run-1648347657260-r-thg5s
 
 O recurso `when` determina atráves de uma expressão se uma `Task` pode ser executada ou não. Existem muitos casos de uso que podemos utilizar o `when`.
 
-Um exemplo é um template de pipeline que verifica se a branch é `feature` e faz apenas o CI, já os testes e o deploy não são executados. Se for executado da branch `develop`, faz o CI, deploy em `Des` e os testes. Se for 
+Um exemplo é um template de pipeline que verifica se a branch é `feature` e faz apenas o CI, já os testes e o deploy não são executados. Se for executado a branch `develop`, faz o CI, deploy em `Des` e os testes. Se for 
 executado da branch `master`, executa todo o fluxo da pipeline finalizando o deploy em `Prod`.
 
-A expressão do `when` é bastante simples. O input pode ser um parâmetro ou um `result`, o operador e o values que determinar o valor aguardado.
+A expressão do `when` é bastante simples. O input pode ser um parâmetro ou um `result` de uma `Task`, o operador é  'in' ou 'notin` e o values que determinar o valor aguardado.
 
 ```python
 when:
@@ -420,7 +418,7 @@ A expressão `when` suporta apenas 2 operadores:
 * **in**:  Contém
 * **notin**: Não contém
 
-No exemplo abaixo estamos recebemos como parâmentro a variável branch e verificando se ela é `master`. Se for será executado a `Task` de deploy.
+No exemplo [src/pipeline/pipeline-exemplo8.yaml](.src/pipeline/pipeline-exemplo8.yaml) abaixo estamos recebemos como parâmentro a variável branch e verificando se ela é `master`. Se for será executado a `Task` de deploy.
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
@@ -468,6 +466,7 @@ Algumas variáveis interessante para utilizar no `Finally` como entrada de parâ
 
 Os recursos de parâmetros e workspace também estão disponíveis no `Finally`.
 
+No exemplo abaixo [src/pipeline/pipeline-exemplo7.yaml](.src/pipeline/pipeline-exemplo7.yaml) temos uma pipeline com a configuração `finnaly`:
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
