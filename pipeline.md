@@ -5,7 +5,9 @@
 
 Ao final deste modulo você será capaz de:
 * Entenda como estruturar uma pipeline no Tekton
-* Entenda como criar pipelines parametrizável 
+* Entenda como criar pipelines parametrizável
+* Entenda como criar pipeline com workspaces
+* Entenda como criar e controlar o fluxo da pipeline
 
 
 ## Conceito
@@ -14,14 +16,14 @@ No Tekton, uma pipeline é uma coleção de task organizada por ordem específic
 
 
 ### Pipeline e PipelineRun
-Enquanto as `Pipeline` define um `template` com o fluxo definido da pipeline, o `PipelineRun` é uma execução de uma `Pipeline`. O histórico de execução e os logs estão registrados no `PipelineRun` para rastreabilidade.
+Enquanto as `Pipeline` define um `template` com o fluxo definido, o `PipelineRun` é uma execução de uma `Pipeline`. O histórico de execução e os logs estão registrados no `PipelineRun` para rastreabilidade.
 
 ![template](img/image16.png)
 
 
 A estrutura básica de criação da `Pipeline` é simples. 
 
-No campo `tasks` são definidos os nome da que será apresentado na pipeline e o `taskref` é o apontamento para uma `Tasks` existente.
+No campo `Tasks` são definidos os nomes que serão apresentados na pipeline e o `taskref` é o apontamento para uma `Tasks` existente.
 
 Segue um exemplo bem simples.
 
@@ -37,13 +39,13 @@ E durante o desenvolvimento da `Pipeline` temos que definir os parâmetros de en
 
 ### Parameters
 
-Como entrada de informação vamos começar pelo parâmetro. No exemplo abaixo, temos o primeiro bloco que definir o parâmetro de entrada da pipeline. Portanto ao executar a pipeline é obrigarório a sua declaração.
+Como entrada de dados na `Pipeline` vamos começar pelo parâmetro. No exemplo abaixo, temos o primeiro bloco que definir o parâmetro de entrada da pipeline. Portanto ao executar a pipeline é obrigarório a sua declaração.
 
 Esse parâmetro pode ser utilizado como entrada em uma `Tasks` conforme o exemplo do segundo bloco de código.
 
 ![template](img/image17.png)
 
-No arquivo [src/pipeline/pipeline-exemplo1.yaml](./src/pipeline/pipeline-exemplo1.yaml), temos um exemplo funcional da pipeline e como receber o parâmetro e passar para a `Tasks`.
+No arquivo [src/pipeline/pipeline-exemplo1.yaml](./src/pipeline/pipeline-exemplo1.yaml), temos um exemplo funcional da pipeline e como receber o parâmetro e passar para as `Tasks`.
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
@@ -81,7 +83,7 @@ kubectl apply -f src/pipeline/pipeline-exemplo1.yaml
 E para executar a pipeline, podemos utilizar o comando `tkn`:
 
 ```bash
-tkn pipeline  start pipeline-exemplo1 -p IMAGE='centos' -p command='ls','-l /'
+tkn pipeline start pipeline-exemplo1 -p IMAGE='centos' -p command='ls','-l /' --showlog
 ```
 Execução da pipeline.
 
@@ -89,9 +91,9 @@ Execução da pipeline.
 
 ### Workspaces
 
-Igualmente a parâmetros, a pipeline pode definir a declaração que `Workspaces` que podem ser passadas para as `Tasks`.
+Igualmente como definidos os parâmetros, a pipeline pode definir a declaração das `Workspaces` que podem ser passadas para as `Tasks`.
 
-No exemplo abaixo, a pipeline define o workspace `pipeline-ws` que é passada para a task `task-exemplo8` com o nome `myworkspace`.
+No exemplo abaixo, a pipeline [src/pipeline/pipeline-exemplo9.yaml](./src/pipeline/pipeline-exemplo9.yaml) define o workspace `pipeline-ws` que é passada para a task [src/task-exemplo8.yaml](./src/task-exemplo8.yaml)com o nome `myworkspace`.
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
@@ -495,9 +497,6 @@ spec:
     - name: limpeza
       taskRef:
         name: limpeza
-
-
-
 ```
 Para executar esse exemplo:
 
