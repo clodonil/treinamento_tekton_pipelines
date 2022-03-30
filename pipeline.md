@@ -127,13 +127,13 @@ tkn pipeline  start pipeline-exemplo9 -w name=pipeline-ws,claimName=mypvc --show
 
 ## Runafter
 
-A configuração de `Runafter` permite criar fluxo de execução em ordem específica na pipeline. Com ele você que uma `Task` só pode ser executada após outra ter finalizado.
+A configuração de `Runafter` permite criar fluxo de execução em ordem específica. Com ele você define que uma `Task` só pode ser executada após outra ter finalizado.
 
-No exemplo abaixo, temos uma a task2 e task3 sendo executado após a execução da task1 e a task4 vai começar a execução após a finalização da task 2 e 3.
+No exemplo abaixo, temos a task2 e a task3 sendo executado após a execução da task1 e a task4 após a execução finalizar a task 2 e 3.
 
 ![fluxo](img/image19.png)
 
-Um exemplo de código que realiza essa implementação (src/pipeline/pipeline-exemplo2.yaml)[.src/pipeline/pipeline-exemplo2.yaml].
+Um exemplo de código que realiza essa implementação [src/pipeline/pipeline-exemplo2.yaml](.src/pipeline/pipeline-exemplo2.yaml).
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
