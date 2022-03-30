@@ -133,7 +133,7 @@ No exemplo abaixo, temos a task2 e a task3 sendo executado após a execução da
 
 ![fluxo](img/image19.png)
 
-Um exemplo de código que realiza essa implementação [src/pipeline/pipeline-exemplo2.yaml](.src/pipeline/pipeline-exemplo2.yaml).
+Um exemplo de código que realiza essa implementação [src/pipeline/pipeline-exemplo2.yaml](./src/pipeline/pipeline-exemplo2.yaml).
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
