@@ -1,0 +1,26 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  name: pipelinerun-python
+spec:
+  workspaces:
+    - name: sharedlibrary
+      persistentVolumeClaim:
+         claimName: sharedlibrary
+    - name: app-source
+      emptyDir: {}     
+  params:
+    - name: IMAGE
+      value: "clodonil/apphello:1"
+    - name: runtime
+      value: python
+    - name: revision
+      value: master
+    - name: url
+      value: 'https://github.com/clodonil/apphello.git'
+    - name: runtime
+      value: 'python'
+    - name: appname
+      value: 'helloworl'
+  pipelineRef:
+    name: api-backend

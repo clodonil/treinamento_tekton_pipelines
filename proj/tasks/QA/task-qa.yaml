@@ -34,10 +34,11 @@ spec:
             secretKeyRef:
               name: sonar
               key: SONAR_TOKEN
-      image: ubuntu
+      image: sonarsource/sonar-scanner-cli
+      timeout: 1h
       script: |
         echo $SONAR_TOKEN
-        sh $(workspaces.sharedlibrary.path)/CI/$(params.runtime)/sonar/sonar.sh
+        sh $(workspaces.sharedlibrary.path)/CI/$(params.runtime)/sonar/sonar.sh $(params.appname)
 
   volumes:
     - name: coverage

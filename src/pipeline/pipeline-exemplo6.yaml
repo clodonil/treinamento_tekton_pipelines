@@ -7,20 +7,15 @@ spec:
     - name: task1
       taskRef:
         name: task1
-
     - name: task2
       taskRef:
         name: task2
-      
-      
     - name: task3
       taskRef:
         name: task3
-
     - name: task4
       taskRef:
         name: task4
-
   results:
     - name: task1
       description: resultado da task1

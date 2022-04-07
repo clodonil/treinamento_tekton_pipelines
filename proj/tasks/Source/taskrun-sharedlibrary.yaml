@@ -13,4 +13,4 @@ spec:
     - name: url
       value: 'https://github.com/clodonil/tekton-sharedlibrary'
   taskRef:
-     name: git-clone
+     name: source

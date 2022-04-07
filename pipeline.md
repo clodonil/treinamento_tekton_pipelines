@@ -325,7 +325,7 @@ Para executar esse exemplo:
 
 ```bash
 kubectl apply -f src/task-exemplo9.yaml
-kubectl apply -f src/pipeline/pipeline-exemplo5.yaml --showlog
+kubectl apply -f src/pipeline/pipeline-exemplo5.yaml
 ```
 
 E para executar a pipeline, podemos utilizar o comando `tkn`:
