@@ -1,0 +1,21 @@
+apiVersion: tekton.dev/v1alpha1
+kind: TaskRun
+metadata:
+  name: taskrun-build
+spec:
+  workspaces:
+    - name: source
+      persistentVolumeClaim:
+         claimName: app-source
+    - name: sharedlibrary
+      persistentVolumeClaim:
+         claimName: sharedlibrary
+  params:
+    - name: appname
+      value: 'newapp'
+    - name: runtime
+      value: 'python'
+    - name: tagimage
+      value: '0.0.2'  
+  taskRef:
+     name: build

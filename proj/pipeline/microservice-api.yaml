@@ -14,6 +14,7 @@ spec:
     - name: sharedlibrary  
   tasks:
     - name: source
+      retries: 3
       params:
          - name: revision
            value: $(params.revision)
@@ -26,6 +27,7 @@ spec:
         name: source
 
     - name: build
+      retries: 3
       params:
          - name: runtime
            value: $(params.runtime)
@@ -46,6 +48,7 @@ spec:
         - source 
 
     - name: security
+      retries: 3
       workspaces:
          - name: source
            workspace: source
@@ -57,6 +60,7 @@ spec:
         - source
 
     - name: quality
+      retries: 3
       params:
          - name: runtime
            value: $(params.runtime)
@@ -73,6 +77,7 @@ spec:
         - source
 
     - name: tests
+      retries: 3
       params:
         - name: app-image
           value: $(tasks.build.results.image)
@@ -86,9 +91,11 @@ spec:
       runAfter:
         - build
         - security
-        - quality 
+        - quality
+
 
     - name: deploy
+      retries: 3
       params:
          - name: appname
            value: $(params.appname)

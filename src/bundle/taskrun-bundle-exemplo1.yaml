@@ -1,0 +1,8 @@
+apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  name: bundle-task
+spec:
+  taskRef:
+    name: task-exemplo1
+    bundle: index.docker.io/clodonil/task-exemplo1:latest

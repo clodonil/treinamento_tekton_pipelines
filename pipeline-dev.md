@@ -12,8 +12,7 @@ Ao final deste modulo você será capaz de:
 
 ![projeto](img/image14.png)
 
-$ kubectl edit configmap feature-flags -n tekton-pipelines
-Procure disable-affinity-assistant. Altere seu valor para true.
+
 
 ```bash
 kubectl apply -f proj/tasks/Source/task-source.yaml
@@ -40,3 +39,7 @@ kubectl create secret docker-registry myregistrykey \
   --docker-password=$DOCKER_PASSWORD \
   --docker-email=$DOCKER_EMAIL
 kubectl patch serviceaccount default -p '{"secrets": [{"name": "myregistrykey"}]}'
+
+
+$ kubectl edit configmap feature-flags -n tekton-pipelines
+Procure disable-affinity-assistant. Altere seu valor para true.

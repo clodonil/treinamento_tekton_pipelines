@@ -1,0 +1,26 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: pipeline-exemplo1
+spec:
+  params:
+    - name: IMAGE
+      description: Nome da imagem
+    - name: command
+      description: comando para execução
+      type: array
+  tasks:
+    - name: exemplo1
+      taskRef:
+        name:   task-exemplo1
+        bundle: index.docker.io/clodonil/task-exemplo1:latest
+    - name: exemplo2
+      params:
+        - name: buildImage
+          value: $(params.IMAGE)
+        - name: build-args
+          value: 
+             - "$(params.command)"
+      taskRef:
+        name:   task-exemplo2
+        bundle: index.docker.io/clodonil/task-exemplo2:latest

@@ -1,0 +1,10 @@
+apiVersion: sharedlibrary/v1alpha1
+kind: Command
+metadata:
+  name: build
+spec:
+    script: |
+        runtime=$(params.runtime)
+        ls -l
+        ls -l /workspace/sharedlibrary/
+        echo "Runtime: $runtime"        

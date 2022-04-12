@@ -1,0 +1,58 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: build
+spec:
+  params:
+    - name: appname
+      description: Nome da Imagem
+    - name: runtime
+      description: Runtime da aplicacao  
+    - name: tagimage
+      description: Tag para criacao da imagem
+    - name: registry
+      description: Registry para armazenamento da imagem
+         
+  workspaces:
+    - name: sharedlibrary
+      description: Pasta com os comandos de execucao da pipeline
+      readOnly: true                
+    - name: source
+      description: Pasta com os fontes da aplicacao
+
+  stepTemplate:
+    workingDir: /workspace/source
+    image: quay.io/buildah/upstream:latest
+    volumeMounts:
+      - name: containers-storage
+        mountPath: /var/lib/containers
+      - name: artefato-build
+        mountPath: /artefato-build   
+    securityContext:
+      runAsUser: 0
+      privileged: true
+
+  results:
+     - name: image
+       description: Nome da imagem criada
+
+  steps:
+    - name: build
+      image: $(params.runtime)
+      script: |
+        runtime=$(params.runtime)
+        ls -l
+        ls -l /workspace/sharedlibrary/
+        echo "Runtime: $runtime"        
+        [ -f "pipeline/build.sh" ] && sh pipeline/build.sh || sh $(workspaces.sharedlibrary.path)/CI/$runtime/build/build.sh 
+    - name: package   
+      script: |
+        sh $(workspaces.sharedlibrary.path)/CI/common/package/package.sh $(params.appname) $(params.tagimage) $(params.registry)
+    - name: publish
+      script: |
+        sh $(workspaces.sharedlibrary.path)/CI/common/publish/publish.sh $(params.appname) $(params.tagimage) $(results.image.path) $(params.registry)
+  volumes:
+    - name: containers-storage
+      emptyDir: {}
+    - name: artefato-build
+      emptyDir: {}                
