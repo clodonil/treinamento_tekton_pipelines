@@ -1,31 +1,98 @@
 
+Criando TasksVersionando os templates com Bundles
+================
+## Objetivo
+
+Ao final deste modulo você será capaz de:
+* Entenda o que é uma Task
+* Entenda como clonar um projeto git e compilação usando o Task
+* Entenda como funciona os Workspaces
+* Crie uma task de build 
+* Como executar uma Tasks
+
+## Conceito
+
+Tekton Bundle é um artefato OCI (`Open Container Initiative`) que contém recursos `Tekton`. Basicamente podemos armazenar `Tasks` e `Pipelines`no formato `yaml` e armazenalas em registry como dockerhub.
+
+No modelo de `Bundle`, podemos referenciar nas `Taskrun` ou `PipelineRun` os artefatos armazenados no registry e os mesmos são abaixos e executados em memória sem a necessidade de armazenamento local.
+
+![template](img/image28.png)
+
+O `PipelineRun` executará às `Task` sem registrá-lo no cluster, permitindo que várias versões do mesmo nome `Task` sejam executadas de uma só vez.
+
+O Task ou o Pipeline referido não precisa estar presente ao se referir a ele, caberia ao controlador a responsabilidade de obter a definição e utilizá-la na memória.
+
+Como eles não estão presentes no cluster, não há risco de substituir um Taskarquivo Run. Ele simplifica um cenário de pipeline como código em que não precisaríamos nos preocupar com uma atualização Task ou Pipeline definição de PR para substituir a versão do branch principal.
+
+É mais fácil gerenciar e raciocinar sobre a versão da tarefa. Sem essa proposta, o usuário precisa incluir versões no nome Task/Pipeline se quiser ter um conceito de versão.
 
 
+# Configuração
 
-$ kubectl edit configmap feature-flags -n tekton-pipelines
-enable-tekton-oci-bundles is set to "true"
+O Tekton Bundle está atualmente na versão `alpha` e precisamos habilitar. E para isso altere o configmap `feature-flags` com o recurso `enable-tekton-oci-bundles` para  `true'.
 
- A Tekton Bundleé um artefato OCI que contém recursos Tekton, como os Tasksque podem ser referenciados em um arquivo taskRef.
+```bash
+kubectl edit configmap feature-flags -n tekton-pipelines
+
+apiVersion: v1
+data:
+  enable-tekton-oci-bundles: "true"
+...
+```
+
+# Criando Bundle de exemplo
+
+Antes de criarmos as `Bundle` das pipelines, vamos criar alguns exemplos para ajudar no entendimento do funcionamento dos `Bundle`.
+
+Para esse exemplo vamos usar o versionamento de 2 `Tasks`. Nesse caso vamos utilizar o  [src/bundle/task-exemplo1-v1.yaml](.src/bundle/task-exemplo1-v1.yaml) e o [src/bundle/task-exemplo1-v2.yaml](.src/bundle/task-exemplo1-v2.yaml).
+
+Abaixo temos o arquivo `task-exemplo1-v1.yaml` e a versão 2, muda apenas o texto.
+
+```yaml
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: task-exemplo1
+spec:
+  steps:
+    - name: step1
+      image: ubuntu      
+      script: |
+        #!/usr/bin/env bash
+        echo "Execunto Step1 - Versao 1"
+        date
+        echo "Finalizado"
+```
+
+Da mesma forma temos a [src/bundle/task-exemplo2-v1.yaml](.src/bundle/task-exemplo2-v1.yaml) e a versão 2 [src/bundle/task-exemplo2-v2.yaml](.src/bundle/task-exemplo2-v2.yaml).
+
+Abaixo temos o arquivo `task-exemplo2-v1.yaml` e a versão 2, muda apenas o texto.
+
+```yaml
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: task-exemplo2
+spec:
+  steps:
+    - name: step1
+      image: ubuntu      
+      script: |
+        #!/usr/bin/env bash
+        echo "Execunto Step1 - Versao 1"
+        date
+        echo "Finalizado"
+```
+
+Agora que temos as `tasks` criadas, podemos subir para o registry utilizando o tkn.
+
+> Não é necessário aplicar as `Tasks` no kubernetes para enviar para os registry.
+
+A sintaxe do tkn para o bundle é:
+
+> tkn bundle push <registry>/<artefato> -f <arquivo.yaml>
 
 
- O PipelineRunexecutará isso Tasksem registrá-lo no cluster, permitindo que várias versões do mesmo nome Tasksejam executadas de uma só vez.
-
-Tekton Bundlespode ser construído com qualquer conjunto de ferramentas que produza artefatos de imagem OCI válidos, desde que o artefato cumpra o contrato .
-
-
-A Open Container Initiative (OCI) é um projeto da Linux Foundation para criar padrões abertos para virtualização em nível de sistema operacional, principalmente contêineres Linux. Existem atualmente duas especificações em desenvolvimento e em uso: Runtime Specification (runtime-spec) e Image Specification (image-spec).
-
-Histórias de usuário (opcional)
-S Taske Pipelines com versão e Pipeline como código
-Esta proposta terá os seguintes benefícios:
-
-O Taskou o Pipelinereferido não precisa estar presente ao se referir a ele, caberia ao controlador a responsabilidade de obter a definição e utilizá-la na memória .
-Como eles não estão presentes no cluster, não há risco de substituir um Taskarquivo Run. Ele simplifica um cenário de pipeline como código em que não precisaríamos nos preocupar com uma atualização Taskou Pipelinedefinição de PR para substituir a versão do branch principal .
-É mais fácil gerenciar e raciocinar sobre a versão da tarefa. Sem essa proposta, o usuário precisa incluir versões no nome Task/ Pipeline se quiser ter um conceito de versão.
-
-Um bundle é uma imagem OCI que contém 0+ arquivos arbitrários e 0+ referências a imagens OCI dependentes (que também podem ser bundles ). Ao rastrear imagens dependentes, o imgpkg pode copiar pacotes entre registros.
-
-As imagens referenciadas são armazenadas no .imgpkgdiretório no nível raiz da imagem do pacote configurável.
 
 ```bash
 ./bundle-exemplo1.sh

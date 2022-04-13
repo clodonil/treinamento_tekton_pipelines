@@ -2,6 +2,7 @@ Workshop: Introdução ao TekTon
 ==========
 
 ## Objetivo
+Construa pipeline modernas, escalável e 100% cloud native com Tekton.
 
 ## Conteúdo
 * [1. O que vamos fazer?](projeto.md)
