@@ -92,30 +92,23 @@ A sintaxe do tkn para o bundle é:
 
 > tkn bundle push <registry>/<artefato> -f <arquivo.yaml>
 
-
+Agora vamos subir as tasks para os registry da docker.io. Vamos subir as versões 1 e 2. E vamos colocar a tag `latest` na versão 2.
 
 ```bash
-./bundle-exemplo1.sh
-Creating Tekton Bundle:
-        - Added Task: task-exemplo1 to image
+tkn bundle push index.docker.io/clodonil/task-exemplo1:v1 -f src/bundle/task-exemplo1-v1.yaml
+tkn bundle push index.docker.io/clodonil/task-exemplo2:v1 -f src/bundle/task-exemplo2-v1.yaml
 
-Pushed Tekton Bundle to index.docker.io/clodonil/task-exemplo1@sha256:d65ab1d53cc856926b742b0c8738bc8cfdf3be83de410936edc451c0b09ecd7c
-Creating Tekton Bundle:
-        - Added Task: task-exemplo1 to image
+tkn bundle push index.docker.io/clodonil/task-exemplo1:v2 -f src/bundle/task-exemplo1-v2.yaml
+tkn bundle push index.docker.io/clodonil/task-exemplo2:v2 -f src/bundle/task-exemplo2-v2.yaml
 
-Pushed Tekton Bundle to index.docker.io/clodonil/task-exemplo1@sha256:d65ab1d53cc856926b742b0c8738bc8cfdf3be83de410936edc451c0b09ecd7c
-Creating Tekton Bundle:
-        - Added Task: task-exemplo2 to image
-
-Pushed Tekton Bundle to index.docker.io/clodonil/task-exemplo2@sha256:44c0c3c73c5082452d956d3d069681f73cdd9669274ed4deea804fad0567b118
-Creating Tekton Bundle:
-        - Added Task: task-exemplo2 to image
-
-Pushed Tekton Bundle to index.docker.io/clodonil/task-exemplo2@sha256:44c0c3c73c5082452d956d3d069681f73cdd9669274ed4deea804fad0567b118
+tkn bundle push index.docker.io/clodonil/task-exemplo1:latest -f src/bundle/task-exemplo1-v2.yaml
+tkn bundle push index.docker.io/clodonil/task-exemplo2:latest -f src/bundle/task-exemplo2-v2.yaml
 ```
+Podemos verificar no docker.io que os artefatos foram registrados no docker.io
 
 ![template](img/image24.png)
 
+Com as `bundle` armazenadas, podemos utilizar na `TaskRun` referenciando o bundle no taskRef conforme o exemplo abaixo [src/bundle/taskrun-bundle-exemplo1.yaml](.src/bundle/taskrun-bundle-exemplo1.yaml).
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
@@ -131,7 +124,7 @@ spec:
 Para executar a task:
 
 ```bash
- kubectl apply -f taskrun-bundle-exemplo1.yaml
+kubectl apply -f src/bundle/taskrun-bundle-exemplo1.yaml
 ```
 
 
