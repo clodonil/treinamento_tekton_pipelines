@@ -12,41 +12,42 @@ Ao final deste modulo você será capaz de:
 
 ## Conceito
 
-Tekton Bundle é um artefato OCI (`Open Container Initiative`) que contém recursos `Tekton`. Basicamente podemos armazenar `Tasks` e `Pipelines`no formato `yaml` e armazenalas em registry como dockerhub.
+Tekton Bundle é um artefato OCI (`Open Container Initiative`) que contém recursos `Tekton`. Basicamente podemos armazenar `Tasks` e `Pipelines`no formato `yaml` e armazenalas em registry como `dockerhub` ou similares.
 
-No modelo de `Bundle`, podemos referenciar nas `Taskrun` ou `PipelineRun` os artefatos armazenados no registry e os mesmos são abaixos e executados em memória sem a necessidade de armazenamento local.
+No modelo de `Bundle`, podemos referenciar nas `Taskrun` ou `PipelineRun` os artefatos armazenados no registry e os mesmos são abaixados e executados em memória sem a necessidade de armazenamento local.
+
+O conceito do `Bundle`, simplifica um cenário de `pipeline como código` em que não precisamos nos preocupar com uma atualização `Task` ou `Pipeline` diretamente, mais podemos trabalhar com branch e versionamento.É mais fácil gerenciar e raciocinar sobre a versão das `Tasks`. 
+
+A figura abaixo exemplifica a utilização do `Bundle` para gerenciamento de versão de `Pipelines` e `Tasks`. Dessa forma podemos trabalhar com versionamento das pipelines gerando mais controle de governança.
 
 ![template](img/image28.png)
 
-O `PipelineRun` executará às `Task` sem registrá-lo no cluster, permitindo que várias versões do mesmo nome `Task` sejam executadas de uma só vez.
+O `PipelineRun` executará às `Task` sem registrá-lo no cluster, permitindo que várias versões do mesmo nome da `Task` sejam executadas de uma só vez.
 
-O Task ou o Pipeline referido não precisa estar presente ao se referir a ele, caberia ao controlador a responsabilidade de obter a definição e utilizá-la na memória.
-
-Como eles não estão presentes no cluster, não há risco de substituir um Taskarquivo Run. Ele simplifica um cenário de pipeline como código em que não precisaríamos nos preocupar com uma atualização Task ou Pipeline definição de PR para substituir a versão do branch principal.
-
-É mais fácil gerenciar e raciocinar sobre a versão da tarefa. Sem essa proposta, o usuário precisa incluir versões no nome Task/Pipeline se quiser ter um conceito de versão.
+Com as `Tasks`e as `Pipelines` não estão armazenadas no cluster, não há risco de substituir um arquivo da `Task` durante a execução, gerando assim mais segurança.
 
 
 # Configuração
 
-O Tekton Bundle está atualmente na versão `alpha` e precisamos habilitar. E para isso altere o configmap `feature-flags` com o recurso `enable-tekton-oci-bundles` para  `true'.
+O Tekton Bundle está atualmente na versão `alpha` e por padrão não vem habilitado. Para habilitar é necessário alterar o configmap `feature-flags` com o recurso `enable-tekton-oci-bundles` para  `true'.
 
 ```bash
 kubectl edit configmap feature-flags -n tekton-pipelines
+```
+As linhas que devem ser alterada:
 
+```yaml
 apiVersion: v1
 data:
   enable-tekton-oci-bundles: "true"
-...
 ```
-
 # Criando Bundle de exemplo
 
-Antes de criarmos as `Bundle` das pipelines, vamos criar alguns exemplos para ajudar no entendimento do funcionamento dos `Bundle`.
+Antes de criarmos as `Bundle` das pipelines do projeto, vamos criar alguns exemplos para ajudar no entendimento do funcionamento dos `Bundle`.
 
-Para esse exemplo vamos usar o versionamento de 2 `Tasks`. Nesse caso vamos utilizar o  [src/bundle/task-exemplo1-v1.yaml](.src/bundle/task-exemplo1-v1.yaml) e o [src/bundle/task-exemplo1-v2.yaml](.src/bundle/task-exemplo1-v2.yaml).
+Para esse exemplo vamos usar o versionamento de duas `Tasks`. Nesse caso vamos utilizar o  [src/bundle/task-exemplo1-v1.yaml](.src/bundle/task-exemplo1-v1.yaml) e o [src/bundle/task-exemplo1-v2.yaml](.src/bundle/task-exemplo1-v2.yaml).
 
-Abaixo temos o arquivo `task-exemplo1-v1.yaml` e a versão 2, muda apenas o texto.
+Abaixo temos o arquivo `task-exemplo1-v1.yaml` e a `task-exemplo1-v2.yaml`, representando duas versões de `Tasks`. Como é apenas um exemplo, estamos alterando apenas o texto "Execunto Step1 - Versao 1" nas `Tasks`. 
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
@@ -64,9 +65,9 @@ spec:
         echo "Finalizado"
 ```
 
-Da mesma forma temos a [src/bundle/task-exemplo2-v1.yaml](.src/bundle/task-exemplo2-v1.yaml) e a versão 2 [src/bundle/task-exemplo2-v2.yaml](.src/bundle/task-exemplo2-v2.yaml).
+Da mesma forma temos a [src/bundle/task-exemplo2-v1.yaml](.src/bundle/task-exemplo2-v1.yaml) e a [src/bundle/task-exemplo2-v2.yaml](.src/bundle/task-exemplo2-v2.yaml).
 
-Abaixo temos o arquivo `task-exemplo2-v1.yaml` e a versão 2, muda apenas o texto.
+Como é apenas um exemplo, estamos alterando apenas o texto "Execunto Step1 - Versao 1" nas `Tasks`. 
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
@@ -84,15 +85,18 @@ spec:
         echo "Finalizado"
 ```
 
-Agora que temos as `tasks` criadas, podemos subir para o registry utilizando o tkn.
+Agora que temos as `tasks` criadas, podemos subir para o registry utilizando o `tkn`.
 
 > Não é necessário aplicar as `Tasks` no kubernetes para enviar para os registry.
 
-A sintaxe do tkn para o bundle é:
+A sintaxe do `tkn` para o bundle é:
 
-> tkn bundle push <registry>/<artefato> -f <arquivo.yaml>
+> ``` tkn bundle push <registry>/<artefato> -f <arquivo.yaml> ```
 
-Agora vamos subir as tasks para os registry da docker.io. Vamos subir as versões 1 e 2. E vamos colocar a tag `latest` na versão 2.
+O `tkn bundle` já transforma o arquivo `yaml` no formato OCI e envia para o registry.
+
+Agora vamos subir as tasks para os registry da `docker.io`. Vamos subir as versões 1 e 2.
+
 
 ```bash
 tkn bundle push index.docker.io/clodonil/task-exemplo1:v1 -f src/bundle/task-exemplo1-v1.yaml
@@ -100,11 +104,15 @@ tkn bundle push index.docker.io/clodonil/task-exemplo2:v1 -f src/bundle/task-exe
 
 tkn bundle push index.docker.io/clodonil/task-exemplo1:v2 -f src/bundle/task-exemplo1-v2.yaml
 tkn bundle push index.docker.io/clodonil/task-exemplo2:v2 -f src/bundle/task-exemplo2-v2.yaml
-
-tkn bundle push index.docker.io/clodonil/task-exemplo1:latest -f src/bundle/task-exemplo1-v2.yaml
-tkn bundle push index.docker.io/clodonil/task-exemplo2:latest -f src/bundle/task-exemplo2-v2.yaml
 ```
-Podemos verificar no docker.io que os artefatos foram registrados no docker.io
+
+A sintaxe do comando é bastante simples:
+
+* `tkn bundle push`: Comando para enviar um artefato (Task ou Pipeline) para o registry;
+* `index.docker.io/clodonil/task-exemplo2:v2`: Define o registry e o path no registry, também define a tag, que neste caso é `v2`; e
+* `-f src/bundle/task-exemplo2-v2.yaml`: É o arquivo `yaml` que será armazenado no registry.
+
+Podemos verificar no `docker.io` que os artefatos foram registrados.
 
 ![template](img/image24.png)
 
@@ -127,6 +135,7 @@ Para executar a task:
 kubectl apply -f src/bundle/taskrun-bundle-exemplo1.yaml
 ```
 
+Da mesma forma podemos utilizar os `bundle` em uma pipeline, conforme mostrado no exemplo abaixo.
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
@@ -134,57 +143,31 @@ kind: Pipeline
 metadata:
   name: pipeline-exemplo1
 spec:
-  params:
-    - name: IMAGE
-      description: Nome da imagem
-    - name: command
-      description: comando para execução
-      type: array
   tasks:
     - name: exemplo1
       taskRef:
         name:   task-exemplo1
-        bundle: index.docker.io/clodonil/task-exemplo1:latest
+        bundle: index.docker.io/clodonil/task-exemplo1:v2
     - name: exemplo2
-      params:
-        - name: buildImage
-          value: $(params.IMAGE)
-        - name: build-args
-          value: 
-             - "$(params.command)"
       taskRef:
         name:   task-exemplo2
-        bundle: index.docker.io/clodonil/task-exemplo2:latest
+        bundle: index.docker.io/clodonil/task-exemplo2:v2
 ```
+Com a pipeline criada vamos subir para o `Tekton`:
+
 ```bash
 kubectl apply -f src/bundle/pipeline-exemplo1.yaml
 ```
 E para executar a pipeline, podemos utilizar o comando `tkn`:
 
 ```bash
-tkn pipeline start pipeline-exemplo1 -p IMAGE='centos' -p command='ls','-l /' --showlog
+tkn pipeline start pipeline-exemplo1 --showlog
 ```
 
 Subindo a versão 2:
 
 ```bash
- ./bundle-push-v2.sh
-Creating Tekton Bundle:
-        - Added Task: task-exemplo1 to image
 
-Pushed Tekton Bundle to index.docker.io/clodonil/task-exemplo1@sha256:4e0c7866a4c0faf0424f46e1064eda34293030971ad4ce78b6972648ccab6fff
-Creating Tekton Bundle:
-        - Added Task: task-exemplo1 to image
-
-Pushed Tekton Bundle to index.docker.io/clodonil/task-exemplo1@sha256:4e0c7866a4c0faf0424f46e1064eda34293030971ad4ce78b6972648ccab6fff
-Creating Tekton Bundle:
-        - Added Task: task-exemplo2 to image
-
-Pushed Tekton Bundle to index.docker.io/clodonil/task-exemplo2@sha256:540f1bbda4c384a3ced27479c993ea021e471b865600aee956d7110de173d4da
-Creating Tekton Bundle:
-        - Added Task: task-exemplo2 to image
-
-Pushed Tekton Bundle to index.docker.io/clodonil/task-exemplo2@sha256:540f1bbda4c384a3ced27479c993ea021e471b865600aee956d7110de173d4da
 ```
 
 ![template](img/image25.png)
