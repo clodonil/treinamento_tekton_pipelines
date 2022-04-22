@@ -179,7 +179,7 @@ tkn bundle push index.docker.io/clodonil/pipeline-exemplo1:v1 -f pipeline-exempl
 
 Podemos verificar no `docker.io` que os artefatos foram registrados.
 
-![template](img/image25.png)
+![template](img/image27.png)
 
 
 Agora podemos construir uma `PipelineRun` referenciando a pipeline no registry e assim executar a pipeline.
@@ -206,4 +206,3 @@ Na figura abaixo podemos verificar a execução da pipeline no `Tekton`.
 ![template](img/image26.png)
 
 
-![template](img/image27.png)
