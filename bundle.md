@@ -108,9 +108,9 @@ tkn bundle push index.docker.io/clodonil/task-exemplo2:v2 -f src/bundle/task-exe
 
 A sintaxe do comando é bastante simples:
 
-* `tkn bundle push`: Comando para enviar um artefato (Task ou Pipeline) para o registry;
-* `index.docker.io/clodonil/task-exemplo2:v2`: Define o registry e o path no registry, também define a tag, que neste caso é `v2`; e
-* `-f src/bundle/task-exemplo2-v2.yaml`: É o arquivo `yaml` que será armazenado no registry.
+* ***`tkn bundle push`:*** Comando para enviar um artefato (Task ou Pipeline) para o registry;
+* ***`index.docker.io/clodonil/task-exemplo2:v2`:*** Define o registry e o path no registry, também define a tag, que neste caso é `v2`; e
+* ***`-f src/bundle/task-exemplo2-v2.yaml`:*** É o arquivo `yaml` que será armazenado no registry.
 
 Podemos verificar no `docker.io` que os artefatos foram registrados.
 
