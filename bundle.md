@@ -164,21 +164,44 @@ E para executar a pipeline, podemos utilizar o comando `tkn`:
 tkn pipeline start pipeline-exemplo1 --showlog
 ```
 
-Subindo a versão 2:
+Também podemos subir a `Pipeline` para o registry e versionar. Antes de fazermos isso vamos deletar a `pipeline-exemplo1` criando anteriormente para não gerar confusão. Queremos que o `Tekton` abaixe a pipeline durante a execução.
+
+Deletando a pipeline criado no `Tekton`.
 
 ```bash
-
+kubectl delete -f src/bundle/pipeline-exemplo1.yaml
 ```
+Agora que a pipeline foi deletada, vamos subir a pipeline para o registry. O comando é similar o que fizemos alteriormente com as `Tasks`.
+
+```bash
+tkn bundle push index.docker.io/clodonil/pipeline-exemplo1:v1 -f pipeline-exemplo1.yaml
+```
+
+Podemos verificar no `docker.io` que os artefatos foram registrados.
 
 ![template](img/image25.png)
 
 
-Para executar a task:
+Agora podemos construir uma `PipelineRun` referenciando a pipeline no registry e assim executar a pipeline.
 
-```bash
-kubectl delete -f taskrun-bundle-exemplo1.yaml
-kubectl apply -f taskrun-bundle-exemplo1.yaml
+```yaml
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: pipelinerun-bundle-exemplo1-run1
+spec:
+  params  :
+    - name: IMAGE
+      value: centos
+    - name: command
+      value:
+         - ls
+         - -l /
+  pipelineRef:
+    name: pipeline-exemplo1
+    bundle: docker.io/clodonil/pipeline-exemplo1:v1
 ```
+Na figura abaixo podemos verificar a execução da pipeline no `Tekton`.
 
 ![template](img/image26.png)
 
