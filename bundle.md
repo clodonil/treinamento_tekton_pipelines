@@ -182,7 +182,7 @@ Podemos verificar no `docker.io` que os artefatos foram registrados.
 ![template](img/image27.png)
 
 
-Agora podemos construir uma `PipelineRun`([src/bundle/pipelinerun-bundle-exemplo1.yaml](./src/bundle/pipelinerun-bundle-ex emplo1.yaml)) referenciando a pipeline no registry e assim executar a pipeline.
+Agora podemos construir uma `PipelineRun`([src/bundle/pipelinerun-bundle-exemplo1.yaml](src/bundle/pipelinerun-bundle-ex emplo1.yaml)) referenciando a pipeline no registry e assim executar a pipeline.
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
