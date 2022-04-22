@@ -45,9 +45,9 @@ data:
 
 Antes de criarmos as `Bundle` das pipelines do projeto, vamos criar alguns exemplos para ajudar no entendimento do funcionamento dos `Bundle`.
 
-Para esse exemplo vamos usar o versionamento de duas `Tasks`. Nesse caso vamos utilizar o  [src/bundle/task-exemplo1-v1.yaml](.src/bundle/task-exemplo1-v1.yaml) e o [src/bundle/task-exemplo1-v2.yaml](.src/bundle/task-exemplo1-v2.yaml).
+Para esse exemplo vamos usar o versionamento de duas `Tasks`. Nesse caso vamos utilizar o  [src/bundle/task-exemplo1-v1.yaml](./src/bundle/task-exemplo1-v1.yaml) e o [src/bundle/task-exemplo1-v2.yaml](./src/bundle/task-exemplo1-v2.yaml).
 
-Abaixo temos o arquivo `task-exemplo1-v1.yaml` e a `task-exemplo1-v2.yaml`, representando duas versões de `Tasks`. Como é apenas um exemplo, estamos alterando apenas o texto "Execunto Step1 - Versao 1" nas `Tasks`. 
+Como essas tasks são apenas um exemplo, a diferença da `task-exemplo1-v1.yaml` para a `task-exemplo1-v2.yaml` é o texto "Execunto Step1 - Versao 1". 
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
@@ -65,9 +65,7 @@ spec:
         echo "Finalizado"
 ```
 
-Da mesma forma temos a [src/bundle/task-exemplo2-v1.yaml](.src/bundle/task-exemplo2-v1.yaml) e a [src/bundle/task-exemplo2-v2.yaml](.src/bundle/task-exemplo2-v2.yaml).
-
-Como é apenas um exemplo, estamos alterando apenas o texto "Execunto Step1 - Versao 1" nas `Tasks`. 
+Da mesma forma temos a [src/bundle/task-exemplo2-v1.yaml](./src/bundle/task-exemplo2-v1.yaml) e a [src/bundle/task-exemplo2-v2.yaml](./src/bundle/task-exemplo2-v2.yaml).
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
@@ -116,7 +114,7 @@ Podemos verificar no `docker.io` que os artefatos foram registrados.
 
 ![template](img/image24.png)
 
-Com as `bundle` armazenadas, podemos utilizar na `TaskRun` referenciando o bundle no taskRef conforme o exemplo abaixo [src/bundle/taskrun-bundle-exemplo1.yaml](.src/bundle/taskrun-bundle-exemplo1.yaml).
+Com as `bundle` armazenadas, podemos utilizar na `TaskRun` referenciando o bundle no `taskRef` conforme o exemplo abaixo [src/bundle/taskrun-bundle-exemplo1.yaml](./src/bundle/taskrun-bundle-exemplo1.yaml).
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
@@ -126,7 +124,7 @@ metadata:
 spec:
   taskRef:
     name: task1
-    bundle: index.docker.io/clodonil/task-exemplo1:latest
+    bundle: index.docker.io/clodonil/task-exemplo1:v1
 ```
 
 Para executar a task:
@@ -134,6 +132,8 @@ Para executar a task:
 ```bash
 kubectl apply -f src/bundle/taskrun-bundle-exemplo1.yaml
 ```
+> Você pode alterar a versão da Tasks e executar novamente a `Taskrun` para validar se a versão 2 esta sendo baixada corretamente.
+> Você pode também criar uma `Taskrun` para executar a `task-exemplo2:v1`.
 
 Da mesma forma podemos utilizar os `bundle` em uma pipeline, conforme mostrado no exemplo abaixo.
 
@@ -147,11 +147,11 @@ spec:
     - name: exemplo1
       taskRef:
         name:   task-exemplo1
-        bundle: index.docker.io/clodonil/task-exemplo1:v2
+        bundle: index.docker.io/clodonil/task-exemplo1:v1
     - name: exemplo2
       taskRef:
         name:   task-exemplo2
-        bundle: index.docker.io/clodonil/task-exemplo2:v2
+        bundle: index.docker.io/clodonil/task-exemplo2:v1
 ```
 Com a pipeline criada vamos subir para o `Tekton`:
 
@@ -198,4 +198,65 @@ Na figura abaixo podemos verificar a execução da pipeline no `Tekton`.
 
 ![template](img/image26.png)
 
+> Você também pode criar criar a pipeline-exemplo:v2 apontando para as tasks com a versão 2 e testar se esta tudo funcionando corretamete.
+
+# Bundle para o projeto
+
+Agora que entendemos o conceito dos `Bundle` e construimos alguns exemplos, vamos criar para o projeto de `Pipeline` que estamos desenvolvendo.
+
+Como as tasks já estão cria
+
+
+```bash
+tkn bundle push index.docker.io/clodonil/microservice-api_tasks_source:v1 -f proj/tasks/Source/task-source.yaml
+tkn bundle push index.docker.io/clodonil/microservice-api_tasks_build:v1 -f proj/tasks/Build/task-build.yaml
+tkn bundle push index.docker.io/clodonil/microservice-api_tasks_qa:v1 -f proj/tasks/QA/task-qa.yaml
+tkn bundle push index.docker.io/clodonil/microservice-api_tasks_security:v1 -f proj/tasks/Security/task-security.yaml
+tkn bundle push index.docker.io/clodonil/microservice-api_tasks_tests:v1 -f proj/tasks/Tests/task-tests.yaml
+tkn bundle push index.docker.io/clodonil/microservice-api_tasks_deploy:v1 -f proj/tasks/Deploy/task-deploy.yaml
+tkn bundle push index.docker.io/clodonil/microservice-api_tasks_finally:v1 -f proj/tasks/Finally/task-finally.yaml
+```
+
+Agora também vamos criar a pipeline como `Bundle`:
+
+```bash
+tkn bundle push index.docker.io/clodonil/microservice-api_pipeline:v1 -f proj/pipeline/microservice-api.yaml
+```
+
+```yaml
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  name: pipelinerun-python
+spec:
+  workspaces:
+    - name: sharedlibrary
+      persistentVolumeClaim:
+         claimName: sharedlibrary
+    - name: app-source
+      persistentVolumeClaim:
+         claimName: app-source
+  params:
+    - name: IMAGE
+      value: "clodonil/apphello:1"
+    - name: runtime
+      value: python
+    - name: revision
+      value: master
+    - name: url
+      value: 'https://github.com/clodonil/apphello.git'
+    - name: runtime
+      value: 'python'
+    - name: appname
+      value: 'helloworl'
+  pipelineRef:
+    name: api-backend
+    bundle: index.docker.io/clodonil/microservice-api_pipeline:v1
+```
+
+Uma proposta de gestão de pipeline seria o controle atráves de `gitflow`, conforme mostra a figura abaixo.
+
+![template](img/image29.png)
+
+> Fica como exercício da criação de uma pipeline no `Tekton` para realizar a gestão dos templates e Tasks.
 
