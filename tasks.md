@@ -9,7 +9,7 @@ Ao final deste modulo você será capaz de:
 * Crie uma task de build 
 * Como executar uma Tasks
 
-## Conceito
+## Conceito  .
 
 A `Task` é uma coleção de `Steps` que são organizados em ordem de execução como parte de pipeline de `integração continua`. A `Task` é executado da mesma forma que um pod no cluster do Kubernetes, onde cada `Step` se torna um contêiner em execução do pod.
 
