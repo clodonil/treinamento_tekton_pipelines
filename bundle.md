@@ -102,7 +102,7 @@ O `tkn bundle` já transforma o arquivo `yaml` no formato OCI e envia para o reg
 
 Agora vamos subir as tasks para os registry da `docker.io`.
 
-> Altere o nome do repositório no registry. Nesse exemplo o nome do repositório é **clodonil** (index.docker.io/**clodonil**/task-exemplo1:v1)
+> Altere o nome do repositório do registry, para um que você tenha acesso. Nesse exemplo o nome do repositório é **clodonil** (index.docker.io/**clodonil**/task-exemplo1:v1)
 
 Vamos subir as versões 1 e 2.
 
@@ -131,10 +131,10 @@ Com as `bundle` armazenadas, podemos utilizar na `TaskRun` referenciando o bundl
 apiVersion: tekton.dev/v1beta1
 kind: TaskRun
 metadata:
-  name: bundle-task
+  name: bundle-task-v1
 spec:
   taskRef:
-    name: task1
+    name: task-exemplo1
     bundle: index.docker.io/clodonil/task-exemplo1:v1
 ```
 
@@ -167,25 +167,25 @@ spec:
 Com a pipeline criada vamos subir para o `Tekton`:
 
 ```bash
-kubectl apply -f src/bundle/pipeline-exemplo1.yaml
+kubectl apply -f src/bundle/pipeline-exemplo1-v1.yaml
 ```
 E para executar a pipeline, podemos utilizar o comando `tkn`:
 
 ```bash
-tkn pipeline start pipeline-exemplo1 --showlog
+tkn pipeline start pipeline-exemplo1-v1 --showlog
 ```
 
-Também podemos subir a `Pipeline` para o registry e versionar. Antes de fazermos isso vamos deletar a `pipeline-exemplo1` criando anteriormente para não gerar confusão. Queremos que o `Tekton` abaixe a pipeline durante a execução.
+Também podemos subir a `Pipeline` para o registry e versionar. Antes de fazermos isso vamos deletar a `pipeline-exemplo1` criando anteriormente para não gerar confusão. Queremos que o `Tekton` abaixe a pipeline durante a execução e não tenha nenhum template armazenado no cluster.
 
 Deletando a pipeline criado no `Tekton`.
 
 ```bash
-kubectl delete -f src/bundle/pipeline-exemplo1.yaml
+kubectl delete -f src/bundle/pipeline-exemplo1-v1.yaml
 ```
 Agora que a pipeline foi deletada, vamos subir a pipeline para o registry. O comando é similar o que fizemos alteriormente com as `Tasks`.
 
 ```bash
-tkn bundle push index.docker.io/clodonil/pipeline-exemplo1:v1 -f pipeline-exemplo1.yaml
+tkn bundle push index.docker.io/clodonil/pipeline-exemplo1:v1 -f src/bundle/pipeline-exemplo1-v1.yaml
 ```
 
 Podemos verificar no `docker.io` que os artefatos foram registrados.
@@ -193,18 +193,25 @@ Podemos verificar no `docker.io` que os artefatos foram registrados.
 ![template](img/image27.png)
 
 
-Agora podemos construir uma `PipelineRun`[src/bundle/pipelinerun-bundle-exemplo1.yaml](./src/bundle/pipelinerun-bundle-exemplo1.yaml) referenciando a pipeline no registry e assim executar a pipeline.
+Agora podemos construir uma `PipelineRun`[src/bundle/pipelinerun-bundle-exemplo1-v1.yaml](./src/bundle/pipelinerun-bundle-exemplo1-v1.yaml) referenciando a pipeline no registry e assim executar a pipeline.
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  name: pipelinerun-bundle-exemplo1-run1
+  name: pipelinerun-bundle-exemplo1-v1
 spec:
   pipelineRef:
     name: pipeline-exemplo1
     bundle: docker.io/clodonil/pipeline-exemplo1:v1
 ```
+
+E para executar a pipeline na versão v1:
+
+```bash
+kubectl apply -f src/bundle/pipelinerun-bundle-exemplo1-v1.yaml
+```
+
 Na figura abaixo podemos verificar a execução da pipeline no `Tekton`.
 
 ![template](img/image26.png)
@@ -215,17 +222,46 @@ Na figura abaixo podemos verificar a execução da pipeline no `Tekton`.
 
 Agora que entendemos o conceito dos `Bundle` e construimos alguns exemplos, vamos criar para o projeto de `Pipeline` que estamos desenvolvendo.
 
-Como as tasks já estão cria
+Como as `Tasks` já estão criadas, vamos apenas subir para o registry. Vamos utilizar as versões como `tags` tais como `v1.0`, `v2.0`. E sempre a ultima versão também receba a tag `latest`.
 
+Dessa forma ao atualizarmos uma `Tasks` todas as execuções de pipeline são atualizadas automaticamente. 
+
+O sintaxe do nome que estamos utilizando é:
+
+* <nome_template>_<taks>:tag
+
+Exemplo:
+* micrservice-api_source:v1
+
+Vamos para a execução:
 
 ```bash
 tkn bundle push index.docker.io/clodonil/microservice-api_tasks_source:v1 -f proj/tasks/Source/task-source.yaml
+tkn bundle push index.docker.io/clodonil/microservice-api_tasks_source:latest -f proj/tasks/Source/task-source.yaml
+
+
 tkn bundle push index.docker.io/clodonil/microservice-api_tasks_build:v1 -f proj/tasks/Build/task-build.yaml
+tkn bundle push index.docker.io/clodonil/microservice-api_tasks_build:latest -f proj/tasks/Build/task-build.yaml
+
+
 tkn bundle push index.docker.io/clodonil/microservice-api_tasks_qa:v1 -f proj/tasks/QA/task-qa.yaml
+tkn bundle push index.docker.io/clodonil/microservice-api_tasks_qa:latest -f proj/tasks/QA/task-qa.yaml
+
+
 tkn bundle push index.docker.io/clodonil/microservice-api_tasks_security:v1 -f proj/tasks/Security/task-security.yaml
+tkn bundle push index.docker.io/clodonil/microservice-api_tasks_security:latest -f proj/tasks/Security/task-security.yaml
+
+
 tkn bundle push index.docker.io/clodonil/microservice-api_tasks_tests:v1 -f proj/tasks/Tests/task-tests.yaml
+tkn bundle push index.docker.io/clodonil/microservice-api_tasks_tests:latest -f proj/tasks/Tests/task-tests.yaml
+
+
 tkn bundle push index.docker.io/clodonil/microservice-api_tasks_deploy:v1 -f proj/tasks/Deploy/task-deploy.yaml
+tkn bundle push index.docker.io/clodonil/microservice-api_tasks_deploy:latest -f proj/tasks/Deploy/task-deploy.yaml
+
+
 tkn bundle push index.docker.io/clodonil/microservice-api_tasks_finally:v1 -f proj/tasks/Finally/task-finally.yaml
+tkn bundle push index.docker.io/clodonil/microservice-api_tasks_finally:latest -f proj/tasks/Finally/task-finally.yaml
 ```
 
 Agora também vamos criar a pipeline como `Bundle`:
