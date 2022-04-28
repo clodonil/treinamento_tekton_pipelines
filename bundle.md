@@ -269,23 +269,12 @@ Podemos verificar no `docker.io` que os artefatos foram registrados.
 ![template](img/image30.png)
 
 
-Agora também vamos criar a pipeline como `Bundle`.
+Agora também vamos criar a pipeline como `Bundle`. Na pipeline, foi adicionado a referência para o `bundle` de cada tasks, como por exemplo do `Source`. Perceba que estamos apontando para a versão `latest`.
+
+O arquivo [proj/pipeline/microservice-api-bundle.yaml](./proj/pipeline/microservice-api-bundle.yaml) contém o arquivo completo da pipeline modificado para trabalhar com o `Bundle`.
+
 
 ```yaml
-apiVersion: tekton.dev/v1beta1
-kind: Pipeline
-metadata:
-  name: microservice-api
-spec:
-  params:
-    - name: revision
-    - name: url
-    - name: runtime
-    - name: appname
-    - name: registry
-  workspaces:
-    - name: source
-    - name: sharedlibrary  
   tasks:
     - name: source
       retries: 3
@@ -300,117 +289,56 @@ spec:
       taskRef:
         name: source
         bundle: index.docker.io/clodonil/microservice-api_tasks_source:latest
-
-    - name: build
-      retries: 3
-      params:
-         - name: runtime
-           value: $(params.runtime)
-         - name: appname
-           value: $(params.appname)
-         - name: tagimage
-           value: $(tasks.source.results.commit)
-         - name: registry
-           value: $(params.registry)
-      workspaces:
-         - name: source
-           workspace: source
-         - name: sharedlibrary
-           workspace: sharedlibrary         
-      taskRef:
-        name: build
-        bundle: index.docker.io/clodonil/microservice-api_tasks_build:latest
-      runAfter:
-        - source 
-
-    - name: security
-      retries: 3
-      workspaces:
-         - name: source
-           workspace: source
-         - name: sharedlibrary
-           workspace: sharedlibrary 
-      taskRef:
-        name: security
-        bundle: index.docker.io/clodonil/microservice-api_tasks_secutiry:latest
-      runAfter:
-        - source
-
-    - name: quality
-      retries: 3
-      params:
-         - name: runtime
-           value: $(params.runtime)
-         - name: appname
-           value: $(params.appname)
-      workspaces:
-         - name: source
-           workspace: source
-         - name: sharedlibrary
-           workspace: sharedlibrary         
-      taskRef:
-        name: quality
-        bundle: index.docker.io/clodonil/microservice-api_tasks_qa:latest
-      runAfter:
-        - source
-
-    - name: tests
-      retries: 3
-      params:
-        - name: app-image
-          value: $(tasks.build.results.image)
-      workspaces:
-         - name: source
-           workspace: source
-         - name: sharedlibrary
-           workspace: sharedlibrary         
-      taskRef:
-        name: tests
-        bundle: index.docker.io/clodonil/microservice-api_tasks_tests:latest
-      runAfter:
-        - build
-        - security
-        - quality
-
-
-    - name: deploy
-      retries: 3
-      params:
-         - name: appname
-           value: $(params.appname)
-         - name: appimage
-           value: $(tasks.build.results.image)
-      workspaces:
-         - name: source
-           workspace: source
-         - name: sharedlibrary
-           workspace: sharedlibrary         
-      taskRef:
-        name: deploy
-        bundle: index.docker.io/clodonil/microservice-api_tasks_deploy:latest
-      runAfter:
-        - tests
-        
-  finally:
-    - name: notificacao
-      params:
-         - name: webhook-secret
-           value: webhook-secret
-         - name: message
-           value: "A execução da pipeline **$(params.appname)** do template **$(context.pipeline.name)**, finalizou com **$(tasks.status)**."
-         - name: bot-name
-           value: "tekton"
-         - name: avatar-url
-           value: "https://cd.foundation/wp-content/uploads/sites/78/2020/04/tekton-icon-color-1.png"
-      taskRef:
-        name: send-to-webhook-discord
-        **bundle: index.docker.io/clodonil/microservice-api_tasks_finally:latest**
 ```
 
+Agora podemos subir a pipeline como bundle.
 
 ```bash
-tkn bundle push index.docker.io/clodonil/microservice-api_pipeline:v1 -f proj/pipeline/microservice-api.yaml
+tkn bundle push index.docker.io/clodonil/microservice-api_pipeline:v1 -f proj/pipeline/microservice-api-bundle.yaml
 ```
+
+Antes de executar a pipeline é necessário realizar as seguintes configurações no cluster:
+
+* Criar Workspaces
+
+```bash
+kubectl apply -f proj/pv-workspaces.yaml
+```
+
+* Desabilitando o Assistente de Afinidade:
+
+Edite o configmap
+```yaml
+kubectl edit configmap feature-flags -n tekton-pipelines
+```
+Procure disable-affinity-assistant. Altere seu valor para `true`.
+
+* Atualizar a workspace da sharedlibrary
+
+```bash
+kubectl apply -f proj/tasks/Source/taskrun-sharedlibrary-bundle.yaml
+```
+
+* Crie o `secret` com o token do SONAR
+
+```bash
+kubectl create secret generic sonar --from-literal=SONAR_TOKEN=$TOKEN
+```
+
+* Crie o `secret` para autenticação no registry
+
+Altere para os valores do seu acesso no registry.
+```bash
+kubectl create secret docker-registry myregistrykey \
+  --docker-server=$DOCKER_REGISTRY_SERVER \
+  --docker-username=$DOCKER_USER \
+  --docker-password=$DOCKER_PASSWORD \
+  --docker-email=$DOCKER_EMAIL
+
+kubectl patch serviceaccount default -p '{"secrets": [{"name": "myregistrykey"}]}'
+```
+
+Após finalizar a criação dos pré-requisitos, podemos executar a `PipelineRun` do arquivo [proj/pipeline/microservice-api-bundle-run.yaml](./proj/pipeline/microservice-api-bundle-run.yaml).
 
 ```yaml
 apiVersion: tekton.dev/v1alpha1
@@ -437,13 +365,21 @@ spec:
     - name: runtime
       value: 'python'
     - name: appname
-      value: 'helloworl'
+      value: 'helloworld'
+    - name: registry
+      value: clodonil
   pipelineRef:
-    name: api-backend
+    name: microservice-api
     bundle: index.docker.io/clodonil/microservice-api_pipeline:v1
 ```
 
-Uma proposta de gestão de pipeline seria o controle atráves de `gitflow`, conforme mostra a figura abaixo.
+Para executar o `PipelineRun`:
+
+```bash
+ kubectl apply -f proj/pipeline/microservice-api-bundle-run.yaml
+```
+
+Uma proposta de gestão de pipeline, seria o controle atráves de `gitflow`, conforme mostra a figura abaixo.
 
 ![template](img/image29.png)
 
