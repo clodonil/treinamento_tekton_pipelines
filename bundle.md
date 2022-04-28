@@ -337,6 +337,11 @@ kubectl create secret docker-registry myregistrykey \
 
 kubectl patch serviceaccount default -p '{"secrets": [{"name": "myregistrykey"}]}'
 ```
+* Permissão para o Tekton realizar o deploy
+
+```bash
+kubectl apply -f proj/tasks/Deploy/sa.yaml
+```
 
 Após finalizar a criação dos pré-requisitos, podemos executar a `PipelineRun` do arquivo [proj/pipeline/microservice-api-bundle-run.yaml](./proj/pipeline/microservice-api-bundle-run.yaml).
 
@@ -378,10 +383,14 @@ Para executar o `PipelineRun`:
 ```bash
  kubectl apply -f proj/pipeline/microservice-api-bundle-run.yaml
 ```
+Podemos acompanhar a execução da pipeline no dashboard do `Tekton`:
+
+![template](img/image30.png)
+
 
 Uma proposta de gestão de pipeline, seria o controle atráves de `gitflow`, conforme mostra a figura abaixo.
 
 ![template](img/image29.png)
 
-> Fica como exercício da criação de uma pipeline no `Tekton` para realizar a gestão dos templates e Tasks.
+> Fica como exercício da criação de uma pipeline no `Tekton` para realizar a gestão dos templates e Tasks, conforme o exemplo acima.
 
