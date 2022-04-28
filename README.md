@@ -12,7 +12,7 @@ Construa pipelines modernas, escalável e 100% cloud native com Tekton.
 * [4.1. Desenvolvendo as Tasks](tasks-dev.md)
 * [5. O que você precisa saber das Pipelines](pipeline.md)
 * [5.1. Desenvolvimento das pipelines](pipeline-dev.md)
-* [6. Versionando os templates com Bundles]() 
+* [6. Versionando os templates com Bundles](bundle.md) 
 * [7. Trigger]()
 * [8. Observability](observability.md)
 

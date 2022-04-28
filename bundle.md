@@ -337,6 +337,13 @@ kubectl create secret docker-registry myregistrykey \
 
 kubectl patch serviceaccount default -p '{"secrets": [{"name": "myregistrykey"}]}'
 ```
+
+* Criação do `secret` para notificação no discord
+
+```bash
+kubectl apply -f proj/tasks/Finally/secret.yaml
+```
+
 * Permissão para o Tekton realizar o deploy
 
 ```bash
