@@ -1,14 +1,14 @@
 
-Criando TasksVersionando os templates com Bundles
+Versionando os templates com Bundles
 ================
 ## Objetivo
 
 Ao final deste modulo você será capaz de:
-* Entenda o que é uma Task
-* Entenda como clonar um projeto git e compilação usando o Task
-* Entenda como funciona os Workspaces
-* Crie uma task de build 
-* Como executar uma Tasks
+* Entenda o que é bundle
+* Como versionar Tasks e Pipelines
+* Executando Bundle 
+* Criando pipelines com Task Bundle 
+* Versionando Pipelines
 
 ## Conceito
 
