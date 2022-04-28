@@ -228,7 +228,7 @@ Dessa forma ao atualizarmos uma `Tasks` todas as execuções de pipeline são at
 
 O sintaxe do nome que estamos utilizando é:
 
-* <template>_<tasks>:tag
+* <nome_do_template>_<nome_da_tasks>:tag
 
 Exemplo:
 * micrservice-api_source:v1
