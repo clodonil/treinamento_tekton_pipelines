@@ -80,8 +80,17 @@ spec:
         date
         echo "Finalizado"
 ```
+Agora que temos as `tasks` criadas, podemos subir para o registry utilizando o `tkn`. Para isso acontecer é necessário estar logado no registry. Nesse exemplo, estamos utilizando o dockerhub.
 
-Agora que temos as `tasks` criadas, podemos subir para o registry utilizando o `tkn`.
+```bash
+docker login
+Authenticating with existing credentials...
+WARNING! Your password will be stored unencrypted in /home/clodo/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+```
 
 > Não é necessário aplicar as `Tasks` no kubernetes para enviar para os registry.
 
@@ -91,7 +100,11 @@ A sintaxe do `tkn` para o bundle é:
 
 O `tkn bundle` já transforma o arquivo `yaml` no formato OCI e envia para o registry.
 
-Agora vamos subir as tasks para os registry da `docker.io`. Vamos subir as versões 1 e 2.
+Agora vamos subir as tasks para os registry da `docker.io`.
+
+> Altere o nome do repositório no registry. Nesse exemplo o nome do repositório é **clodonil** (index.docker.io/**clodonil**/task-exemplo1:v1)
+
+Vamos subir as versões 1 e 2.
 
 
 ```bash
