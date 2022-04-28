@@ -1,0 +1,17 @@
+apiVersion: tekton.dev/v1alpha1
+kind: TaskRun
+metadata:
+  name: taskrun-sharedlibrary
+spec:
+  workspaces:
+    - name: output
+      persistentVolumeClaim:
+         claimName: sharedlibrary
+  params:
+    - name: revision
+      value: main
+    - name: url
+      value: 'https://github.com/clodonil/tekton-sharedlibrary'
+  taskRef:
+     name: source
+     bundle: index.docker.io/clodonil/microservice-api_tasks_source:latest

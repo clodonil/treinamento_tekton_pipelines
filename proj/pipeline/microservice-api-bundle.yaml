@@ -1,0 +1,133 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: microservice-api
+spec:
+  params:
+    - name: revision
+    - name: url
+    - name: runtime
+    - name: appname
+    - name: registry
+  workspaces:
+    - name: source
+    - name: sharedlibrary  
+  tasks:
+    - name: source
+      retries: 3
+      params:
+         - name: revision
+           value: $(params.revision)
+         - name: url
+           value: $(params.url)
+      workspaces:
+         - name: output
+           workspace: source       
+      taskRef:
+        name: source
+        bundle: index.docker.io/clodonil/microservice-api_tasks_source:latest
+
+    - name: build
+      retries: 3
+      params:
+         - name: runtime
+           value: $(params.runtime)
+         - name: appname
+           value: $(params.appname)
+         - name: tagimage
+           value: $(tasks.source.results.commit)
+         - name: registry
+           value: $(params.registry)
+      workspaces:
+         - name: source
+           workspace: source
+         - name: sharedlibrary
+           workspace: sharedlibrary         
+      taskRef:
+        name: build
+        bundle: index.docker.io/clodonil/microservice-api_tasks_build:latest
+      runAfter:
+        - source 
+
+    - name: security
+      retries: 3
+      workspaces:
+         - name: source
+           workspace: source
+         - name: sharedlibrary
+           workspace: sharedlibrary 
+      taskRef:
+        name: security
+        bundle: index.docker.io/clodonil/microservice-api_tasks_security:latest
+      runAfter:
+        - source
+
+    - name: quality
+      retries: 3
+      params:
+         - name: runtime
+           value: $(params.runtime)
+         - name: appname
+           value: $(params.appname)
+      workspaces:
+         - name: source
+           workspace: source
+         - name: sharedlibrary
+           workspace: sharedlibrary         
+      taskRef:
+        name: quality
+        bundle: index.docker.io/clodonil/microservice-api_tasks_qa:latest
+      runAfter:
+        - source
+
+    - name: tests
+      retries: 3
+      params:
+        - name: app-image
+          value: $(tasks.build.results.image)
+      workspaces:
+         - name: source
+           workspace: source
+         - name: sharedlibrary
+           workspace: sharedlibrary         
+      taskRef:
+        name: tests
+        bundle: index.docker.io/clodonil/microservice-api_tasks_tests:latest
+      runAfter:
+        - build
+        - security
+        - quality
+
+
+    - name: deploy
+      retries: 3
+      params:
+         - name: appname
+           value: $(params.appname)
+         - name: appimage
+           value: $(tasks.build.results.image)
+      workspaces:
+         - name: source
+           workspace: source
+         - name: sharedlibrary
+           workspace: sharedlibrary         
+      taskRef:
+        name: deploy
+        bundle: index.docker.io/clodonil/microservice-api_tasks_deploy:latest
+      runAfter:
+        - tests
+        
+  finally:
+    - name: notificacao
+      params:
+         - name: webhook-secret
+           value: webhook-secret
+         - name: message
+           value: "A execução da pipeline **$(params.appname)** do template **$(context.pipeline.name)**, finalizou com **$(tasks.status)**."
+         - name: bot-name
+           value: "tekton"
+         - name: avatar-url
+           value: "https://cd.foundation/wp-content/uploads/sites/78/2020/04/tekton-icon-color-1.png"
+      taskRef:
+        name: send-to-webhook-discord
+        bundle: index.docker.io/clodonil/microservice-api_tasks_finally:latest

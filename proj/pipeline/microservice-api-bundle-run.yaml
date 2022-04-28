@@ -1,0 +1,30 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  name: pipelinerun-python
+spec:
+  workspaces:
+    - name: sharedlibrary
+      persistentVolumeClaim:
+         claimName: sharedlibrary
+    - name: source
+      persistentVolumeClaim:
+         claimName: app-source
+  params:
+    - name: IMAGE
+      value: "clodonil/apphello:1"
+    - name: runtime
+      value: python
+    - name: revision
+      value: master
+    - name: url
+      value: 'https://github.com/clodonil/apphello.git'
+    - name: runtime
+      value: 'python'
+    - name: appname
+      value: 'helloworld'
+    - name: registry
+      value: clodonil
+  pipelineRef:
+    name: microservice-api
+    bundle: index.docker.io/clodonil/microservice-api_pipeline:v1
