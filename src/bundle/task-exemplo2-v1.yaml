@@ -8,7 +8,7 @@ spec:
       image: ubuntu      
       script: |
         #!/usr/bin/env bash
-        echo "Execunto Step1 - Versao 1"
+        echo "Executando Step1 - Versao 1"
         date
         echo "Finalizado"
 

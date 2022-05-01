@@ -335,7 +335,16 @@ kubectl create secret docker-registry myregistrykey \
   --docker-password=$DOCKER_PASSWORD \
   --docker-email=$DOCKER_EMAIL
 
+```
+Adicionando o `secret` na service account `default` para fazer push de imagem durante o build para o registry.
+
+```bash
 kubectl patch serviceaccount default -p '{"secrets": [{"name": "myregistrykey"}]}'
+```
+Adicionando o `secret` na service account `default` para fazer pull de imagem docker com autenticação.
+
+```bash
+ kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "myregistrykey"}]}'
 ```
 
 * Criação do `secret` para notificação no discord
