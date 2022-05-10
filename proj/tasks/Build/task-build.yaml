@@ -55,4 +55,4 @@ spec:
     - name: containers-storage
       emptyDir: {}
     - name: artefato-build
-      emptyDir: {}                
+      emptyDir: {}    

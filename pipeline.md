@@ -270,7 +270,7 @@ spec:
 Para executar esse exemplo:
 
 ```bash
-kubectl apply -f src/task-exemplo3.yaml
+kubectl apply -f src/task-exemplo4.yaml
 kubectl apply -f src/pipeline/pipeline-exemplo4.yaml
 ```
 E para executar a pipeline, podemos utilizar o comando `tkn`:
@@ -324,7 +324,7 @@ spec:
 Para executar esse exemplo:
 
 ```bash
-kubectl apply -f src/task-exemplo9.yaml
+kubectl apply -f src/task-exemplo5.yaml
 kubectl apply -f src/pipeline/pipeline-exemplo5.yaml
 ```
 
@@ -379,7 +379,7 @@ spec:
 Para executar esse exemplo:
 
 ```bash
-kubectl apply -f src/task-exemplo3.yaml
+kubectl apply -f src/task-exemplo6.yaml
 kubectl apply -f src/pipeline/pipeline-exemplo6.yaml
 ```
 E para executar a pipeline, podemos utilizar o comando `tkn`:
@@ -444,7 +444,7 @@ spec:
 Para executar esse exemplo:
 
 ```bash
-kubectl apply -f src/task-exemplo3.yaml
+kubectl apply -f src/task-exemplo8.yaml
 kubectl apply -f src/pipeline/pipeline-exemplo8.yaml
 ```
 E para executar a pipeline, podemos utilizar o comando `tkn`:
@@ -500,7 +500,7 @@ spec:
 Para executar esse exemplo:
 
 ```bash
-kubectl apply -f src/task-exemplo3.yaml
+kubectl apply -f src/task-exemplo7.yaml
 kubectl apply -f src/task-exemplo10.yaml
 kubectl apply -f src/pipeline/pipeline-exemplo7.yaml
 ```
