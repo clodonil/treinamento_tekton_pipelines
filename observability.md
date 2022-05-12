@@ -125,7 +125,7 @@ kubectl -n observability apply -f proj/Metrics/Grafana/
 
 O prometheus pode ser acessado pela URL: `http://localhost:30003/`
 
-![template](img/image31.png)
+![template](img/image33.png)
 
 ## Executando os Logs
 O Tekton armazena os logs de execução das TaskRuns e PipelineRuns dentro do `Pod` que contém os contêineres que executam o Steps seu TaskRun ou PipelineRun. 
