@@ -23,6 +23,13 @@ kubectl apply -f proj/tasks/Tests/task-tests.yaml
 kubectl apply -f proj/tasks/Deploy/task-deploy.yaml
 kubectl apply -f proj/tasks/Deploy/sa.yaml
 kubectl apply -f proj/pv-workspaces.yaml
+kubectl apply -f proj/tasks/Finally/secret.yaml
+kubectl apply -f proj/tasks/Finally/task-finally.yaml
+kubectl apply -f proj/pipeline/microservice-api.yaml
+```
+
+```
+kubectl apply -f proj/tasks/Source/taskrun-sharedlibrary.yaml
 ```
 
 ```bash

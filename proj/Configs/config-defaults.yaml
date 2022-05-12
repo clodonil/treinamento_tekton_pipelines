@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-defaults
+  namespace: tekton-pipelines
+  labels:
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/part-of: tekton-pipelines
+data:
+    default-timeout-minutes: "120"
+    default-service-account: "default"
+    default-managed-by-label-value: "tekton-pipelines"
+    default-affinity-assistant-pod-template: |
+      imagePullSecrets: 
+        - name: myregistrykey
+
+#    default-pod-template: |
+#      securityContext:
+#        runAsNonRoot: false
+#        runAsUser: 1001
+      
+#    default-task-run-workspace-binding: |
+#      name: arquivos
+#      persistentVolumeClaim:
+#        claimName: mypvc

@@ -1,4 +1,3 @@
-
 Versionando os templates com Bundles
 ================
 ## Objetivo
