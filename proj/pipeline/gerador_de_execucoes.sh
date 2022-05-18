@@ -1,6 +1,5 @@
 #!/bin/bash
-numero_de_execucoes=2
-
+numero_de_execucoes=1
 microservices=('app1' 'app2' 'app3' 'app4' 'app5') 
 
 

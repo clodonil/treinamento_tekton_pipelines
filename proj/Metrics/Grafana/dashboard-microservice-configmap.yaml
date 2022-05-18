@@ -1,757 +1,1035 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: grafana-dashboard-microservice
+  name: grafana-dashboard-microservice-api
   labels:
     grafana_dashboard: "true"
 data:
   microservice-api.json: |-
      {
-     "annotations": {
-       "list": [
-         {
-           "builtIn": 1,
-           "datasource": {
-             "type": "grafana",
-             "uid": "-- Grafana --"
-           },
-           "enable": true,
-           "hide": true,
-           "iconColor": "rgba(0, 211, 255, 1)",
-           "name": "Annotations & Alerts",
-           "target": {
-             "limit": 100,
-             "matchAny": false,
-             "tags": [],
-             "type": "dashboard"
-           },
-           "type": "dashboard"
-         }
-       ]
-     },
-     "editable": true,
-     "fiscalYearStartMonth": 0,
-     "graphTooltip": 0,
-     "id": 1,
-     "links": [],
-     "liveNow": false,
-     "panels": [
-       {
-         "datasource": {
-           "type": "prometheus",
-           "uid": "P1809F7CD0C75ACF3"
-         },
-         "fieldConfig": {
-           "defaults": {
-             "color": {
-               "mode": "palette-classic"
+       "annotations": {
+         "list": [
+           {
+             "builtIn": 1,
+             "datasource": {
+               "type": "grafana",
+               "uid": "-- Grafana --"
              },
-             "custom": {
-               "hideFrom": {
-                 "legend": false,
-                 "tooltip": false,
-                 "viz": false
+             "enable": true,
+             "hide": true,
+             "iconColor": "rgba(0, 211, 255, 1)",
+             "name": "Annotations & Alerts",
+             "target": {
+               "limit": 100,
+               "matchAny": false,
+               "tags": [],
+               "type": "dashboard"
+             },
+             "type": "dashboard"
+           }
+         ]
+       },
+       "editable": true,
+       "fiscalYearStartMonth": 0,
+       "graphTooltip": 0,
+       "id": 5,
+       "links": [],
+       "liveNow": false,
+       "panels": [
+         {
+           "datasource": {
+             "type": "datasource",
+             "uid": "grafana"
+           },
+           "gridPos": {
+             "h": 5,
+             "w": 24,
+             "x": 0,
+             "y": 0
+           },
+           "id": 19,
+           "options": {
+             "content": "<center><h2>Métricas MicroService-API</h2> \n\n<img width=\"100\" height=\"100\" src=\"https://cd.foundation/wp-content/uploads/sites/78/2020/04/tekton-icon-color-1-300x300.png\"></img>\n</center>",
+             "mode": "html"
+           },
+           "pluginVersion": "8.5.2",
+           "transparent": true,
+           "type": "text"
+         },
+         {
+           "datasource": {
+             "type": "prometheus",
+             "uid": "P1809F7CD0C75ACF3"
+           },
+           "fieldConfig": {
+             "defaults": {
+               "color": {
+                 "mode": "palette-classic"
+               },
+               "custom": {
+                 "hideFrom": {
+                   "legend": false,
+                   "tooltip": false,
+                   "viz": false
+                 }
+               },
+               "mappings": []
+             },
+             "overrides": []
+           },
+           "gridPos": {
+             "h": 5,
+             "w": 6,
+             "x": 0,
+             "y": 5
+           },
+           "id": 4,
+           "options": {
+             "displayLabels": [],
+             "legend": {
+               "displayMode": "hidden",
+               "placement": "bottom",
+               "values": []
+             },
+             "pieType": "pie",
+             "reduceOptions": {
+               "calcs": [
+                 "lastNotNull"
+               ],
+               "fields": "",
+               "values": false
+             },
+             "tooltip": {
+               "mode": "single",
+               "sort": "none"
+             }
+           },
+           "pluginVersion": "8.5.2",
+           "targets": [
+             {
+               "datasource": {
+                 "type": "prometheus",
+                 "uid": "P1809F7CD0C75ACF3"
+               },
+               "editorMode": "code",
+               "expr": "tekton_pipelines_controller_pipelinerun_count{status='success'}",
+               "legendFormat": "{{status}}",
+               "range": true,
+               "refId": "A"
+             },
+             {
+               "datasource": {
+                 "type": "prometheus",
+                 "uid": "P1809F7CD0C75ACF3"
+               },
+               "expr": "tekton_pipelines_controller_pipelinerun_count{status='failed'}",
+               "hide": false,
+               "refId": "B"
+             }
+           ],
+           "title": "Sucesso X Falha",
+           "type": "piechart"
+         },
+         {
+           "datasource": {
+             "type": "prometheus",
+             "uid": "P1809F7CD0C75ACF3"
+           },
+           "fieldConfig": {
+             "defaults": {
+               "color": {
+                 "mode": "thresholds"
+               },
+               "mappings": [],
+               "thresholds": {
+                 "mode": "absolute",
+                 "steps": [
+                   {
+                     "color": "green",
+                     "value": null
+                   },
+                   {
+                     "color": "red",
+                     "value": 80
+                   }
+                 ]
                }
              },
-             "mappings": []
+             "overrides": []
            },
-           "overrides": []
-         },
-         "gridPos": {
-           "h": 6,
-           "w": 8,
-           "x": 0,
-           "y": 0
-         },
-         "id": 4,
-         "options": {
-           "displayLabels": [
-             "value"
+           "gridPos": {
+             "h": 5,
+             "w": 8,
+             "x": 6,
+             "y": 5
+           },
+           "id": 2,
+           "options": {
+             "colorMode": "value",
+             "graphMode": "none",
+             "justifyMode": "auto",
+             "orientation": "auto",
+             "reduceOptions": {
+               "calcs": [
+                 "lastNotNull"
+               ],
+               "fields": "",
+               "values": false
+             },
+             "textMode": "auto"
+           },
+           "pluginVersion": "8.5.2",
+           "targets": [
+             {
+               "datasource": {
+                 "type": "prometheus",
+                 "uid": "P1809F7CD0C75ACF3"
+               },
+               "expr": "tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds_count{pipeline='microservice-api',status='success',task='build'}",
+               "refId": "A"
+             }
            ],
-           "legend": {
-             "displayMode": "hidden",
-             "placement": "bottom",
-             "values": []
-           },
-           "pieType": "pie",
-           "reduceOptions": {
-             "calcs": [
-               "lastNotNull"
-             ],
-             "fields": "",
-             "values": false
-           },
-           "tooltip": {
-             "mode": "single",
-             "sort": "none"
-           }
+           "title": "Número de Build",
+           "type": "stat"
          },
-         "pluginVersion": "8.5.2",
-         "targets": [
-           {
-             "datasource": {
-               "type": "prometheus",
-               "uid": "P1809F7CD0C75ACF3"
-             },
-             "expr": "tekton_pipelines_controller_pipelinerun_count{status='success'}",
-             "refId": "A"
+         {
+           "datasource": {
+             "type": "prometheus",
+             "uid": "P1809F7CD0C75ACF3"
            },
-           {
-             "datasource": {
-               "type": "prometheus",
-               "uid": "P1809F7CD0C75ACF3"
+           "fieldConfig": {
+             "defaults": {
+               "color": {
+                 "mode": "continuous-GrYlRd"
+               },
+               "mappings": [],
+               "thresholds": {
+                 "mode": "absolute",
+                 "steps": [
+                   {
+                     "color": "green",
+                     "value": null
+                   },
+                   {
+                     "color": "red",
+                     "value": 80
+                   }
+                 ]
+               }
              },
-             "expr": "tekton_pipelines_controller_pipelinerun_count{status='failed'}",
-             "hide": false,
-             "refId": "B"
-           }
-         ],
-         "title": "Sucesso X Falha",
-         "type": "piechart"
-       },
-       {
-         "datasource": {
-           "type": "prometheus",
-           "uid": "P1809F7CD0C75ACF3"
-         },
-         "fieldConfig": {
-           "defaults": {
-             "color": {
-               "mode": "thresholds"
+             "overrides": []
+           },
+           "gridPos": {
+             "h": 5,
+             "w": 5,
+             "x": 14,
+             "y": 5
+           },
+           "id": 16,
+           "options": {
+             "displayMode": "lcd",
+             "minVizHeight": 10,
+             "minVizWidth": 0,
+             "orientation": "horizontal",
+             "reduceOptions": {
+               "calcs": [
+                 "lastNotNull"
+               ],
+               "fields": "",
+               "values": false
              },
-             "mappings": [],
-             "thresholds": {
-               "mode": "absolute",
-               "steps": [
-                 {
-                   "color": "green",
-                   "value": null
-                 },
-                 {
-                   "color": "red",
-                   "value": 80
-                 }
-               ]
+             "showUnfilled": true,
+             "text": {}
+           },
+           "pluginVersion": "8.5.2",
+           "targets": [
+             {
+               "datasource": {
+                 "type": "prometheus",
+                 "uid": "P1809F7CD0C75ACF3"
+               },
+               "editorMode": "code",
+               "exemplar": false,
+               "expr": "tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds_count{status='failed', pipeline='microservice-api'} ",
+               "format": "time_series",
+               "legendFormat": "{{task}}",
+               "range": true,
+               "refId": "A"
              }
+           ],
+           "title": "Task que mais falham",
+           "type": "bargauge"
+         },
+         {
+           "datasource": {
+             "type": "prometheus",
+             "uid": "P1809F7CD0C75ACF3"
            },
-           "overrides": []
-         },
-         "gridPos": {
-           "h": 6,
-           "w": 8,
-           "x": 8,
-           "y": 0
-         },
-         "id": 2,
-         "options": {
-           "colorMode": "value",
-           "graphMode": "none",
-           "justifyMode": "auto",
-           "orientation": "auto",
-           "reduceOptions": {
-             "calcs": [
-               "lastNotNull"
-             ],
-             "fields": "",
-             "values": false
+           "fieldConfig": {
+             "defaults": {
+               "color": {
+                 "mode": "continuous-GrYlRd"
+               },
+               "mappings": [],
+               "thresholds": {
+                 "mode": "absolute",
+                 "steps": [
+                   {
+                     "color": "green",
+                     "value": null
+                   },
+                   {
+                     "color": "#EAB839",
+                     "value": 20
+                   },
+                   {
+                     "color": "red",
+                     "value": 80
+                   }
+                 ]
+               },
+               "unit": "short"
+             },
+             "overrides": []
            },
-           "textMode": "auto"
-         },
-         "pluginVersion": "8.5.2",
-         "targets": [
-           {
-             "datasource": {
-               "type": "prometheus",
-               "uid": "P1809F7CD0C75ACF3"
-             },
-             "expr": "tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds_count{pipeline='microservice-api',status='success',task='build'}",
-             "refId": "A"
-           }
-         ],
-         "title": "Número de Build",
-         "type": "stat"
-       },
-       {
-         "datasource": {
-           "type": "prometheus",
-           "uid": "P1809F7CD0C75ACF3"
-         },
-         "fieldConfig": {
-           "defaults": {
-             "color": {
-               "mode": "thresholds"
-             },
-             "mappings": [],
-             "thresholds": {
-               "mode": "absolute",
-               "steps": [
-                 {
-                   "color": "green",
-                   "value": null
-                 },
-                 {
-                   "color": "red",
-                   "value": 80
-                 }
-               ]
-             },
-             "unit": "s"
+           "gridPos": {
+             "h": 5,
+             "w": 5,
+             "x": 19,
+             "y": 5
            },
-           "overrides": []
-         },
-         "gridPos": {
-           "h": 6,
-           "w": 8,
-           "x": 16,
-           "y": 0
-         },
-         "id": 5,
-         "options": {
-           "colorMode": "none",
-           "graphMode": "none",
-           "justifyMode": "auto",
-           "orientation": "auto",
-           "reduceOptions": {
-             "calcs": [
-               "lastNotNull"
-             ],
-             "fields": "",
-             "values": false
+           "id": 17,
+           "options": {
+             "orientation": "auto",
+             "reduceOptions": {
+               "calcs": [
+                 "lastNotNull"
+               ],
+               "fields": "/^sum\\(count by \\(pod\\) \\(tekton_pipelines_controller_taskruns_pod_latency\\{pod=~\"\\.\\*retry\\.\\*\"\\}\\)\\)$/",
+               "values": false
+             },
+             "showThresholdLabels": false,
+             "showThresholdMarkers": true
            },
-           "textMode": "auto"
-         },
-         "pluginVersion": "8.5.2",
-         "targets": [
-           {
-             "datasource": {
-               "type": "prometheus",
-               "uid": "P1809F7CD0C75ACF3"
-             },
-             "expr": "tekton_pipelines_controller_pipelinerun_duration_seconds_sum{pipeline='microservice-api',status='success'} / tekton_pipelines_controller_pipelinerun_duration_seconds_count{pipeline='microservice-api',status='success'}",
-             "refId": "A"
-           }
-         ],
-         "title": "LeadTime",
-         "type": "stat"
-       },
-       {
-         "datasource": {
-           "type": "prometheus",
-           "uid": "P1809F7CD0C75ACF3"
-         },
-         "fieldConfig": {
-           "defaults": {
-             "color": {
-               "mode": "thresholds"
-             },
-             "mappings": [],
-             "thresholds": {
-               "mode": "absolute",
-               "steps": [
-                 {
-                   "color": "green",
-                   "value": null
-                 },
-                 {
-                   "color": "red",
-                   "value": 80
-                 }
-               ]
-             },
-             "unit": "s"
-           },
-           "overrides": []
-         },
-         "gridPos": {
-           "h": 6,
-           "w": 4,
-           "x": 0,
-           "y": 6
-         },
-         "id": 6,
-         "options": {
-           "colorMode": "none",
-           "graphMode": "none",
-           "justifyMode": "auto",
-           "orientation": "auto",
-           "reduceOptions": {
-             "calcs": [
-               "lastNotNull"
-             ],
-             "fields": "",
-             "values": false
-           },
-           "textMode": "auto"
-         },
-         "pluginVersion": "8.5.2",
-         "targets": [
-           {
-             "datasource": {
-               "type": "prometheus",
-               "uid": "P1809F7CD0C75ACF3"
-             },
-             "expr": "tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds_sum{pipeline='microservice-api',status='success',task='source'}/tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds_count{pipeline='microservice-api',status='success',task='source'}",
-             "refId": "A"
-           }
-         ],
-         "title": "Source",
-         "type": "stat"
-       },
-       {
-         "datasource": {
-           "type": "prometheus",
-           "uid": "P1809F7CD0C75ACF3"
-         },
-         "fieldConfig": {
-           "defaults": {
-             "color": {
-               "mode": "thresholds"
-             },
-             "mappings": [],
-             "thresholds": {
-               "mode": "absolute",
-               "steps": [
-                 {
-                   "color": "green",
-                   "value": null
-                 },
-                 {
-                   "color": "red",
-                   "value": 80
-                 }
-               ]
-             },
-             "unit": "s"
-           },
-           "overrides": []
-         },
-         "gridPos": {
-           "h": 6,
-           "w": 4,
-           "x": 4,
-           "y": 6
-         },
-         "id": 7,
-         "options": {
-           "colorMode": "none",
-           "graphMode": "none",
-           "justifyMode": "auto",
-           "orientation": "auto",
-           "reduceOptions": {
-             "calcs": [
-               "lastNotNull"
-             ],
-             "fields": "",
-             "values": false
-           },
-           "textMode": "auto"
-         },
-         "pluginVersion": "8.5.2",
-         "targets": [
-           {
-             "datasource": {
-               "type": "prometheus",
-               "uid": "P1809F7CD0C75ACF3"
-             },
-             "expr": "tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds_sum{pipeline='microservice-api',status='success',task='build'}/tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds_count{pipeline='microservice-api',status='success',task='build'}",
-             "refId": "A"
-           }
-         ],
-         "title": "Build",
-         "type": "stat"
-       },
-       {
-         "datasource": {
-           "type": "prometheus",
-           "uid": "P1809F7CD0C75ACF3"
-         },
-         "fieldConfig": {
-           "defaults": {
-             "color": {
-               "mode": "thresholds"
-             },
-             "mappings": [],
-             "thresholds": {
-               "mode": "absolute",
-               "steps": [
-                 {
-                   "color": "green",
-                   "value": null
-                 },
-                 {
-                   "color": "red",
-                   "value": 80
-                 }
-               ]
-             },
-             "unit": "s"
-           },
-           "overrides": []
-         },
-         "gridPos": {
-           "h": 6,
-           "w": 4,
-           "x": 8,
-           "y": 6
-         },
-         "id": 8,
-         "options": {
-           "colorMode": "none",
-           "graphMode": "none",
-           "justifyMode": "auto",
-           "orientation": "auto",
-           "reduceOptions": {
-             "calcs": [
-               "lastNotNull"
-             ],
-             "fields": "",
-             "values": false
-           },
-           "textMode": "auto"
-         },
-         "pluginVersion": "8.5.2",
-         "targets": [
-           {
-             "datasource": {
-               "type": "prometheus",
-               "uid": "P1809F7CD0C75ACF3"
-             },
-             "expr": "tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds_sum{pipeline='microservice-api',status='success',task='security'}/tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds_count{pipeline='microservice-api',status='success',task='security'}",
-             "refId": "A"
-           }
-         ],
-         "title": "Security",
-         "type": "stat"
-       },
-       {
-         "datasource": {
-           "type": "prometheus",
-           "uid": "P1809F7CD0C75ACF3"
-         },
-         "fieldConfig": {
-           "defaults": {
-             "color": {
-               "mode": "thresholds"
-             },
-             "mappings": [],
-             "thresholds": {
-               "mode": "absolute",
-               "steps": [
-                 {
-                   "color": "green",
-                   "value": null
-                 },
-                 {
-                   "color": "red",
-                   "value": 80
-                 }
-               ]
-             },
-             "unit": "s"
-           },
-           "overrides": []
-         },
-         "gridPos": {
-           "h": 6,
-           "w": 4,
-           "x": 12,
-           "y": 6
-         },
-         "id": 9,
-         "options": {
-           "colorMode": "none",
-           "graphMode": "none",
-           "justifyMode": "auto",
-           "orientation": "auto",
-           "reduceOptions": {
-             "calcs": [
-               "lastNotNull"
-             ],
-             "fields": "",
-             "values": false
-           },
-           "textMode": "auto"
-         },
-         "pluginVersion": "8.5.2",
-         "targets": [
-           {
-             "datasource": {
-               "type": "prometheus",
-               "uid": "P1809F7CD0C75ACF3"
-             },
-             "expr": "tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds_sum{pipeline='microservice-api',status='success',task='quality'}/tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds_count{pipeline='microservice-api',status='success',task='quality'}",
-             "refId": "A"
-           }
-         ],
-         "title": "Quality",
-         "type": "stat"
-       },
-       {
-         "datasource": {
-           "type": "prometheus",
-           "uid": "P1809F7CD0C75ACF3"
-         },
-         "fieldConfig": {
-           "defaults": {
-             "color": {
-               "mode": "thresholds"
-             },
-             "mappings": [],
-             "thresholds": {
-               "mode": "absolute",
-               "steps": [
-                 {
-                   "color": "green",
-                   "value": null
-                 },
-                 {
-                   "color": "red",
-                   "value": 80
-                 }
-               ]
-             },
-             "unit": "s"
-           },
-           "overrides": []
-         },
-         "gridPos": {
-           "h": 6,
-           "w": 4,
-           "x": 16,
-           "y": 6
-         },
-         "id": 10,
-         "options": {
-           "colorMode": "none",
-           "graphMode": "none",
-           "justifyMode": "auto",
-           "orientation": "auto",
-           "reduceOptions": {
-             "calcs": [
-               "lastNotNull"
-             ],
-             "fields": "",
-             "values": false
-           },
-           "textMode": "auto"
-         },
-         "pluginVersion": "8.5.2",
-         "targets": [
-           {
-             "datasource": {
-               "type": "prometheus",
-               "uid": "P1809F7CD0C75ACF3"
-             },
-             "expr": "tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds_sum{pipeline='microservice-api',status='success',task='tests'}/tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds_count{pipeline='microservice-api',status='success',task='tests'}",
-             "refId": "A"
-           }
-         ],
-         "title": "Tests",
-         "type": "stat"
-       },
-       {
-         "datasource": {
-           "type": "prometheus",
-           "uid": "P1809F7CD0C75ACF3"
-         },
-         "fieldConfig": {
-           "defaults": {
-             "color": {
-               "mode": "thresholds"
-             },
-             "mappings": [],
-             "thresholds": {
-               "mode": "absolute",
-               "steps": [
-                 {
-                   "color": "green",
-                   "value": null
-                 },
-                 {
-                   "color": "red",
-                   "value": 80
-                 }
-               ]
-             },
-             "unit": "s"
-           },
-           "overrides": []
-         },
-         "gridPos": {
-           "h": 6,
-           "w": 4,
-           "x": 20,
-           "y": 6
-         },
-         "id": 11,
-         "options": {
-           "colorMode": "none",
-           "graphMode": "none",
-           "justifyMode": "auto",
-           "orientation": "auto",
-           "reduceOptions": {
-             "calcs": [
-               "lastNotNull"
-             ],
-             "fields": "",
-             "values": false
-           },
-           "textMode": "auto"
-         },
-         "pluginVersion": "8.5.2",
-         "targets": [
-           {
-             "datasource": {
-               "type": "prometheus",
-               "uid": "P1809F7CD0C75ACF3"
-             },
-             "expr": "tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds_sum{pipeline='microservice-api',status='success',task='deploy'}/tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds_count{pipeline='microservice-api',status='success',task='deploy'}",
-             "refId": "A"
-           }
-         ],
-         "title": "Deploy",
-         "type": "stat"
-       },
-       {
-         "datasource": {
-           "type": "prometheus",
-           "uid": "P1809F7CD0C75ACF3"
-         },
-         "fieldConfig": {
-           "defaults": {
-             "color": {
-               "mode": "thresholds"
-             },
-             "mappings": [],
-             "thresholds": {
-               "mode": "absolute",
-               "steps": [
-                 {
-                   "color": "green",
-                   "value": null
-                 },
-                 {
-                   "color": "red",
-                   "value": 80
-                 }
-               ]
+           "pluginVersion": "8.5.2",
+           "targets": [
+             {
+               "datasource": {
+                 "type": "prometheus",
+                 "uid": "P1809F7CD0C75ACF3"
+               },
+               "expr": "sum(count by (pod) (tekton_pipelines_controller_taskruns_pod_latency{pod=~\".*retry.*\"}))",
+               "refId": "A"
              }
+           ],
+           "title": "Número de Retry de Task",
+           "type": "gauge"
+         },
+         {
+           "datasource": {
+             "type": "prometheus",
+             "uid": "P1809F7CD0C75ACF3"
            },
-           "overrides": []
-         },
-         "gridPos": {
-           "h": 6,
-           "w": 4,
-           "x": 0,
-           "y": 12
-         },
-         "id": 3,
-         "options": {
-           "colorMode": "value",
-           "graphMode": "area",
-           "justifyMode": "auto",
-           "orientation": "auto",
-           "reduceOptions": {
-             "calcs": [
-               "lastNotNull"
-             ],
-             "fields": "",
-             "values": false
+           "fieldConfig": {
+             "defaults": {
+               "color": {
+                 "mode": "thresholds"
+               },
+               "mappings": [],
+               "thresholds": {
+                 "mode": "absolute",
+                 "steps": [
+                   {
+                     "color": "green",
+                     "value": null
+                   },
+                   {
+                     "color": "orange",
+                     "value": 1080
+                   },
+                   {
+                     "color": "red",
+                     "value": 1200
+                   }
+                 ]
+               },
+               "unit": "s"
+             },
+             "overrides": []
            },
-           "textMode": "auto"
-         },
-         "pluginVersion": "8.5.2",
-         "targets": [
-           {
-             "datasource": {
-               "type": "prometheus",
-               "uid": "P1809F7CD0C75ACF3"
+           "gridPos": {
+             "h": 3,
+             "w": 24,
+             "x": 0,
+             "y": 10
+           },
+           "id": 5,
+           "options": {
+             "colorMode": "value",
+             "graphMode": "none",
+             "justifyMode": "auto",
+             "orientation": "auto",
+             "reduceOptions": {
+               "calcs": [
+                 "lastNotNull"
+               ],
+               "fields": "",
+               "values": false
              },
-             "expr": "tekton_pipelines_controller_running_pipelineruns_count",
-             "refId": "A"
-           }
-         ],
-         "title": "Taem Execução",
-         "type": "stat"
-       },
-       {
-         "datasource": {
-           "type": "prometheus",
-           "uid": "P1809F7CD0C75ACF3"
-         },
-         "fieldConfig": {
-           "defaults": {
-             "color": {
-               "mode": "thresholds"
-             },
-             "mappings": [],
-             "thresholds": {
-               "mode": "absolute",
-               "steps": [
-                 {
-                   "color": "green",
-                   "value": null
-                 },
-                 {
-                   "color": "red",
-                   "value": 80
-                 }
-               ]
+             "textMode": "auto"
+           },
+           "pluginVersion": "8.5.2",
+           "targets": [
+             {
+               "datasource": {
+                 "type": "prometheus",
+                 "uid": "P1809F7CD0C75ACF3"
+               },
+               "expr": "tekton_pipelines_controller_pipelinerun_duration_seconds_sum{pipeline='microservice-api',status='success'} / tekton_pipelines_controller_pipelinerun_duration_seconds_count{pipeline='microservice-api',status='success'}",
+               "refId": "A"
              }
+           ],
+           "title": "LeadTime",
+           "type": "stat"
+         },
+         {
+           "datasource": {
+             "type": "prometheus",
+             "uid": "P1809F7CD0C75ACF3"
            },
-           "overrides": []
-         },
-         "gridPos": {
-           "h": 6,
-           "w": 4,
-           "x": 4,
-           "y": 12
-         },
-         "id": 12,
-         "options": {
-           "colorMode": "value",
-           "graphMode": "area",
-           "justifyMode": "auto",
-           "orientation": "auto",
-           "reduceOptions": {
-             "calcs": [
-               "lastNotNull"
-             ],
-             "fields": "",
-             "values": false
-           },
-           "textMode": "auto"
-         },
-         "pluginVersion": "8.5.2",
-         "targets": [
-           {
-             "datasource": {
-               "type": "prometheus",
-               "uid": "P1809F7CD0C75ACF3"
+           "fieldConfig": {
+             "defaults": {
+               "color": {
+                 "mode": "thresholds"
+               },
+               "mappings": [],
+               "thresholds": {
+                 "mode": "absolute",
+                 "steps": [
+                   {
+                     "color": "green",
+                     "value": null
+                   },
+                   {
+                     "color": "red",
+                     "value": 80
+                   }
+                 ]
+               },
+               "unit": "s"
              },
-             "expr": "tekton_pipelines_controller_running_taskruns_count",
-             "refId": "A"
-           }
-         ],
-         "title": "Tasks em Execução",
-         "type": "stat"
-       }
-     ],
-     "refresh": "5s",
-     "schemaVersion": 36,
-     "style": "dark",
-     "tags": [],
-     "templating": {
-       "list": []
-     },
-     "time": {
-       "from": "now-12h",
-       "to": "now"
-     },
-     "timepicker": {},
-     "timezone": "",
-     "title": "dashboard-tekton",
-     "uid": "F-Nfzu_nz",
-     "version": 12,
-     "weekStart": ""
-    }
+             "overrides": []
+           },
+           "gridPos": {
+             "h": 4,
+             "w": 4,
+             "x": 0,
+             "y": 13
+           },
+           "id": 6,
+           "options": {
+             "colorMode": "none",
+             "graphMode": "none",
+             "justifyMode": "auto",
+             "orientation": "auto",
+             "reduceOptions": {
+               "calcs": [
+                 "lastNotNull"
+               ],
+               "fields": "",
+               "values": false
+             },
+             "textMode": "auto"
+           },
+           "pluginVersion": "8.5.2",
+           "targets": [
+             {
+               "datasource": {
+                 "type": "prometheus",
+                 "uid": "P1809F7CD0C75ACF3"
+               },
+               "expr": "tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds_sum{pipeline='microservice-api',status='success',task='source'}/tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds_count{pipeline='microservice-api',status='success',task='source'}",
+               "refId": "A"
+             }
+           ],
+           "title": "Source",
+           "type": "stat"
+         },
+         {
+           "datasource": {
+             "type": "prometheus",
+             "uid": "P1809F7CD0C75ACF3"
+           },
+           "fieldConfig": {
+             "defaults": {
+               "color": {
+                 "mode": "thresholds"
+               },
+               "mappings": [],
+               "thresholds": {
+                 "mode": "absolute",
+                 "steps": [
+                   {
+                     "color": "green",
+                     "value": null
+                   },
+                   {
+                     "color": "red",
+                     "value": 80
+                   }
+                 ]
+               },
+               "unit": "s"
+             },
+             "overrides": []
+           },
+           "gridPos": {
+             "h": 4,
+             "w": 4,
+             "x": 4,
+             "y": 13
+           },
+           "id": 7,
+           "options": {
+             "colorMode": "none",
+             "graphMode": "none",
+             "justifyMode": "auto",
+             "orientation": "auto",
+             "reduceOptions": {
+               "calcs": [
+                 "lastNotNull"
+               ],
+               "fields": "",
+               "values": false
+             },
+             "textMode": "auto"
+           },
+           "pluginVersion": "8.5.2",
+           "targets": [
+             {
+               "datasource": {
+                 "type": "prometheus",
+                 "uid": "P1809F7CD0C75ACF3"
+               },
+               "expr": "tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds_sum{pipeline='microservice-api',status='success',task='build'}/tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds_count{pipeline='microservice-api',status='success',task='build'}",
+               "refId": "A"
+             }
+           ],
+           "title": "Build",
+           "type": "stat"
+         },
+         {
+           "datasource": {
+             "type": "prometheus",
+             "uid": "P1809F7CD0C75ACF3"
+           },
+           "fieldConfig": {
+             "defaults": {
+               "color": {
+                 "mode": "thresholds"
+               },
+               "mappings": [],
+               "thresholds": {
+                 "mode": "absolute",
+                 "steps": [
+                   {
+                     "color": "green",
+                     "value": null
+                   },
+                   {
+                     "color": "red",
+                     "value": 80
+                   }
+                 ]
+               },
+               "unit": "s"
+             },
+             "overrides": []
+           },
+           "gridPos": {
+             "h": 4,
+             "w": 4,
+             "x": 8,
+             "y": 13
+           },
+           "id": 8,
+           "options": {
+             "colorMode": "none",
+             "graphMode": "none",
+             "justifyMode": "auto",
+             "orientation": "auto",
+             "reduceOptions": {
+               "calcs": [
+                 "lastNotNull"
+               ],
+               "fields": "",
+               "values": false
+             },
+             "textMode": "auto"
+           },
+           "pluginVersion": "8.5.2",
+           "targets": [
+             {
+               "datasource": {
+                 "type": "prometheus",
+                 "uid": "P1809F7CD0C75ACF3"
+               },
+               "expr": "tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds_sum{pipeline='microservice-api',status='success',task='security'}/tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds_count{pipeline='microservice-api',status='success',task='security'}",
+               "refId": "A"
+             }
+           ],
+           "title": "Security",
+           "type": "stat"
+         },
+         {
+           "datasource": {
+             "type": "prometheus",
+             "uid": "P1809F7CD0C75ACF3"
+           },
+           "fieldConfig": {
+             "defaults": {
+               "color": {
+                 "mode": "thresholds"
+               },
+               "mappings": [],
+               "thresholds": {
+                 "mode": "absolute",
+                 "steps": [
+                   {
+                     "color": "green",
+                     "value": null
+                   },
+                   {
+                     "color": "red",
+                     "value": 80
+                   }
+                 ]
+               },
+               "unit": "s"
+             },
+             "overrides": []
+           },
+           "gridPos": {
+             "h": 4,
+             "w": 4,
+             "x": 12,
+             "y": 13
+           },
+           "id": 9,
+           "options": {
+             "colorMode": "none",
+             "graphMode": "none",
+             "justifyMode": "auto",
+             "orientation": "auto",
+             "reduceOptions": {
+               "calcs": [
+                 "lastNotNull"
+               ],
+               "fields": "",
+               "values": false
+             },
+             "textMode": "auto"
+           },
+           "pluginVersion": "8.5.2",
+           "targets": [
+             {
+               "datasource": {
+                 "type": "prometheus",
+                 "uid": "P1809F7CD0C75ACF3"
+               },
+               "expr": "tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds_sum{pipeline='microservice-api',status='success',task='quality'}/tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds_count{pipeline='microservice-api',status='success',task='quality'}",
+               "refId": "A"
+             }
+           ],
+           "title": "Quality",
+           "type": "stat"
+         },
+         {
+           "datasource": {
+             "type": "prometheus",
+             "uid": "P1809F7CD0C75ACF3"
+           },
+           "fieldConfig": {
+             "defaults": {
+               "color": {
+                 "mode": "thresholds"
+               },
+               "mappings": [],
+               "thresholds": {
+                 "mode": "absolute",
+                 "steps": [
+                   {
+                     "color": "green",
+                     "value": null
+                   },
+                   {
+                     "color": "red",
+                     "value": 80
+                   }
+                 ]
+               },
+               "unit": "s"
+             },
+             "overrides": []
+           },
+           "gridPos": {
+             "h": 4,
+             "w": 4,
+             "x": 16,
+             "y": 13
+           },
+           "id": 10,
+           "options": {
+             "colorMode": "none",
+             "graphMode": "none",
+             "justifyMode": "auto",
+             "orientation": "auto",
+             "reduceOptions": {
+               "calcs": [
+                 "lastNotNull"
+               ],
+               "fields": "",
+               "values": false
+             },
+             "textMode": "auto"
+           },
+           "pluginVersion": "8.5.2",
+           "targets": [
+             {
+               "datasource": {
+                 "type": "prometheus",
+                 "uid": "P1809F7CD0C75ACF3"
+               },
+               "expr": "tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds_sum{pipeline='microservice-api',status='success',task='tests'}/tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds_count{pipeline='microservice-api',status='success',task='tests'}",
+               "refId": "A"
+             }
+           ],
+           "title": "Tests",
+           "type": "stat"
+         },
+         {
+           "datasource": {
+             "type": "prometheus",
+             "uid": "P1809F7CD0C75ACF3"
+           },
+           "fieldConfig": {
+             "defaults": {
+               "color": {
+                 "mode": "thresholds"
+               },
+               "mappings": [],
+               "thresholds": {
+                 "mode": "absolute",
+                 "steps": [
+                   {
+                     "color": "green",
+                     "value": null
+                   },
+                   {
+                     "color": "red",
+                     "value": 80
+                   }
+                 ]
+               },
+               "unit": "s"
+             },
+             "overrides": []
+           },
+           "gridPos": {
+             "h": 4,
+             "w": 4,
+             "x": 20,
+             "y": 13
+           },
+           "id": 11,
+           "options": {
+             "colorMode": "none",
+             "graphMode": "none",
+             "justifyMode": "auto",
+             "orientation": "auto",
+             "reduceOptions": {
+               "calcs": [
+                 "lastNotNull"
+               ],
+               "fields": "",
+               "values": false
+             },
+             "textMode": "auto"
+           },
+           "pluginVersion": "8.5.2",
+           "targets": [
+             {
+               "datasource": {
+                 "type": "prometheus",
+                 "uid": "P1809F7CD0C75ACF3"
+               },
+               "expr": "tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds_sum{pipeline='microservice-api',status='success',task='deploy'}/tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds_count{pipeline='microservice-api',status='success',task='deploy'}",
+               "refId": "A"
+             }
+           ],
+           "title": "Deploy",
+           "type": "stat"
+         },
+         {
+           "datasource": {
+             "type": "prometheus",
+             "uid": "P1809F7CD0C75ACF3"
+           },
+           "fieldConfig": {
+             "defaults": {
+               "color": {
+                 "mode": "thresholds"
+               },
+               "mappings": [],
+               "thresholds": {
+                 "mode": "absolute",
+                 "steps": [
+                   {
+                     "color": "green"
+                   },
+                   {
+                     "color": "red",
+                     "value": 80
+                   }
+                 ]
+               }
+             },
+             "overrides": []
+           },
+           "gridPos": {
+             "h": 4,
+             "w": 4,
+             "x": 0,
+             "y": 17
+           },
+           "id": 3,
+           "options": {
+             "colorMode": "value",
+             "graphMode": "area",
+             "justifyMode": "auto",
+             "orientation": "auto",
+             "reduceOptions": {
+               "calcs": [
+                 "lastNotNull"
+               ],
+               "fields": "",
+               "values": false
+             },
+             "textMode": "auto"
+           },
+           "pluginVersion": "8.5.2",
+           "targets": [
+             {
+               "datasource": {
+                 "type": "prometheus",
+                 "uid": "P1809F7CD0C75ACF3"
+               },
+               "expr": "tekton_pipelines_controller_running_pipelineruns_count",
+               "refId": "A"
+             }
+           ],
+           "title": "Pipelines em Execução",
+           "type": "stat"
+         },
+         {
+           "datasource": {
+             "type": "prometheus",
+             "uid": "P1809F7CD0C75ACF3"
+           },
+           "fieldConfig": {
+             "defaults": {
+               "color": {
+                 "mode": "thresholds"
+               },
+               "mappings": [],
+               "thresholds": {
+                 "mode": "absolute",
+                 "steps": [
+                   {
+                     "color": "green"
+                   },
+                   {
+                     "color": "red",
+                     "value": 80
+                   }
+                 ]
+               }
+             },
+             "overrides": []
+           },
+           "gridPos": {
+             "h": 4,
+             "w": 4,
+             "x": 4,
+             "y": 17
+           },
+           "id": 12,
+           "options": {
+             "colorMode": "value",
+             "graphMode": "area",
+             "justifyMode": "auto",
+             "orientation": "auto",
+             "reduceOptions": {
+               "calcs": [
+                 "lastNotNull"
+               ],
+               "fields": "",
+               "values": false
+             },
+             "textMode": "auto"
+           },
+           "pluginVersion": "8.5.2",
+           "targets": [
+             {
+               "datasource": {
+                 "type": "prometheus",
+                 "uid": "P1809F7CD0C75ACF3"
+               },
+               "expr": "tekton_pipelines_controller_running_taskruns_count",
+               "refId": "A"
+             }
+           ],
+           "title": "Tasks em Execução",
+           "type": "stat"
+         },
+         {
+           "datasource": {
+             "type": "prometheus",
+             "uid": "P1809F7CD0C75ACF3"
+           },
+           "fieldConfig": {
+             "defaults": {
+               "color": {
+                 "mode": "thresholds"
+               },
+               "mappings": [],
+               "thresholds": {
+                 "mode": "absolute",
+                 "steps": [
+                   {
+                     "color": "green"
+                   },
+                   {
+                     "color": "red",
+                     "value": 80
+                   }
+                 ]
+               }
+             },
+             "overrides": []
+           },
+           "gridPos": {
+             "h": 4,
+             "w": 4,
+             "x": 8,
+             "y": 17
+           },
+           "id": 14,
+           "options": {
+             "colorMode": "value",
+             "graphMode": "area",
+             "justifyMode": "auto",
+             "orientation": "auto",
+             "reduceOptions": {
+               "calcs": [
+                 "lastNotNull"
+               ],
+               "fields": "",
+               "values": false
+             },
+             "textMode": "auto"
+           },
+           "pluginVersion": "8.5.2",
+           "targets": [
+             {
+               "datasource": {
+                 "type": "prometheus",
+                 "uid": "P1809F7CD0C75ACF3"
+               },
+               "expr": "tekton_pipelines_controller_running_taskruns_count",
+               "refId": "A"
+             }
+           ],
+           "title": "Número de componetes",
+           "type": "stat"
+         },
+         {
+           "datasource": {
+             "type": "prometheus",
+             "uid": "P1809F7CD0C75ACF3"
+           },
+           "fieldConfig": {
+             "defaults": {
+               "color": {
+                 "mode": "thresholds"
+               },
+               "mappings": [],
+               "thresholds": {
+                 "mode": "absolute",
+                 "steps": [
+                   {
+                     "color": "green"
+                   },
+                   {
+                     "color": "red",
+                     "value": 80
+                   }
+                 ]
+               }
+             },
+             "overrides": []
+           },
+           "gridPos": {
+             "h": 4,
+             "w": 4,
+             "x": 12,
+             "y": 17
+           },
+           "id": 15,
+           "options": {
+             "colorMode": "value",
+             "graphMode": "none",
+             "justifyMode": "auto",
+             "orientation": "auto",
+             "reduceOptions": {
+               "calcs": [
+                 "lastNotNull"
+               ],
+               "fields": "",
+               "values": false
+             },
+             "textMode": "value"
+           },
+           "pluginVersion": "8.5.2",
+           "targets": [
+             {
+               "datasource": {
+                 "type": "prometheus",
+                 "uid": "P1809F7CD0C75ACF3"
+               },
+               "expr": "sum(group by (pipeline) (tekton_pipelines_controller_pipelinerun_duration_seconds_count))",
+               "refId": "A"
+             }
+           ],
+           "title": "Número de templates de pipelines",
+           "type": "stat"
+         }
+       ],
+       "refresh": "",
+       "schemaVersion": 36,
+       "style": "dark",
+       "tags": [],
+       "templating": {
+         "list": []
+       },
+       "time": {
+         "from": "2022-05-16T19:00:42.945Z",
+         "to": "2022-05-17T01:00:42.945Z"
+       },
+       "timepicker": {},
+       "timezone": "",
+       "title": "microservice-api",
+       "uid": "F-Nfzu_nzk",
+       "version": 1,
+       "weekStart": ""
+     }
