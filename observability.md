@@ -27,16 +27,16 @@ O configmap [config-observability](./proj/Configs/config-observability.yaml) tr�
 
 |Configuração |	Valor | Descrição|
 |------------|--------|----------|
-|metrics.taskrun.level |	taskrun|	Level of metrics is taskrun|
-|metrics.taskrun.level |	task	|Level of metrics is task and taskrun label isn’t present in the metrics|
-|metrics.taskrun.level |	namespace|	Level of metrics is namespace, and task and taskrun label isn’t present in the metrics|
-|metrics.pipelinerun.level |	pipelinerun	|Level of metrics is pipelinerun
-|metrics.pipelinerun.level |	pipeline	|Level of metrics is pipeline and pipelinerun label isn’t present in the metrics
-|metrics.pipelinerun.level |	namespace	|Level of metrics is namespace, pipeline and pipelinerun label isn’t present in the metrics
-|metrics.taskrun.duration-type|	histogram|	tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds and tekton_pipelines_controller_taskrun_duration_seconds is of type histogram
-metrics.taskrun.duration-type	lastvalue	tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds and tekton_pipelines_controller_taskrun_duration_seconds is of type gauge
-|metrics.pipelinerun.duration-type|	histogram|	tekton_pipelines_controller_pipelinerun_duration_seconds is of type histogram|
-|metrics.pipelinerun.duration-type|	histogram|	tekton_pipelines_controller_pipelinerun_duration_seconds is of type gauge or lastvalue|
+|metrics.taskrun.level |	taskrun|	|
+|metrics.taskrun.level |	task	| |
+|metrics.taskrun.level |	namespace|	|
+|metrics.pipelinerun.level |	pipelinerun	||
+|metrics.pipelinerun.level |	pipeline	|  |
+|metrics.pipelinerun.level |	namespace	||
+|metrics.taskrun.duration-type|	histogram|	|
+|metrics.taskrun.duration-type|	lastvalue|	|
+|metrics.pipelinerun.duration-type|	histogram|	|
+|metrics.pipelinerun.duration-type|	histogram|	|
 
 
 O `confimap` que estamos utilizando para habilitar as métricas.
