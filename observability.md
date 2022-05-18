@@ -79,7 +79,7 @@ Agora que `Tekton` externalizou as métricas, vamos precisar instalar o `prometh
 
 Na configuração do `prometheus` precisamos apontar para o service (`tekton-pipelines-controller.tekton-pipelines.svc:9090`) das métricas do `Tekton`.
 
-O arquivo (prometheus-configmap)[./proj/prometheus/prometheus-configmap.yaml] 
+O arquivo [prometheus-configmap](./proj/prometheus/prometheus-configmap.yaml).
 
 ```yaml
     global:
@@ -103,9 +103,9 @@ O arquivo (prometheus-configmap)[./proj/prometheus/prometheus-configmap.yaml]
 Vamos executar o `prometheus` no namespace `observability` e para isso vamos precisar criar a namespace primeiro.
 Em seguida vamos realizar o deploy do `prometheus` aplicando os seguintes arquivos:
 
-* [prometheus-deployment.yaml](): Deploy do `prometheus` com as configuração da imagem e recursos utilizado 
-* [prometheus-services.yaml](): Configuração do service para expor o `prometheus`
-* [prometheus-configmap.yaml](): Configuração do `prometheus` com o confimap.
+* [prometheus-deployment.yaml](./proj/Metrics/prometeus/prometheus-deployment.yaml): Deploy do `prometheus` com as configuração da imagem e recursos utilizado 
+* [prometheus-services.yaml](./proj/Metrics/prometeus/prometheus-services.yaml): Configuração do service para expor o `prometheus`
+* [prometheus-configmap.yaml](./proj/Metrics/prometeus/prometheus-configmap.yaml): Configuração do `prometheus` com o confimap.
 
 
 Para aplicar a configuração no `prometheus`: 
@@ -140,8 +140,7 @@ Para isso, temos o script [gerador_de_execucoes](./proj/pipeline/gerador_de_exec
 proj/pipeline/gerador_de_execucoes.sh
 ```
 
-
-## Grafana
+## Instalação do Grafana
 
 Para visualizar as métricas vamos utilizar o `grafana`. Na configuração é necessário definir o `datasource` que é o `prometheus` e os dasboard que contém os gráficos.  
 
