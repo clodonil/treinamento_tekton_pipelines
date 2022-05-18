@@ -39,7 +39,8 @@ metrics.taskrun.duration-type	lastvalue	tekton_pipelines_controller_pipelinerun_
 |metrics.pipelinerun.duration-type|	histogram|	tekton_pipelines_controller_pipelinerun_duration_seconds is of type gauge or lastvalue|
 
 
-Segue o confimap que estamos utilizando nesse módulo.
+O `confimap` que estamos utilizando para habilitar as métricas.
+
 ```yaml
 apiVersion: v1
 kind: ConfigMap
