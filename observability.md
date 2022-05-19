@@ -25,6 +25,8 @@ O configmap [config-observability](./proj/Configs/config-observability.yaml) tr�
     metrics.pipelinerun.duration-type: "histogram"
 ```
 
+Segue abaixo os valores possíveis:
+
 |Configuração |	Valor | Descrição|
 |------------|--------|----------|
 |metrics.taskrun.level |	taskrun|	|
