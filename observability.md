@@ -15,7 +15,7 @@ Nesse módulo vamos externalizar as métricas no tekton no formato do  `promethe
 
 ![template](img/image32.png)
 
-O configmap [config-observability](./proj/Configs/config-observability.yaml) trás como métricas padrão os seguintes valores:
+O configmap trás como métricas padrão os seguintes valores:
 
 
 ```yaml
@@ -41,7 +41,7 @@ Segue abaixo os valores possíveis:
 |metrics.pipelinerun.duration-type|	histogram|	|
 
 
-O `confimap` que estamos utilizando para habilitar as métricas.
+O [config-observability](./proj/Configs/config-observability.yaml) que estamos utilizando para habilitar as métricas.
 
 ```yaml
 apiVersion: v1
