@@ -82,7 +82,7 @@ Agora que `Tekton` externalizou as métricas, vamos precisar instalar o `prometh
 
 Na configuração do `prometheus` precisamos apontar para o service (`tekton-pipelines-controller.tekton-pipelines.svc:9090`) das métricas do `Tekton`.
 
-O arquivo [prometheus-configmap](./proj/prometheus/prometheus-configmap.yaml).
+O arquivo [prometheus-configmap](./proj/prometheus/prometheus-configmap.yaml) configura o prometheus para buscar os dados no tekton.
 
 ```yaml
     global:
