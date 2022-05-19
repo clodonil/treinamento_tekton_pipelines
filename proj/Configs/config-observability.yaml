@@ -17,9 +17,3 @@ data:
     metrics.taskrun.duration-type: "histogram"
     metrics.pipelinerun.level: "pipeline"
     metrics.pipelinerun.duration-type: "histogram"
-    pruner:
-      resources:
-        - taskrun
-        - pipelinerun
-      keep: 3
-      schedule: "* * * * *"    
