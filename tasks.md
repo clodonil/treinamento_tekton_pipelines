@@ -128,7 +128,7 @@ Além do nome, deve ser definido o `type` do parâmetro que pode ser:
 * `array` : Uma lista de argumentos é passado para a `Tasks`;
 * `string`: Apenas um argumento é passado para a `Tasks`.
 
-Abaixo temos uma `Tasks` que recebe como entrada 2 parâmetros que são o `build-args` queé um `array` e o `buildImage` que é do tipo `string`.
+Abaixo temos uma `Tasks` que recebe como entrada 2 parâmetros que são o `build-args` que é um `array` e o `buildImage` que é do tipo `string`.
 A ideia é criar uma `Tasks` que funciona como template para passagem de parâmetro para definir a imagem e os comandos que devem ser executados.
 
 ```yaml:src/task-exemplo2.yaml
@@ -238,7 +238,7 @@ spec:
         echo "Finalizado"
 ```
 
-Nesse exemplo, todas os `Steps` que não definir uma imagem base, vai utilizar a imagem do `ubuntu`, a mesma coisa para memória e cpu.
+Nesse exemplo, todos os `Steps` que não definir uma imagem base, vai utilizar a imagem do `ubuntu`, a mesma coisa para memória e cpu.
 
 ### Configurações
 
@@ -360,6 +360,8 @@ spec:
 Para executar a `tasks` é necessário passar o nome do workspace e o volume.
 
 ```bash
+ tkn task start task-exemplo2 -p buildImage='centos' -p build-args='-c','ls -lha /'
+ kubectl apply -f task-exemplo8.yaml
  tkn task start task-exemplo8  -w name=myworkspace,claimName=mypvc
 ```
 
