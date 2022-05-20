@@ -186,6 +186,32 @@ O grafana pode ser acessado pela URL: `http://localhost:30003/`
 
 As métricas criadas:
 
+* Taxa de sucesso e falhas das pipelines
+> tekton_pipelines_controller_pipelinerun_duration_seconds_count{pipeline='microservice-api',status='success'}
+> tekton_pipelines_controller_pipelinerun_duration_seconds_count{pipeline='microservice-api',status='failed'}
+
+* Número de Builds
+> tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds_count{pipeline='microservice-api',status='success',task='build'}
+
+* As 4 Tasks que mais falham
+> topk(4, tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds_count{status='failed', pipeline='microservice-api'} )
+
+* Número de retry das tasks
+> sum(count by (pod) (tekton_pipelines_controller_taskruns_pod_latency{pod=~ "microservice-api.*retry.*"}))
+
+* Lead Time da pipeline
+> tekton_pipelines_controller_pipelinerun_duration_seconds_sum{pipeline='microservice-api',status='success'} / tekton_pipelines_controller_pipelinerun_duration_seconds_count{pipeline='microservice-api',status='success'}
+
+* Tempo médio de execução de cada tasks
+> tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds_sum{pipeline='microservice-api',status='success',task='build'}/tekton_pipelines_controller_pipelinerun_taskrun_duration_seconds_count{pipeline='microservice-api',status='success',task='build'}
+
+* Número de pipelines em execução
+> tekton_pipelines_controller_running_pipelineruns_count
+
+* Número de Tasks em execução
+> tekton_pipelines_controller_running_taskruns_count
+![template](img/image34.png)
+
 
 ## Executando os Logs
 O Tekton armazena os logs de execução das TaskRuns e PipelineRuns dentro do `Pod` que contém os contêineres que executam o Steps seu TaskRun ou PipelineRun. 
