@@ -79,6 +79,11 @@ Ou podemos utilizar o `kubectl` passando o endereço do git-clone.
 ```
 kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/git-clone/0.5/git-clone.yaml
 ```
+Em seguida devemos aplicar o taskrun-source.yaml
+
+```
+kubectl apply -f taskrun-source.yaml
+```
 
 Ambos tem o mesmo resultado.
 
@@ -138,7 +143,7 @@ spec:
 Para fazer o download/atualização da `sharedlibrary` para o workspace precisamos executar a Taskrun. Esse processo deve ser feito toda vez que tiver alteração na `sharedlibrary`.
 
 ```bash
-kubectl apply -f task-sharedlibrary.yaml
+kubectl apply -f taskrun-sharedlibrary.yaml
 ```
 
 ### Criando a Tasks `Quality`

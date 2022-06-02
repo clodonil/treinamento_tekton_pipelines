@@ -97,6 +97,11 @@ A sintaxe do `tkn` para o bundle é:
 
 > ``` tkn bundle push <registry>/<artefato> -f <arquivo.yaml> ```
 
+Exemplo:
+```
+tkn bundle push index.docker.io/userDoDocker/microservice-api_tasks_source:latest -f proj/tasks/Source/task-source.yaml
+```
+
 O `tkn bundle` já transforma o arquivo `yaml` no formato OCI e envia para o registry.
 
 Agora vamos subir as tasks para os registry da `docker.io`.
