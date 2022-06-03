@@ -5,7 +5,7 @@ Observability
 Ao final deste módulo você será capaz de:
 * Criar métricas das pipelines
 * Criar métricas de tasks
-* Externalizar os logs 
+* Gerenciar os logs 
 
 # Habilitando Métricas no Tekton
 
@@ -220,7 +220,97 @@ O Tekton armazena os logs de execução das TaskRuns e PipelineRuns dentro do `P
 
 Você pode obter logs de execução usando um dos seguintes métodos:
 
-* Logs (https://tekton.dev/docs/pipelines/logs/)
+Obtenha os nome dos pod das instâncias de Taskrun
+```yaml
+kubectl get taskruns -o yaml | grep 
+podName: microservice-api.app5-blgz5-build-pod
+podName: microservice-api.app5-blgz5-deploy-pod
+podName: microservice-api.app5-blgz5-quality-pod-retry1
+podName: microservice-api.app5-blgz5-quality-pod
+podName: microservice-api.app5-blgz5-security-pod
+podName: microservice-api.app5-blgz5-source-pod
+podName: microservice-api.app5-blgz5-tests-pod
+```
+Também é possível pegar os nome dos Pod das instâncias das pipelinesRun
+
+```yaml
+kubectl get pipelineruns -o yaml | grep podName
+podName: microservice-api.app5-blgz5-build-pod
+podName: microservice-api.app5-blgz5-deploy-pod
+podName: microservice-api.app5-blgz5-quality-pod-retry1
+podName: microservice-api.app5-blgz5-quality-pod
+podName: microservice-api.app5-blgz5-security-pod
+podName: microservice-api.app5-blgz5-source-pod
+podName: microservice-api.app5-blgz5-tests-pod
+```
+Para visualizar os logs de todos os container do Pod. No exemplo, vamos utilizar o pod `microservice-api.app5-blgz5-build-pod`. 
+
+```yaml
+kubectl logs microservice-api.app5-blgz5-build-pod --all-containers
+```
+
+Uma forma mais simples para visualizar os logs é utilizar o `tkn`. Os logs podem ser visualizados por `Taskrun` especificos ou por execução da `PipelineRun`.
+
+Vamos ver primeiro a  `Taskrun` e para isso primeiro vamos listar todas:
+
+```yaml
+tkn taskrun list
+NAME                                   STARTED       DURATION     STATUS
+microservice-api.app5-blgz5-deploy     1 hour ago    10 seconds   Succeeded
+microservice-api.app5-blgz5-tests      1 hour ago    27 seconds   Succeeded
+microservice-api.app5-blgz5-quality    1 hour ago    45 seconds   Succeeded
+microservice-api.app5-blgz5-build      2 hours ago   2 minutes    Succeeded
+microservice-api.app5-blgz5-security   2 hours ago   4 minutes    Succeeded
+microservice-api.app5-blgz5-source     2 hours ago   16 seconds   Succeeded
+taskrun-sharedlibrary                  3 hours ago   24 seconds   Succeeded
+```
+Agora podemos escolher uma `Taskrun` para visualizar o log.
+
+```yaml
+tkn taskrun logs microservice-api.app5-blgz5-tests
+[performance] + k6 run /workspace/sharedlibrary/TESTS/performance/test.js
+[performance]
+[performance]           /\      |‾‾| /‾‾/   /‾‾/
+[performance]      /\  /  \     |  |/  /   /  /
+[performance]     /  \/    \    |     (   /   ‾‾\
+[performance]    /          \   |  |\  \ |  (‾)  |
+[performance]   / __________ \  |__| \__\ \_____/ .io
+[performance]
+[performance]   execution: local
+[performance]      script: /workspace/sharedlibrary/TESTS/performance/test.js
+[performance]      output: -
+[performance]
+[performance]   scenarios: (100.00%) 1 scenario, 1 max VUs, 10m30s max duration (incl. graceful stop):
+[performance]            * default: 1 iterations for each of 1 VUs (maxDuration: 10m0s, gracefulStop: 30s)
+[performance]
+[performance] time="2022-06-02T23:06:50Z" level=warning msg="Request Failed" error="Get \"http://localhost\": dial tcp 127.0.0.1:80: connect: connection refused"
+[performance]
+[performance] running (00m01.0s), 1/1 VUs, 0 complete and 0 interrupted iterations
+[performance] default   [   0% ] 1 VUs  00m01.0s/10m0s  0/1 iters, 1 per VU
+[performance]
+[performance] running (00m01.0s), 0/1 VUs, 1 complete and 0 interrupted iterations
+[performance] default ✓ [ 100% ] 1 VUs  00m01.0s/10m0s  1/1 iters, 1 per VU
+[performance]
+[performance]      data_received..............: 0 B     0 B/s
+[performance]      data_sent..................: 0 B     0 B/s
+[performance]      http_req_blocked...........: avg=0s min=0s med=0s max=0s p(90)=0s p(95)=0s
+[performance]      http_req_connecting........: avg=0s min=0s med=0s max=0s p(90)=0s p(95)=0s
+[performance]      http_req_duration..........: avg=0s min=0s med=0s max=0s p(90)=0s p(95)=0s
+[performance]      http_req_failed............: 100.00% ✓ 1        ✗ 0
+[performance]      http_req_receiving.........: avg=0s min=0s med=0s max=0s p(90)=0s p(95)=0s
+[performance]      http_req_sending...........: avg=0s min=0s med=0s max=0s p(90)=0s p(95)=0s
+[performance]      http_req_tls_handshaking...: avg=0s min=0s med=0s max=0s p(90)=0s p(95)=0s
+[performance]      http_req_waiting...........: avg=0s min=0s med=0s max=0s p(90)=0s p(95)=0s
+[performance]      http_reqs..................: 1       0.997387/s
+[performance]      iteration_duration.........: avg=1s min=1s med=1s max=1s p(90)=1s p(95)=1s
+[performance]      iterations.................: 1       0.997387/s
+[performance]      vus........................: 1       min=1      max=1
+[performance]      vus_max....................: 1       min=1      max=1
+```
+
+## Elastic Observability
+
+![template](img/image35.png)
 
 ```bash
 kubectl apply -f https://download.elastic.co/downloads/eck/1.3.1/all-in-one.yaml
@@ -236,3 +326,39 @@ echo $(kubectl get secret -n elastic-system elasticsearch-monitoring-es-elastic-
 kubectl port-forward -n elastic-system svc/kibana-monitoring-kb-http 5601
 
 https://localhost:5601/app/observability/overview
+
+
+# Limpandos os logs
+
+As execuções de `Taskrun` ficam armazenadas no kubernetes e com o uso o número de registro aumenta consideravelmente podendo gerar impacto na performance do kubernetes.
+
+Podemos ver todas as `Taskrun`.
+
+```yaml
+kubectl get pod
+NAME                                             READY   STATUS      RESTARTS   AGE
+microservice-api.app1-j9wmg-build-pod            0/3     Completed   0          3m22s
+microservice-api.app1-j9wmg-deploy-pod           0/1     Completed   0          45s
+microservice-api.app1-j9wmg-quality-pod          0/2     Completed   0          3m22s
+microservice-api.app1-j9wmg-security-pod         0/3     Completed   1          3m22s
+microservice-api.app1-j9wmg-source-pod           0/1     Completed   0          5m5s
+microservice-api.app1-j9wmg-tests-pod            0/3     Completed   1          61s
+microservice-api.app2-hxjjh-build-pod            0/3     Completed   0          4m49s
+microservice-api.app2-hxjjh-deploy-pod           0/1     Completed   0          109s
+microservice-api.app2-hxjjh-quality-pod          0/2     Completed   0          4m48s
+microservice-api.app2-hxjjh-security-pod         0/3     Completed   1          4m49s
+microservice-api.app2-hxjjh-source-pod           0/1     Completed   0          5m4s
+microservice-api.app2-hxjjh-tests-pod            0/3     Completed   1          2m14s
+microservice-api.app3-4cnhx-build-pod            0/3     Completed   0          4m45s
+microservice-api.app3-4cnhx-deploy-pod           0/1     Completed   0          91s
+microservice-api.app3-4cnhx-quality-pod          0/2     Completed   0          4m45s
+microservice-api.app3-4cnhx-security-pod         0/3     Completed   1          4m45s
+microservice-api.app3-4cnhx-source-pod           0/1     Completed   0          5m3s
+microservice-api.app3-4cnhx-tests-pod            0/3     Completed   1          3m8s
+microservice-api.app4-ghqcv-build-pod            0/3     Completed   0          3m35s
+```
+Como os logs estão externalizados no `Elastic`, podemos excluir as `Taskrun` deixando apenas as últimas execuções. 
+
+```yaml
+tkn pipelinerun delete --keep 2
+```
