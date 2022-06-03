@@ -221,7 +221,7 @@ O Tekton armazena os logs de execução das TaskRuns e PipelineRuns dentro do `P
 Você pode obter logs de execução usando um dos seguintes métodos:
 
 Obtenha os nome dos pod das instâncias de Taskrun
-```yaml
+```bash
 kubectl get taskruns -o yaml | grep 
 podName: microservice-api.app5-blgz5-build-pod
 podName: microservice-api.app5-blgz5-deploy-pod
@@ -233,7 +233,7 @@ podName: microservice-api.app5-blgz5-tests-pod
 ```
 Também é possível pegar os nome dos Pod das instâncias das pipelinesRun
 
-```yaml
+```bash
 kubectl get pipelineruns -o yaml | grep podName
 podName: microservice-api.app5-blgz5-build-pod
 podName: microservice-api.app5-blgz5-deploy-pod
@@ -245,7 +245,7 @@ podName: microservice-api.app5-blgz5-tests-pod
 ```
 Para visualizar os logs de todos os container do Pod. No exemplo, vamos utilizar o pod `microservice-api.app5-blgz5-build-pod`. 
 
-```yaml
+```bash
 kubectl logs microservice-api.app5-blgz5-build-pod --all-containers
 ```
 
@@ -253,7 +253,7 @@ Uma forma mais simples para visualizar os logs é utilizar o `tkn`. Os logs pode
 
 Vamos ver primeiro a  `Taskrun` e para isso primeiro vamos listar todas:
 
-```yaml
+```bash
 tkn taskrun list
 NAME                                   STARTED       DURATION     STATUS
 microservice-api.app5-blgz5-deploy     1 hour ago    10 seconds   Succeeded
@@ -266,7 +266,7 @@ taskrun-sharedlibrary                  3 hours ago   24 seconds   Succeeded
 ```
 Agora podemos escolher uma `Taskrun` para visualizar o log.
 
-```yaml
+```bash
 tkn taskrun logs microservice-api.app5-blgz5-tests
 [performance] + k6 run /workspace/sharedlibrary/TESTS/performance/test.js
 [performance]
@@ -318,6 +318,15 @@ kubectl -n elastic-system apply -f monitoring-es-kb.yaml
 kubectl -n elastic-system apply -f monitoring-filebeat-metricbeat.yaml
 ```
 
+```bash
+kubectl -n elastic-system get pod
+NAME                                    READY   STATUS    RESTARTS   AGE
+elastic-operator-0                      1/1     Running   0          1h14m
+elasticsearch-monitoring-es-default-0   1/1     Running   0          1h11m
+filebeat-beat-filebeat-pjsq2            1/1     Running   0          1h7m
+kibana-monitoring-kb-ccdd6dfd9-lshnf    1/1     Running   0          1h11m
+metricbeat-beat-metricbeat-jh2kr        1/1     Running   0          1h11m
+```
 
 User: elastic
 password:
@@ -328,13 +337,15 @@ kubectl port-forward -n elastic-system svc/kibana-monitoring-kb-http 5601
 https://localhost:5601/app/observability/overview
 
 
-# Limpandos os logs
+# Sanitização dos logs
 
 As execuções de `Taskrun` ficam armazenadas no kubernetes e com o uso o número de registro aumenta consideravelmente podendo gerar impacto na performance do kubernetes.
 
-Podemos ver todas as `Taskrun`.
+Uma boa prática é limpar os registro com frequência. 
 
-```yaml
+Podemos ver todos os registro do `Taskrun`.
+
+```bash
 kubectl get pod
 NAME                                             READY   STATUS      RESTARTS   AGE
 microservice-api.app1-j9wmg-build-pod            0/3     Completed   0          3m22s
@@ -357,8 +368,8 @@ microservice-api.app3-4cnhx-source-pod           0/1     Completed   0          
 microservice-api.app3-4cnhx-tests-pod            0/3     Completed   1          3m8s
 microservice-api.app4-ghqcv-build-pod            0/3     Completed   0          3m35s
 ```
-Como os logs estão externalizados no `Elastic`, podemos excluir as `Taskrun` deixando apenas as últimas execuções. 
+Como os logs estão externalizados no `Elastic`, podemos excluir os registros das `Taskrun` deixando apenas as últimas execuções. 
 
-```yaml
+```bash
 tkn pipelinerun delete --keep 2
 ```
