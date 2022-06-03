@@ -35,17 +35,20 @@ kubectl apply -f proj/tasks/Source/taskrun-sharedlibrary.yaml
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/send-to-webhook-discord/0.1/send-to-webhook-discord.yaml
 ```
-
+```
 kubectl apply -f proj/tasks/Source/taskrun-sharedlibrary.yaml
-
+```
+```
 kubectl create secret generic sonar --from-literal=SONAR_TOKEN=$TOKEN
-
+```
+```
 kubectl create secret docker-registry myregistrykey \
   --docker-server=$DOCKER_REGISTRY_SERVER \
   --docker-username=$DOCKER_USER \
   --docker-password=$DOCKER_PASSWORD \
   --docker-email=$DOCKER_EMAIL
 kubectl patch serviceaccount default -p '{"secrets": [{"name": "myregistrykey"}]}'
+```
 
 
 $ kubectl edit configmap feature-flags -n tekton-pipelines
