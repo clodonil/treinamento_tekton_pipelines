@@ -283,7 +283,6 @@ tkn taskrun logs microservice-api.app5-blgz5-tests
 [performance]   scenarios: (100.00%) 1 scenario, 1 max VUs, 10m30s max duration (incl. graceful stop):
 [performance]            * default: 1 iterations for each of 1 VUs (maxDuration: 10m0s, gracefulStop: 30s)
 [performance]
-[performance] time="2022-06-02T23:06:50Z" level=warning msg="Request Failed" error="Get \"http://localhost\": dial tcp 127.0.0.1:80: connect: connection refused"
 [performance]
 [performance] running (00m01.0s), 1/1 VUs, 0 complete and 0 interrupted iterations
 [performance] default   [   0% ] 1 VUs  00m01.0s/10m0s  0/1 iters, 1 per VU
