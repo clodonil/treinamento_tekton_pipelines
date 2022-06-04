@@ -311,11 +311,14 @@ tkn taskrun logs microservice-api.app5-blgz5-tests
 
 ![template](img/image35.png)
 
+Para aplicar a configuração do `Elastic`:
+
 ```bash
 kubectl apply -f https://download.elastic.co/downloads/eck/1.3.1/all-in-one.yaml
 kubectl -n elastic-system apply -f monitoring-es-kb.yaml
 kubectl -n elastic-system apply -f monitoring-filebeat-metricbeat.yaml
 ```
+Vamos aguardar até todos os serviços estejam rodando.
 
 ```bash
 kubectl -n elastic-system get pod
@@ -329,11 +332,22 @@ metricbeat-beat-metricbeat-jh2kr        1/1     Running   0          1h11m
 
 User: elastic
 password:
-echo $(kubectl get secret -n elastic-system elasticsearch-monitoring-es-elastic-user -o=jsonpath='{.data.elastic}' | base64 --decode)
 
+```bash
+echo $(kubectl get secret -n elastic-system elasticsearch-monitoring-es-elastic-user -o=jsonpath='{.data.elastic}' | base64 --decode)
+```
+
+Vamos externalizar o `Elastic` com `port-forward`.
+
+```bash
 kubectl port-forward -n elastic-system svc/kibana-monitoring-kb-http 5601
+```
 
 https://localhost:5601/app/observability/overview
+
+
+![template](img/image35.png)
+
 
 
 # Sanitização dos logs
