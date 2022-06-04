@@ -348,6 +348,10 @@ https://localhost:5601/app/observability/overview
 
 ![template](img/image35.png)
 
+![template](img/image36.png)
+
+
+![template](img/image37.png)
 
 
 # Sanitização dos logs
