@@ -350,9 +350,13 @@ https://localhost:5601/app/observability/overview
 
 ![template](img/image36.png)
 
+Vá para a IU de métricas, na visualização Inventário, e clique em Mostrar os pods do Kubernetes. Em seguida, selecione Agrupado por Namespace. Você deve ver os pods em execução no namespace elastic-system e os que estão sendo executados no namespace tekton-pipelines.
 
 ![template](img/image37.png)
 
+Ao clicar na linha do tempo à direita da tela, você pode acessar o painel "Registrar detalhes do documento do evento" e observar que muitos rótulos Tekton estão disponíveis prontos para uso. Isso porque por padrão o Tekton adiciona rótulos dedicados ao Pod criado para executar a Tarefa, como você pode ver na imagem abaixo:
+
+![template](img/image38.png)
 
 # Sanitização dos logs
 
