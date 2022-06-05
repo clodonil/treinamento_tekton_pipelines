@@ -346,7 +346,7 @@ kubectl port-forward -n elastic-system svc/kibana-monitoring-kb-http 5601
 https://localhost:5601/app/observability/overview
 
 
-![template](img/image35.png)
+Você pode filtrar os logs pelo nome da tarefa, nome do TaskRun e assim por diante
 
 ![template](img/image36.png)
 
