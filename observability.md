@@ -309,8 +309,22 @@ tkn taskrun logs microservice-api.app5-blgz5-tests
 
 ## Elastic Observability
 
+O Elastic Cloud on Kubernetes (ECK) é o operador oficial para provisionar implantações do Elastic Stack no Kubernetes. Este artigo não vai explicar como funciona. Para saber mais sobre isso, confira a postagem de blog dedicada [Elastic Stack Monitoring with Elastic Cloud on Kubernetes](https://www.elastic.co/pt/blog/elastic-stack-monitoring-with-elastic-cloud-on-kubernetes)
+
+A observabilidade com o Elastic Stack permite unificar todos os seus logs, métricas e informações de rastreamento de aplicativos em um só lugar. Dê uma olhada na postagem do blog [Observability with the Elastic Stack](https://www.elastic.co/pt/blog/observability-with-the-elastic-stack) para saber mais sobre isso.
+
 ![template](img/image35.png)
 
+
+O Tekton Pipelines expõe algumas métricas por padrão 3 no formato Prometheus. A configuração do metricbeat fornecida anteriormente 5 neste post foi inicializada com o módulo Prometheus para reunir automaticamente todos esses dados:
+
+```yaml
+- module: prometheus
+   period: 10s
+   hosts:
+   - http://tekton-pipelines-controller.tekton-pipelines:9090
+   metrics_path: /metrics
+```
 Para aplicar a configuração do `Elastic`:
 
 ```bash
