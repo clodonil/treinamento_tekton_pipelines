@@ -384,6 +384,7 @@ metricbeat-beat-metricbeat-jh2kr        1/1     Running   0          1h11m
 Para logar no `Elastic`, utilize os seguintes dados:
 
 **User**: elastic
+
 **password:** ```echo $(kubectl get secret -n elastic-system elasticsearch-monitoring-es-elastic-user -o=jsonpath='{.data.elastic}' | base64 --decode)```
 
 Vamos externalizar o `Elastic` com `port-forward`.
