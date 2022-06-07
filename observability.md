@@ -385,10 +385,7 @@ Para logar no `Elastic`, utilize os seguintes dados:
 
 **User**: elastic
 
-**password:** 
-```bash
-echo $(kubectl get secret -n elastic-system elasticsearch-monitoring-es-elastic-user -o=jsonpath='{.data.elastic}' | base64 --decode)
-```
+**password:** ```echo $(kubectl get secret -n elastic-system elasticsearch-monitoring-es-elastic-user -o=jsonpath='{.data.elastic}' | base64 --decode)```
 
 Vamos externalizar o `Elastic` com `port-forward`.
 
