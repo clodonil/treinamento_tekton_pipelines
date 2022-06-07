@@ -189,11 +189,24 @@ Para aplicar a configuração do `grafana`:
 kubectl -n observability apply -f proj/Metrics/Grafana/
 ```
 
+Verifique se o serviço do `grafana` esta rodando corretamente:
+
+```bash
+kubectl -n observability get pods
+NAME                                    READY   STATUS    RESTARTS   AGE
+grafana-64fddf6f6c-ghw78                1/1     Running   0          34s
+prometheus-deployment-87cc8fb88-z8xm4   1/1     Running   0          6m18s
+```
+
 O grafana pode ser acessado pela URL: `http://localhost:30003/`
 
-![template](img/image33.png)
+Agora podemos criar os gráficos com as métricas desejadas. Nós criamos, como exemplo, 2 dashboard automaticamente no grafana.
 
-As métricas criadas:
+![template](img/image39.png)
+
+## microservice-api
+
+As métricas do dashboard `microservice-api` são relacionadas as pipelines e foram criadas utilizando o padrão PromQL, para conforme abaixo:
 
 * **Taxa de sucesso e falhas das pipelines**
 > tekton_pipelines_controller_pipelinerun_duration_seconds_count{pipeline='microservice-api',status='success'}
@@ -220,6 +233,12 @@ As métricas criadas:
 * **Número de Tasks em execução**
 > tekton_pipelines_controller_running_taskruns_count
 
+![template](img/image33.png)
+
+
+## Tekton-Operator
+
+As métricas do dashboard `Tekton-Operator` são relacionadas ao funcionamento do `Tekton` e ao processamento do operator.
 
 ![template](img/image34.png)
 
