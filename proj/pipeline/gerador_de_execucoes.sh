@@ -1,8 +1,8 @@
 #!/bin/bash
 
-numero_de_execucoes=1
+numero_de_execucoes=$1
 
-for x in $(seq 0 $numero_de_execucoes); do
+for x in $(seq 1 $numero_de_execucoes); do
   app="app$x"
   echo $app
       tkn pipeline start microservice-api  \

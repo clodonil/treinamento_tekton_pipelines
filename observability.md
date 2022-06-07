@@ -309,15 +309,18 @@ tkn taskrun logs microservice-api.app5-blgz5-tests
 
 ## Elastic Observability
 
-O Elastic Cloud on Kubernetes (ECK) é o operador oficial para provisionar implantações do Elastic Stack no Kubernetes. Este artigo não vai explicar como funciona. Para saber mais sobre isso, confira a postagem de blog dedicada [Elastic Stack Monitoring with Elastic Cloud on Kubernetes](https://www.elastic.co/pt/blog/elastic-stack-monitoring-with-elastic-cloud-on-kubernetes)
+O Elastic Cloud on Kubernetes (ECK) é a ferramenta oficial para provisionar implantações do `Elastic Stack` no Kubernetes. Esse treinamento é focado no `Tekton`, portanto não vamos aprofundar no `Elastic`. Para saber mais sobre `Elastic`, confira a postagem de blog [Elastic Stack Monitoring with Elastic Cloud on Kubernetes](https://www.elastic.co/pt/blog/elastic-stack-monitoring-with-elastic-cloud-on-kubernetes).
 
-A observabilidade com o Elastic Stack permite unificar todos os seus logs, métricas e informações de rastreamento de aplicativos em um só lugar. Dê uma olhada na postagem do blog [Observability with the Elastic Stack](https://www.elastic.co/pt/blog/observability-with-the-elastic-stack) para saber mais sobre isso.
+A observabilidade com o `Elastic Stack` permite unificar todos os logs do kubernetes, métricas e informações de rastreamento de aplicativos em um só lugar. Dê uma olhada na postagem do blog [Observability with the Elastic Stack](https://www.elastic.co/pt/blog/observability-with-the-elastic-stack) para saber mais sobre isso.
+
+A estrutura e o fluxo do `Elastic Stack`. 
 
 ![template](img/image35.png)
 
 
-O Tekton Pipelines expõe algumas métricas por padrão 3 no formato Prometheus. A configuração do metricbeat fornecida anteriormente 5 neste post foi inicializada com o módulo Prometheus para reunir automaticamente todos esses dados:
+O Tekton Pipelines expõe algumas métricas por padrão no formato Prometheus, conforme fizemos acima. A configuração do `metricbeat` definido no arquivo [monitoring-filebeat-metricbeat.yaml](./proj/Metrics/Elastic/monitoring-filebeat-metricbeat.yaml) é inicializada com o módulo Prometheus para reunir automaticamente todos esses dados:
 
+Aqui temos a parte do arquivo [monitoring-filebeat-metricbeat.yaml](./proj/Metrics/Elastic/monitoring-filebeat-metricbeat.yaml) que define o módulo do prometheus no `metricbeat`.
 ```yaml
 - module: prometheus
    period: 10s
@@ -344,6 +347,8 @@ kibana-monitoring-kb-ccdd6dfd9-lshnf    1/1     Running   0          1h11m
 metricbeat-beat-metricbeat-jh2kr        1/1     Running   0          1h11m
 ```
 
+Para logar no `Elastic`, utilize os seguintes dados:
+
 User: elastic
 password:
 
@@ -356,8 +361,7 @@ Vamos externalizar o `Elastic` com `port-forward`.
 ```bash
 kubectl port-forward -n elastic-system svc/kibana-monitoring-kb-http 5601
 ```
-
-https://localhost:5601/app/observability/overview
+Acesso o `Elastic` no endereço `https://localhost:5601/app/observability/overview`.
 
 
 Você pode filtrar os logs pelo nome da tarefa, nome do TaskRun e assim por diante
