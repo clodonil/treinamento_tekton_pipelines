@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [ -z "$1" ]; then
+  echo "Error: Número de execuções não definida"
+  echo "Exemplo:"
+  echo "proj/pipeline/gerador_de_execucoes.sh 3"
+  exit -1
+fi  
 numero_de_execucoes=$1
 
 for x in $(seq 1 $numero_de_execucoes); do
