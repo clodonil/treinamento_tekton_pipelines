@@ -26,6 +26,7 @@ kubectl apply -f proj/pv-workspaces.yaml
 kubectl apply -f proj/tasks/Finally/secret.yaml
 kubectl apply -f proj/tasks/Finally/task-finally.yaml
 kubectl apply -f proj/pipeline/microservice-api.yaml
+kubectl apply -f proj/Configs/feature-flags.yaml
 ```
 
 ```

@@ -69,6 +69,7 @@ Para aplicar a configuração no `tekton`:
 ```bash
 kubectl apply -f proj/Configs/config-observability.yaml
 ```
+
 Para visualizar a externalização das métricas, vamos expor a porta `9090` do `tekton`.
 
 ```bash
@@ -118,6 +119,14 @@ kubectl create namespace observability
 kubectl -n observability apply -f proj/Metrics/prometeus/
 ```
 
+Verifique se o serviço esta rodando corretamente:
+
+```bash
+kubectl -n observability get pods
+NAME                                    READY   STATUS    RESTARTS   AGE
+prometheus-deployment-87cc8fb88-z8xm4   1/1     Running   0          17s
+```
+
 O prometheus pode ser acessado pela URL: `http://localhost:30004/`
 
 ![template](img/image31.png)
@@ -137,10 +146,10 @@ Tipos de métricas:
 
 Agora que temos o `prometheus` configurado, vamos executar algumas pipelines para gerar dados e métricas.
 
-Para isso, temos o script [gerador_de_execucoes](./proj/pipeline/gerador_de_execucoes.sh).  Altere para suas necessidades.
+Para isso, temos o script [gerador_de_execucoes](./proj/pipeline/gerador_de_execucoes.sh).  Ao executar o sript, passe o número de execuções que deseja.
 
 ```bash
-proj/pipeline/gerador_de_execucoes.sh
+proj/pipeline/gerador_de_execucoes.sh 2
 ```
 
 ## Instalação do Grafana
