@@ -244,13 +244,13 @@ As métricas do dashboard `Tekton-Operator` são relacionadas ao funcionamento d
 
 
 ## Executando os Logs
-O Tekton armazena os logs de execução das TaskRuns e PipelineRuns dentro do `Pod` que contém os contêineres que executam o Steps seu TaskRun ou PipelineRun. 
+O Tekton armazena os logs de execução das TaskRuns e PipelineRuns dentro do `Pod` que contém os contêineres que executam os Steps. 
 
 Você pode obter logs de execução usando um dos seguintes métodos:
 
 Obtenha os nome dos pod das instâncias de Taskrun
 ```bash
-kubectl get taskruns -o yaml | grep 
+kubectl get taskruns -o yaml | grep podName
 podName: microservice-api.app5-blgz5-build-pod
 podName: microservice-api.app5-blgz5-deploy-pod
 podName: microservice-api.app5-blgz5-quality-pod-retry1
@@ -275,6 +275,12 @@ Para visualizar os logs de todos os container do Pod. No exemplo, vamos utilizar
 
 ```bash
 kubectl logs microservice-api.app5-blgz5-build-pod --all-containers
+```
+
+Também é possível visualizar os logs de um  `Step` que a nível de Pod se transforma em um container. O nome do step é `trivy` e na composição do comando é necessário adicionar `step-trivy`.
+
+```bash
+kubectl logs microservice-api.app5-blgz5-security-pod -c step-trivy
 ```
 
 Uma forma mais simples para visualizar os logs é utilizar o `tkn`. Os logs podem ser visualizados por `Taskrun` especificos ou por execução da `PipelineRun`.
@@ -360,8 +366,8 @@ Para aplicar a configuração do `Elastic`:
 
 ```bash
 kubectl apply -f https://download.elastic.co/downloads/eck/1.3.1/all-in-one.yaml
-kubectl -n elastic-system apply -f monitoring-es-kb.yaml
-kubectl -n elastic-system apply -f monitoring-filebeat-metricbeat.yaml
+kubectl -n elastic-system apply -f proj/Metrics/Elastic/monitoring-es-kb.yaml
+kubectl -n elastic-system apply -f proj/Metrics/Elastic/monitoring-filebeat-metricbeat.yaml
 ```
 Vamos aguardar até todos os serviços estejam rodando.
 
@@ -377,9 +383,9 @@ metricbeat-beat-metricbeat-jh2kr        1/1     Running   0          1h11m
 
 Para logar no `Elastic`, utilize os seguintes dados:
 
-User: elastic
-password:
+**User**: elastic
 
+**password:** 
 ```bash
 echo $(kubectl get secret -n elastic-system elasticsearch-monitoring-es-elastic-user -o=jsonpath='{.data.elastic}' | base64 --decode)
 ```
