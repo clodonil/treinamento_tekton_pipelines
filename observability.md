@@ -395,17 +395,31 @@ kubectl port-forward -n elastic-system svc/kibana-monitoring-kb-http 5601
 Acesso o `Elastic` no endereço `https://localhost:5601/app/observability/overview`.
 
 
-Você pode filtrar os logs pelo nome da tarefa, nome do TaskRun e assim por diante
+Agora que você esta logado no `Elastic`, pode filtrar os logs pelo nome da Task, nome do TaskRun e assim por diante.
+Para isso, click no lado esquerdo no menu `Observability` e `Logs`. E utilize como filtros.
+
+Os filtros mais comum são:
+
+| Filtros |
++---------|
+|kubernetes.labels.tekton_dev/pipeline| 
+|kubernetes.labels.tekton_dev/pipelineRun| 
+|kubernetes.labels.tekton_dev/pipelineTask| 
+|kubernetes.labels.tekton_dev/task |
+|kubernetes.labels.tekton_dev/taskRun| 
+
 
 ![template](img/image36.png)
 
-Vá para a IU de métricas, na visualização Inventário, e clique em Mostrar os pods do Kubernetes. Em seguida, selecione Agrupado por Namespace. Você deve ver os pods em execução no namespace elastic-system e os que estão sendo executados no namespace tekton-pipelines.
+Vá para a IU de métricas, na visualização Inventário, e clique em Mostrar os `Kubernetes Pods`. Em seguida, selecione Agrupado por `Namespace`. Você deve ver os pods em execução no namespace `elastic-system` e os que estão sendo executados no namespace tekton-pipelines. No namespace `default` temos os pods de execução das pipelines.
 
 ![template](img/image37.png)
 
 Ao clicar na linha do tempo à direita da tela, você pode acessar o painel "Registrar detalhes do documento do evento" e observar que muitos rótulos Tekton estão disponíveis prontos para uso. Isso porque por padrão o Tekton adiciona rótulos dedicados ao Pod criado para executar a Tarefa, como você pode ver na imagem abaixo:
 
 ![template](img/image38.png)
+
+
 
 # Sanitização dos logs
 
