@@ -401,7 +401,7 @@ Para isso, click no lado esquerdo no menu `Observability` e `Logs`. E utilize co
 Os filtros mais comum são:
 
 | Filtros |
-+---------+
+|---------|
 |kubernetes.labels.tekton_dev/pipeline| 
 |kubernetes.labels.tekton_dev/pipelineRun| 
 |kubernetes.labels.tekton_dev/pipelineTask| 
