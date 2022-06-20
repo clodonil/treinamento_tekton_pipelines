@@ -1,0 +1,13 @@
+---
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: gitea-webhook
+spec:
+  serviceAccountName: tekton-triggers-example-sa
+  triggers:
+    - name: tekton-greeter-webhook
+      bindings:
+        - ref: gitea-triggerbinding
+      template:
+        ref: tekton-greeter-trigger-template

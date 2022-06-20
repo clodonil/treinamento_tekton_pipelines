@@ -1,5 +1,9 @@
-Workshop: Introdução ao TekTon
+Desenvolvimento de Pipelines com Tekton
 ==========
+
+
+![task](img/tekton.png)
+
 
 ## Objetivo
 Construa pipelines modernas, escalável e 100% cloud native com Tekton.
@@ -20,7 +24,7 @@ Construa pipelines modernas, escalável e 100% cloud native com Tekton.
 
 Temos um canal para você tirar as suas dúvidas:
 
-[Link para o grupo no Discord](https://discord.gg/Gybx4d4DTX)
+[Link para o grupo no Discord](https://discord.gg/k2RWWCjBN4)
 
 ## Contribuindo
 1. Primeiramente realize um `Fork` do projeto;

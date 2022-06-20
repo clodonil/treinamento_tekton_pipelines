@@ -1,0 +1,42 @@
+---
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: tekton-greeter-trigger-template
+spec:
+  params:
+    - name: gitrevision
+      description: The git revision
+      default: staging
+    - name: gitrepositoryurl
+      description: The git repository url
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: PipelineRun
+      metadata:
+        generateName: greeter-app-
+        labels:
+          tekton.dev/pipeline: microservice-api
+      spec:
+        serviceAccountName: tekton-triggers-example-sa
+        pipelineRef:
+          name: microservice-api
+        params:
+          - name: IMAGE
+            value: "clodonil/apphello:1"
+          - name: runtime
+            value: python
+          - name: revision
+            value: master
+          - name: url
+            value: 'https://github.com/clodonil/apphello.git'
+          - name: runtime
+            value: 'python'
+          - name: appname
+            value: 'helloworl'
+        workspaces:
+          - name: sharedlibrary
+            persistentVolumeClaim:
+               claimName: sharedlibrary
+          - name: app-source
+            emptyDir: {}     
