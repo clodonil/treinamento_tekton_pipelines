@@ -5,10 +5,10 @@ metadata:
   name: tekton-greeter-trigger-template
 spec:
   params:
-    - name: gitrevision
+    - name: revision
       description: The git revision
-      default: staging
-    - name: gitrepositoryurl
+      default: master
+    - name: repository
       description: The git repository url
   resourcetemplates:
     - apiVersion: tekton.dev/v1beta1
@@ -27,16 +27,18 @@ spec:
           - name: runtime
             value: python
           - name: revision
-            value: master
+            value: '$(tt.params.revision)'
           - name: url
-            value: 'https://github.com/clodonil/apphello.git'
+            value: '$(tt.params.repository)'
           - name: runtime
             value: 'python'
           - name: appname
             value: 'helloworl'
+          - name: registry
+            value: clodonil  
         workspaces:
           - name: sharedlibrary
             persistentVolumeClaim:
                claimName: sharedlibrary
-          - name: app-source
+          - name: source
             emptyDir: {}     

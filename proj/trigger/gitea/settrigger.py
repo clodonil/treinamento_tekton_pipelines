@@ -4,8 +4,8 @@ import requests
 gitea_user = "user1"
 gitea_pwd = "redepp"
 webhookURL = "http://el-gitea-webhook.default.svc:8080"
-repo = 'app1'
-giteaURL = "http://" + gitea_user + ":" + gitea_pwd + '@localhost:30005'
+repo = 'app1-hello-python'
+giteaURL = "http://" + gitea_user + ":" + gitea_pwd + '@172.25.145.96:30005'
 # configure webhook on tekton-tutorial-greeter
 data_webhook = '{"type": "gogs", "config": { "url": "' + webhookURL + '", "content_type": "json"}, "events": ["push"], "active": true}'
 headers = {'Content-Type': 'application/json'}

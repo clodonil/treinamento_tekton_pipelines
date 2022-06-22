@@ -32,3 +32,6 @@ Temos um canal para você tirar as suas dúvidas:
 3. Realize suas mudanças e faça os commits: `git commit -am "adicione a feature`
 4. Realize o Push da branch:  `git push origin my-new-feature`
 5. Envie o pull request
+
+## Tecnologias utilizada
+![task](img/image41.png)
