@@ -39,7 +39,7 @@ http://localhost:30005/
 ```bash
 export USER='XXXX'
 export PASS='XXXX'
-export GIT='http://172.18.211.138:30005'
+export GIT='http://xxx.xxx.xxx.xxx:30005'
 python3 $WORKSHOP_HOME/proj/trigger/gitea/gitea_cli.py -n -r sharedlibrary -u $USER -p $PASS
 python3 $WORKSHOP_HOME/proj/trigger/gitea/gitea_cli.py -w -r sharedlibrary -u $USER -p $PASS
 
@@ -54,6 +54,24 @@ git add *
 git commit -m "first commit"
 git remote add origin $GIT/user1/sharedlibrary.git
 git push -u origin master
+```
+
+
+```bash
+kubectl apply -f $WORKSHOP_HOME/proj/trigger/rbac.yaml
+```
+
+```bash
+kubectl apply -f $WORKSHOP_HOME/proj/trigger/sharedlibrary/
+eventlistener.triggers.tekton.dev/gitea-webhook-sharedlibrary created
+triggerbinding.triggers.tekton.dev/gitea-triggerbinding-sharedlibrary created
+triggertemplate.triggers.tekton.dev/tekton-triggertemplate-sharedlibrary created
+```
+
+```bash
+kubectl get pods
+NAME                                             READY   STATUS      RESTARTS   AGE
+el-gitea-webhook-sharedlibrary-67c697dc7-t8wss   1/1     Running     0          8m6s
 ```
 
 
