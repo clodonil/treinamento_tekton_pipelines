@@ -10,6 +10,12 @@ spec:
       default: master
     - name: repository
       description: The git repository url
+    - name: runtime
+      description: Runtime of app
+    - name: appname
+      description: Aplication name
+    - name: version
+      description: vesion of application
   resourcetemplates:
     - apiVersion: tekton.dev/v1beta1
       kind: PipelineRun
@@ -22,18 +28,14 @@ spec:
         pipelineRef:
           name: microservice-api
         params:
-          - name: IMAGE
-            value: "clodonil/apphello:1"
-          - name: runtime
-            value: python
           - name: revision
             value: '$(tt.params.revision)'
           - name: url
             value: '$(tt.params.repository)'
           - name: runtime
-            value: 'python'
+            value: '$(tt.params.runtime)'
           - name: appname
-            value: 'helloworl'
+            value: '$(tt.params.appname)'
           - name: registry
             value: clodonil  
         workspaces:
@@ -41,4 +43,5 @@ spec:
             persistentVolumeClaim:
                claimName: sharedlibrary
           - name: source
-            emptyDir: {}     
+            persistentVolumeClaim:
+               claimName: app-source

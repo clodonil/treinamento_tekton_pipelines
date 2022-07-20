@@ -1,0 +1,10 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerBinding
+metadata:
+  name: gitea-triggerbinding-sharedlibrary
+spec:
+  params:
+    - name: revision
+      value: $(body.repository.default_branch)
+    - name: repository
+      value: $(body.repository.clone_url)

@@ -7,6 +7,16 @@ spec:
   serviceAccountName: tekton-triggers-example-sa
   triggers:
     - name: tekton-greeter-webhook
+      interceptors:
+        - ref:
+            name: cel
+          params:
+          - name: "overlays"
+            value:
+            - key: runtime
+              expression: "body.repository.name.split('-')[2]"    
+            - key: appname
+              expression: "body.repository.name.split('-')[0]"    
       bindings:
         - ref: gitea-triggerbinding
       template:

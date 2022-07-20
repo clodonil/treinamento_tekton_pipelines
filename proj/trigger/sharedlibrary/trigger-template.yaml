@@ -1,0 +1,33 @@
+---
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: tekton-triggertemplate-sharedlibrary
+spec:
+  params:
+    - name: revision
+      description: The git revision
+      default: master
+    - name: repository
+      description: The git repository url
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: TaskRun
+      metadata:
+        generateName: 'sharedlibrary-'
+        labels:
+          tekton.dev/task: 'source'
+      spec:
+        serviceAccountName: tekton-triggers-sa
+        taskRef:
+          name: source
+        params:
+          - name: revision
+            value: '$(tt.params.revision)'
+          - name: url
+            value: '$(tt.params.repository)'
+        workspaces:
+          - name: output
+            persistentVolumeClaim:
+               claimName: sharedlibrary
+

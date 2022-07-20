@@ -219,7 +219,7 @@ spec:
           -sparseCheckoutDirectories="${PARAM_SPARSE_CHECKOUT_DIRECTORIES}"
         cd "${CHECKOUT_DIR}"
         ls -l
-        RESULT_SHA="$(git rev-parse HEAD)"
+        RESULT_SHA="$(git rev-parse HEAD | cut -c1-8)"
         EXIT_CODE="$?"
         if [ "${EXIT_CODE}" != 0 ] ; then
           exit "${EXIT_CODE}"

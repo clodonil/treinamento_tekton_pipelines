@@ -39,5 +39,4 @@ kubectl -n tekton-pipelines delete service tekton-dashboard 2>&1 > $logs
 kubectl -n tekton-pipelines create service nodeport tekton-dashboard --tcp=9097:9097 --node-port=30000 2>&1 > $logs
 
 echo "Dashboard: http://localhost:30000"
-echo "Metrics: http://localhost:30001/metrics"
 echo "$cluster_name Configurado."

@@ -3,6 +3,13 @@
 # reopened with the relevant failures.
 #
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/part-of: tekton-pipelines
+  name: feature-flags
+  namespace: tekton-pipelines
 data:
   disable-affinity-assistant: "true"
   disable-creds-init: "false"
@@ -12,16 +19,3 @@ data:
   require-git-ssh-secret-known-hosts: "false"
   running-in-environment-with-injected-sidecars: "true"
   send-cloudevents-for-runs: "false"
-kind: ConfigMap
-metadata:
-  annotations:
-    kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"v1","data":{"disable-affinity-assistant":"false","disable-creds-init":"false","enable-api-fields":"stable","enable-custom-tasks":"false","enable-tekton-oci-bundles":"false","require-git-ssh-secret-known-hosts":"false","running-in-environment-with-injected-sidecars":"true","send-cloudevents-for-runs":"false"},"kind":"ConfigMap","metadata":{"annotations":{},"labels":{"app.kubernetes.io/instance":"default","app.kubernetes.io/part-of":"tekton-pipelines"},"name":"feature-flags","namespace":"tekton-pipelines"}}
-  creationTimestamp: "2022-06-07T22:36:58Z"
-  labels:
-    app.kubernetes.io/instance: default
-    app.kubernetes.io/part-of: tekton-pipelines
-  name: feature-flags
-  namespace: tekton-pipelines
-  resourceVersion: "357"
-  uid: 8f306869-fe3f-427e-94ea-c01707b1b455

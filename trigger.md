@@ -1,6 +1,11 @@
+# Em Desenvolvimento: Previsão 18/07/2022
+
+```bash
 kubectl apply --filename https://storage.googleapis.com/tekton-releases/triggers/latest/release.yaml
 kubectl apply --filename https://storage.googleapis.com/tekton-releases/triggers/latest/interceptors.yaml
+```
 
+```bash
 kubectl get pods --namespace tekton-pipelines 
 NAME                                                READY   STATUS    RESTARTS   AGE
 tekton-dashboard-57cf45447c-fmcgw                   1/1     Running   0          3h33m
@@ -9,14 +14,47 @@ tekton-pipelines-webhook-6c9d4d5798-4jfl8           1/1     Running   0         
 tekton-triggers-controller-668df9f855-vpgjc         1/1     Running   0          46s
 tekton-triggers-core-interceptors-55d8cfbd6-dq775   1/1     Running   0          44s
 tekton-triggers-webhook-55574b569b-nscvl            1/1     Running   0          46s
-
+```
 
 # Instalando o gita
-kubectl apply -f proj/trigger/gitea/
 
+```bash
+kubectl create namespace tools
+kubectl -n tools apply -f $WORKSHOP_HOME/proj/trigger/gitea/
+```
+
+```bash
+kubectl get pods -n tools
+NAME                     READY   STATUS    RESTARTS   AGE
+gitea-8554476b8b-mm6gc   1/1     Running   0          27s
+```
 http://localhost:30005/
 
 ![trigger](img/image40.png)
+
+![trigger](img/image42.png)
+
+## Criar os repositórios e WebHook
+
+```bash
+export USER='XXXX'
+export PASS='XXXX'
+export GIT='http://172.18.211.138:30005'
+python3 $WORKSHOP_HOME/proj/trigger/gitea/gitea_cli.py -n -r sharedlibrary -u $USER -p $PASS
+python3 $WORKSHOP_HOME/proj/trigger/gitea/gitea_cli.py -w -r sharedlibrary -u $USER -p $PASS
+
+python3 $WORKSHOP_HOME/proj/trigger/gitea/gitea_cli.py -n -r app1-python -u $USER -p $PASS
+python3 $WORKSHOP_HOME/proj/trigger/gitea/gitea_cli.py -w -r app1-python -u $USER -p $PASS
+```
+
+```bash
+cd $WORKSHOP_HOME/src/sharedlibrary
+git init
+git add *
+git commit -m "first commit"
+git remote add origin $GIT/user1/sharedlibrary.git
+git push -u origin master
+```
 
 
 # Inicializando o repositório de código
