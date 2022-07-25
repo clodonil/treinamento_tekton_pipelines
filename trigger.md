@@ -1,5 +1,24 @@
 # Em Desenvolvimento: Previsão 18/07/2022
 
+# Criando o trigger
+
+![trigger](img/image42.png)
+
+## EventListener
+escuta eventos em uma porta especificada em seu cluster Kubernetes. Especifica um ou mais arquivos Triggers.
+Trigger- especifica o que acontece quando EventListenerdetecta um evento. A Triggerespecifica a TriggerTemplate, a TriggerBinding, e opcionalmente, an Interceptor.
+
+### Interceptor
+- um processador de eventos "pega-tudo" para uma plataforma específica que é executado antes de TriggerBindingpermitir que você execute filtragem de carga útil, verificação (usando um segredo), transformação, defina e teste condições de disparo e outros processamentos úteis. Depois que os dados do evento passam por um interceptor, eles vão para o Triggerantes de você passar os dados de carga útil para o TriggerBinding.
+
+## Trigger-Bindings
+especifica os campos na carga útil do evento dos quais você deseja extrair dados e os campos em seu correspondente TriggerTemplatepara preencher com os valores extraídos. Você pode então usar os campos preenchidos no TriggerTemplatepara preencher campos no arquivo associado TaskRunou PipelineRun.
+
+## Trigger-Template
+specifica um blueprint para o recurso, como a TaskRunou PipelineRun, que você deseja instanciar e/ou executar quando EventListenerdetectar um evento. Ele expõe parâmetros que você pode usar em qualquer lugar dentro do modelo do seu recurso.
+
+
+
 ```bash
 kubectl apply --filename https://storage.googleapis.com/tekton-releases/triggers/latest/release.yaml
 kubectl apply --filename https://storage.googleapis.com/tekton-releases/triggers/latest/interceptors.yaml
@@ -63,20 +82,6 @@ git push -u origin master
 kubectl apply -f $WORKSHOP_HOME/proj/trigger/rbac.yaml
 ```
 
-# Criando o trigger
-
-## EventListener
-escuta eventos em uma porta especificada em seu cluster Kubernetes. Especifica um ou mais arquivos Triggers.
-Trigger- especifica o que acontece quando EventListenerdetecta um evento. A Triggerespecifica a TriggerTemplate, a TriggerBinding, e opcionalmente, an Interceptor.
-
-### Interceptor
-- um processador de eventos "pega-tudo" para uma plataforma específica que é executado antes de TriggerBindingpermitir que você execute filtragem de carga útil, verificação (usando um segredo), transformação, defina e teste condições de disparo e outros processamentos úteis. Depois que os dados do evento passam por um interceptor, eles vão para o Triggerantes de você passar os dados de carga útil para o TriggerBinding.
-
-## Trigger-Bindings
-especifica os campos na carga útil do evento dos quais você deseja extrair dados e os campos em seu correspondente TriggerTemplatepara preencher com os valores extraídos. Você pode então usar os campos preenchidos no TriggerTemplatepara preencher campos no arquivo associado TaskRunou PipelineRun.
-
-## Trigger-Template
-specifica um blueprint para o recurso, como a TaskRunou PipelineRun, que você deseja instanciar e/ou executar quando EventListenerdetectar um evento. Ele expõe parâmetros que você pode usar em qualquer lugar dentro do modelo do seu recurso.
 
 
 ```bash
