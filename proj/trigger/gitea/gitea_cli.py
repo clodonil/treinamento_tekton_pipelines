@@ -5,7 +5,7 @@ import argparse
 
 parser = argparse.ArgumentParser(description="Just an example",
                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-parser.add_argument("-w", "--webhook", action="store_true", help="criar um novo webhook")
+parser.add_argument("-w", "--webhook",  help="criar um novo webhook")
 parser.add_argument("-n", "--novo", action="store_true", help="cria um novo repositorio")
 parser.add_argument("-r","--repositorio", help="Nome do repositorio")
 parser.add_argument("-u","--user", help="Destination location")
@@ -17,11 +17,13 @@ config = vars(args)
 gitea_user = config['user']
 gitea_pwd = config['password']
 repo = config['repositorio']
-gitea_ip = '172.18.211.138'
-gitea_port = '30005'
-webhookURL = "http://el-gitea-webhook.tools.svc:8080"
 
-giteaURL = f"http://{gitea_user}:{gitea_pwd}@{gitea_ip}:{gitea_port}"
+git_url = os.getenv('GIT')
+gitea_url = git_url.split('//')[1]
+#webhookURL = "http://el-gitea-webhook.default.svc:8080"
+webhookURL = f"http://{config['webhook']}.default.svc:8080"
+
+giteaURL = f"http://{gitea_user}:{gitea_pwd}@{gitea_url}"
 headers = {'Content-Type': 'application/json'}
 
 
@@ -34,7 +36,7 @@ def create_webhook(repo):
       print("Error configuring the webhook (status code: {})".format(resp.status_code))
       print(resp.content)
     else:
-      print("Repositorio criado: " + repo)
+      print("Configured webhook: " + webhookURL)
 
 def create_repo(name):
     repo_name = '{"name":"'+ name + '" }"'
@@ -44,7 +46,7 @@ def create_repo(name):
       print("Problema para criar o repositorio (status code: {})".format(resp.status_code))
       print(resp.content)
     else:
-      print("Configured webhook: " + webhookURL)
+      print("Repositorio criado: " + name)
 
 if __name__ == "__main__":
  if config['novo']:

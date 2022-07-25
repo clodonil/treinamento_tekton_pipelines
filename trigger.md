@@ -41,11 +41,12 @@ export USER='XXXX'
 export PASS='XXXX'
 export GIT='http://xxx.xxx.xxx.xxx:30005'
 python3 $WORKSHOP_HOME/proj/trigger/gitea/gitea_cli.py -n -r sharedlibrary -u $USER -p $PASS
-python3 $WORKSHOP_HOME/proj/trigger/gitea/gitea_cli.py -w -r sharedlibrary -u $USER -p $PASS
 
 python3 $WORKSHOP_HOME/proj/trigger/gitea/gitea_cli.py -n -r app1-python -u $USER -p $PASS
-python3 $WORKSHOP_HOME/proj/trigger/gitea/gitea_cli.py -w -r app1-python -u $USER -p $PASS
+#python3 $WORKSHOP_HOME/proj/trigger/gitea/gitea_cli.py -w -r app1-python -u $USER -p $PASS
 ```
+
+# Inicializando o repositório de código
 
 ```bash
 cd $WORKSHOP_HOME/src/sharedlibrary
@@ -56,10 +57,27 @@ git remote add origin $GIT/user1/sharedlibrary.git
 git push -u origin master
 ```
 
+# Create ServiceAccount, Roles and Role Bindings
 
 ```bash
 kubectl apply -f $WORKSHOP_HOME/proj/trigger/rbac.yaml
 ```
+
+# Criando o trigger
+
+## EventListener
+escuta eventos em uma porta especificada em seu cluster Kubernetes. Especifica um ou mais arquivos Triggers.
+Trigger- especifica o que acontece quando EventListenerdetecta um evento. A Triggerespecifica a TriggerTemplate, a TriggerBinding, e opcionalmente, an Interceptor.
+
+### Interceptor
+- um processador de eventos "pega-tudo" para uma plataforma específica que é executado antes de TriggerBindingpermitir que você execute filtragem de carga útil, verificação (usando um segredo), transformação, defina e teste condições de disparo e outros processamentos úteis. Depois que os dados do evento passam por um interceptor, eles vão para o Triggerantes de você passar os dados de carga útil para o TriggerBinding.
+
+## Trigger-Bindings
+especifica os campos na carga útil do evento dos quais você deseja extrair dados e os campos em seu correspondente TriggerTemplatepara preencher com os valores extraídos. Você pode então usar os campos preenchidos no TriggerTemplatepara preencher campos no arquivo associado TaskRunou PipelineRun.
+
+## Trigger-Template
+specifica um blueprint para o recurso, como a TaskRunou PipelineRun, que você deseja instanciar e/ou executar quando EventListenerdetectar um evento. Ele expõe parâmetros que você pode usar em qualquer lugar dentro do modelo do seu recurso.
+
 
 ```bash
 kubectl apply -f $WORKSHOP_HOME/proj/trigger/sharedlibrary/
@@ -69,25 +87,23 @@ triggertemplate.triggers.tekton.dev/tekton-triggertemplate-sharedlibrary created
 ```
 
 ```bash
-kubectl get pods
-NAME                                             READY   STATUS      RESTARTS   AGE
-el-gitea-webhook-sharedlibrary-67c697dc7-t8wss   1/1     Running     0          8m6s
+kubectl get pods,svc
+NAME                                                 READY   STATUS    RESTARTS   AGE
+pod/el-gitea-webhook-sharedlibrary-67c697dc7-w6wwt   1/1     Running   0          2m43s
+
+NAME                                     TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)             AGE
+service/el-gitea-webhook-sharedlibrary   ClusterIP   10.96.20.246   <none>        8080/TCP,9000/TCP   2m43s
 ```
 
-
-# Inicializando o repositório de código
-
-## Criando o trigger
-
-# Create ServiceAccount, Roles and Role Bindings
-
-Precisamos consultar objetos do Kubernetes, criar Triggers e finalmente implantar o Knative Service como parte dos exercícios deste capítulo. Vamos criar uma conta de serviço do Kubernetes e adicionar as funções/permissões necessárias:
+# Criação do webhook.
+```bash
+python3 $WORKSHOP_HOME/proj/trigger/gitea/gitea_cli.py -w el-gitea-webhook-sharedlibrary -r sharedlibrary -u $USER -p $PASS
+```
+![trigger](img/image43.png)
 
 
 
-# EventListener
 
-# Trigger-Bindings
 ```yaml
 {
   "ref": "refs/heads/master",

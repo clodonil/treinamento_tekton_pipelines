@@ -40,7 +40,7 @@ kubectl apply -f $WORKSHOP_HOME/proj/tasks/Source/taskrun-sharedlibrary.yaml
 kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/send-to-webhook-discord/0.1/send-to-webhook-discord.yaml
 ```
 
-```
+```bash
 kubectl create secret generic sonar --from-literal=SONAR_TOKEN=$TOKEN
 ```
 ```
