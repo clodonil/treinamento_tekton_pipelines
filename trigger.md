@@ -2,7 +2,7 @@
 
 # Criando o trigger
 
-![trigger](img/image42.png)
+![trigger](img/image44.png)
 
 ## EventListener
 escuta eventos em uma porta especificada em seu cluster Kubernetes. Especifica um ou mais arquivos Triggers.
