@@ -1,8 +1,23 @@
-# Em Desenvolvimento: Previsão 18/07/2022
+Triggers
+================
+## Objetivo
 
-# Criando o trigger
+Ao final deste modulo você será capaz de:
+* Ter criado as tasks necessárias da pipeline;
+* Ter validado cada tasks e seus passos;
+* Ter utilizado a sharedlibrary;
 
-![trigger](img/image44.png)
+## Setup
+
+```bash
+git clone https://github.com/clodonil/treinamento_tekton_pipelines.git
+export TREINAMENTO_HOME="$(pwd)/treinamento_tekton_pipelines"
+cd $TREINAMENTO_HOME
+```
+
+
+# Trigger
+
 
 ## EventListener
 escuta eventos em uma porta especificada em seu cluster Kubernetes. Especifica um ou mais arquivos Triggers.
@@ -18,6 +33,10 @@ especifica os campos na carga útil do evento dos quais você deseja extrair dad
 specifica um blueprint para o recurso, como a TaskRunou PipelineRun, que você deseja instanciar e/ou executar quando EventListenerdetectar um evento. Ele expõe parâmetros que você pode usar em qualquer lugar dentro do modelo do seu recurso.
 
 
+![trigger](img/image44.png)
+
+
+# Instalação do trigger
 
 ```bash
 kubectl apply --filename https://storage.googleapis.com/tekton-releases/triggers/latest/release.yaml
