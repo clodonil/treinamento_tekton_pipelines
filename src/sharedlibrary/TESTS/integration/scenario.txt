@@ -1,0 +1,4 @@
+Scenario: Testando se aplicacao esta respondendo
+Given url 'http://localhost
+When method GET
+Then status 200
