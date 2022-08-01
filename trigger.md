@@ -58,7 +58,7 @@ tekton-triggers-webhook-55574b569b-nscvl            1/1     Running   0         
 
 ```bash
 kubectl create namespace tools
-kubectl -n tools apply -f $WORKSHOP_HOME/proj/trigger/gitea/
+kubectl -n tools apply -f $TREINAMENTO_HOME/proj/trigger/gitea/
 ```
 
 ```bash
@@ -78,16 +78,15 @@ http://localhost:30005/
 export USER='XXXX'
 export PASS='XXXX'
 export GIT='http://xxx.xxx.xxx.xxx:30005'
-python3 $WORKSHOP_HOME/proj/trigger/gitea/gitea_cli.py -n -r sharedlibrary -u $USER -p $PASS
-
-python3 $WORKSHOP_HOME/proj/trigger/gitea/gitea_cli.py -n -r app1-python -u $USER -p $PASS
+python3 $TREINAMENTO_HOME/proj/trigger/gitea/gitea_cli.py -n -r sharedlibrary -u $USER -p $PASS
+python3 $TREINAMENTO_HOME/proj/trigger/gitea/gitea_cli.py -n -r app1-python -u $USER -p $PASS
 #python3 $WORKSHOP_HOME/proj/trigger/gitea/gitea_cli.py -w -r app1-python -u $USER -p $PASS
 ```
 
 # Inicializando o repositório de código
 
 ```bash
-cd $WORKSHOP_HOME/src/sharedlibrary
+cd $TREINAMENTO_HOME/src/sharedlibrary
 git init
 git add *
 git commit -m "first commit"
