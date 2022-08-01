@@ -2,12 +2,12 @@
 apiVersion: triggers.tekton.dev/v1alpha1
 kind: EventListener
 metadata:
-  name: gitea-webhook-sharedlibrary
+  name: tekton-webhook-sharedlibrary
 spec:
   serviceAccountName: tekton-triggers-sa
   triggers:
     - name: tekton-webhook-sharedlibrary
       bindings:
-        - ref: gitea-triggerbinding-sharedlibrary
+        - ref: tekton-triggerbinding-sharedlibrary
       template:
         ref: tekton-triggertemplate-sharedlibrary

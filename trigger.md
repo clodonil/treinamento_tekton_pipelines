@@ -15,9 +15,15 @@ export TREINAMENTO_HOME="$(pwd)/treinamento_tekton_pipelines"
 cd $TREINAMENTO_HOME
 ```
 
+## Pré-Requisito
+
+Para realizar a criação das triggers é necessário ter as pipelines criadas, portanto realize o módulo [5.1. Desenvolvimento das pipelines](pipeline-dev.md).
+
+
 
 # Trigger
 
+O Tekton Triggers é um componente do Tekton que permite detectar e extrair informações de eventos de uma variedade de fontes e instanciar e executar deterministicamente TaskRunse PipelineRunscom base nessas informações. Os Tekton Triggers também podem passar informações extraídas de eventos diretamente para TaskRunse PipelineRuns. Você instala Tekton Triggers em seu cluster Kubernetes como uma extensão para Tekton Pipelines.
 
 ## EventListener
 escuta eventos em uma porta especificada em seu cluster Kubernetes. Especifica um ou mais arquivos Triggers.
@@ -80,10 +86,17 @@ export PASS='XXXX'
 export GIT='http://xxx.xxx.xxx.xxx:30005'
 python3 $TREINAMENTO_HOME/proj/trigger/gitea/gitea_cli.py -n -r sharedlibrary -u $USER -p $PASS
 python3 $TREINAMENTO_HOME/proj/trigger/gitea/gitea_cli.py -n -r app1-python -u $USER -p $PASS
-#python3 $WORKSHOP_HOME/proj/trigger/gitea/gitea_cli.py -w -r app1-python -u $USER -p $PASS
 ```
 
-# Inicializando o repositório de código
+
+
+# Create ServiceAccount, Roles and Role Bindings
+
+```bash
+kubectl apply -f $TREINAMENTO_HOME/proj/trigger/rbac.yaml
+```
+
+# Inicializando o repositório da SharedLibrary
 
 ```bash
 cd $TREINAMENTO_HOME/src/sharedlibrary
@@ -94,33 +107,57 @@ git remote add origin $GIT/user1/sharedlibrary.git
 git push -u origin master
 ```
 
-# Create ServiceAccount, Roles and Role Bindings
 
 ```bash
-kubectl apply -f $WORKSHOP_HOME/proj/trigger/rbac.yaml
-```
-
-
-
-```bash
-kubectl apply -f $WORKSHOP_HOME/proj/trigger/sharedlibrary/
-eventlistener.triggers.tekton.dev/gitea-webhook-sharedlibrary created
-triggerbinding.triggers.tekton.dev/gitea-triggerbinding-sharedlibrary created
-triggertemplate.triggers.tekton.dev/tekton-triggertemplate-sharedlibrary created
+kubectl apply -f kubectl apply -f $TREINAMENTO_HOME/proj/trigger/EventListener.yaml
 ```
 
 ```bash
 kubectl get pods,svc
 NAME                                                 READY   STATUS    RESTARTS   AGE
-pod/el-gitea-webhook-sharedlibrary-67c697dc7-w6wwt   1/1     Running   0          2m43s
+pod/el-gitea-webhook-67c697dc7-w6wwt   1/1     Running   0          2m43s
 
 NAME                                     TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)             AGE
-service/el-gitea-webhook-sharedlibrary   ClusterIP   10.96.20.246   <none>        8080/TCP,9000/TCP   2m43s
+service/el-gitea-webhook   ClusterIP   10.96.20.246   <none>        8080/TCP,9000/TCP   2m43s
+```
+
+SharedLibrary
+
+```bash
+kubectl apply -f $TREINAMENTO_HOME/proj/trigger/sharedlibrary/EventListener.yaml
+kubectl apply -f $TREINAMENTO_HOME/proj/trigger/sharedlibrary/trigger-bindings.yaml
+kubectl apply -f $TREINAMENTO_HOME/proj/trigger/sharedlibrary/trigger-template.yaml
 ```
 
 # Criação do webhook.
 ```bash
-python3 $WORKSHOP_HOME/proj/trigger/gitea/gitea_cli.py -w el-gitea-webhook-sharedlibrary -r sharedlibrary -u $USER -p $PASS
+ python3 $TREINAMENTO_HOME/proj/trigger/gitea/gitea_cli.py -w el-tekton-webhook-sharedlibrary -r sharedlibrary -u $USER -p $PASS
+```
+![trigger](img/image43.png)
+
+
+# Inicializando o repositório de uma aplicação
+
+```bash
+cd $TREINAMENTO_HOME/src/app1-hello-python
+git init
+git add *
+git commit -m "first commit"
+git remote add origin $GIT/user1/app1-python.git
+git push -u origin master
+```
+
+Pipelinede Microservice
+
+```bash
+kubectl apply -f $TREINAMENTO_HOME/proj/trigger/pipeline-microservice/EventListener.yaml
+kubectl apply -f $TREINAMENTO_HOME/proj/trigger/pipeline-microservice/trigger-bindings.yaml
+kubectl apply -f $TREINAMENTO_HOME/proj/trigger/pipeline-microservice/trigger-template.yaml
+```
+
+# Criação do webhook.
+```bash
+python3 $TREINAMENTO_HOME/proj/trigger/gitea/gitea_cli.py -w el-tekton-webhook-microservice -r app1-python -u $USER -p $PASS
 ```
 ![trigger](img/image43.png)
 

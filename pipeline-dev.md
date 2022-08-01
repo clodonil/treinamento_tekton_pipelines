@@ -14,10 +14,12 @@ Ao final deste modulo você será capaz de:
 
 
 ## Setup
+
+```
 git clone https://github.com/clodonil/treinamento_tekton_pipelines.git
 export TREINAMENTO_HOME="$(pwd)/treinamento_tekton_pipelines"
 cd $TREINAMENTO_HOME
-
+```
 
 ![projeto](img/image14.png)
 

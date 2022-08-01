@@ -2,7 +2,7 @@
 apiVersion: triggers.tekton.dev/v1alpha1
 kind: TriggerTemplate
 metadata:
-  name: tekton-greeter-trigger-template
+  name: tekton-triggertemplate-microservice
 spec:
   params:
     - name: revision
@@ -24,7 +24,7 @@ spec:
         labels:
           tekton.dev/pipeline: microservice-api
       spec:
-        serviceAccountName: tekton-triggers-example-sa
+        serviceAccountName: tekton-triggers-sa
         pipelineRef:
           name: microservice-api
         params:

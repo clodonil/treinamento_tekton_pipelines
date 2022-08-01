@@ -2,11 +2,11 @@
 apiVersion: triggers.tekton.dev/v1alpha1
 kind: EventListener
 metadata:
-  name: gitea-webhook
+  name: tekton-webhook-microservice
 spec:
-  serviceAccountName: tekton-triggers-example-sa
+  serviceAccountName: tekton-triggers-sa
   triggers:
-    - name: tekton-greeter-webhook
+    - name: tekton-webhook-microservice
       interceptors:
         - ref:
             name: cel
@@ -14,10 +14,10 @@ spec:
           - name: "overlays"
             value:
             - key: runtime
-              expression: "body.repository.name.split('-')[2]"    
+              expression: "body.repository.name.split('-')[1]"    
             - key: appname
               expression: "body.repository.name.split('-')[0]"    
       bindings:
-        - ref: gitea-triggerbinding
+        - ref: tekton-triggerbinding-microservice
       template:
-        ref: tekton-greeter-trigger-template
+        ref: tekton-triggertemplate-microservice 
