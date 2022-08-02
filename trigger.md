@@ -3,11 +3,12 @@ Triggers
 ## Objetivo
 
 Ao final deste modulo você será capaz de:
-* Ter criado as tasks necessárias da pipeline;
-* Ter validado cada tasks e seus passos;
-* Ter utilizado a sharedlibrary;
+* Entender como as triggers no tekton funcionam;
+* Como criar uma trigger baseado em evento do repositório;
 
 ## Setup
+
+Para execução desse módulo, é necessário clonar o repositório do treinamento e configurar a variável de ambiente, caso ainda não tenha feito.
 
 ```bash
 git clone https://github.com/clodonil/treinamento_tekton_pipelines.git
@@ -19,35 +20,54 @@ cd $TREINAMENTO_HOME
 
 Para realizar a criação das triggers é necessário ter as pipelines criadas, portanto realize o módulo [5.1. Desenvolvimento das pipelines](pipeline-dev.md).
 
+## Trigger
 
+As Triggers são componentes do Tekton que permite detectar e extrair informações de eventos de uma variedade de fontes, tais como `repositório git`, `Docker Registry` e `PubSub`. E com essas informações, executar `TasksRun` e `PipelineRun`.
 
-# Trigger
+Os Tekton Triggers também podem passar informações extraídas de eventos diretamente para `TaskRuns` e `PipelineRuns`.
 
-O Tekton Triggers é um componente do Tekton que permite detectar e extrair informações de eventos de uma variedade de fontes e instanciar e executar deterministicamente TaskRunse PipelineRunscom base nessas informações. Os Tekton Triggers também podem passar informações extraídas de eventos diretamente para TaskRunse PipelineRuns. Você instala Tekton Triggers em seu cluster Kubernetes como uma extensão para Tekton Pipelines.
+A criação da trigger no tekton, envolve a criação dos seguintes componentes:
 
-## EventListener
-escuta eventos em uma porta especificada em seu cluster Kubernetes. Especifica um ou mais arquivos Triggers.
-Trigger- especifica o que acontece quando EventListenerdetecta um evento. A Triggerespecifica a TriggerTemplate, a TriggerBinding, e opcionalmente, an Interceptor.
+* EventListener
+* Trigger-Bindings
+* Trigger-Template
 
-### Interceptor
-- um processador de eventos "pega-tudo" para uma plataforma específica que é executado antes de TriggerBindingpermitir que você execute filtragem de carga útil, verificação (usando um segredo), transformação, defina e teste condições de disparo e outros processamentos úteis. Depois que os dados do evento passam por um interceptor, eles vão para o Triggerantes de você passar os dados de carga útil para o TriggerBinding.
+Vamos ver cada um com mais detalhes.
 
-## Trigger-Bindings
-especifica os campos na carga útil do evento dos quais você deseja extrair dados e os campos em seu correspondente TriggerTemplatepara preencher com os valores extraídos. Você pode então usar os campos preenchidos no TriggerTemplatepara preencher campos no arquivo associado TaskRunou PipelineRun.
+### EventListener
+O componente de `EventListener` escuta eventos em uma porta especificada através de um `Pod` em execução. Também é no `EventListener` que são especificada os arquivos de `TriggerBinding` e `TriggerTemplate` que são acionados quandos um evento é detectado.
 
-## Trigger-Template
-specifica um blueprint para o recurso, como a TaskRunou PipelineRun, que você deseja instanciar e/ou executar quando EventListenerdetectar um evento. Ele expõe parâmetros que você pode usar em qualquer lugar dentro do modelo do seu recurso.
+Quando um evento é detectado, antes de passar para os processos de `TriggerBinding` e `TriggerTemplate` é possível passar pelo `Interceptor` que pode realizar filtros e manipulações no evento.
 
+#### Interceptor
+O `Interceptor` é um processador de eventos que fica dentro do `EventListener`.  O `EventListener` recebe o eventos completo e antes de enviar para o `binding` é possível executar filtragem do evento, verificação (usando um segredo), transformação, defina e teste condições de trigger e outros processamentos úteis. 
+
+Depois que os dados do evento passam por um `interceptor`, eles vão para o `TriggerBinding` e `TriggerTemplate`.
+
+### Trigger-Bindings
+O `Trigger-Binding` especifica os campos do evento dos quais você deseja extrair dados. Esses dados entram no `TriggerTemplate` como parâmetros dos valores extraídos. 
+
+Você pode então usar os campos preenchidos no `TriggerTemplate` para preencher campos no arquivo associado `TaskRun` ou `PipelineRun`.
+
+### Trigger-Template
+O `TriggerTemplate` recebe os parâmetros do `Trigger-Binding` para inicializar os recursos de `TaskRun` ou `PipelineRun`. 
+
+Ele expõe parâmetros que você pode usar em qualquer lugar dentro do modelo do seu recurso.
+
+Abaixo um modelo da estrutura da triggers.
 
 ![trigger](img/image44.png)
 
 
-# Instalação do trigger
+## Instalação do trigger
+
+Agora que sabemos o que são as triggers e os seus componentes, vamos instalar os componentes. E para isso execute os seguintes comandos:
 
 ```bash
 kubectl apply --filename https://storage.googleapis.com/tekton-releases/triggers/latest/release.yaml
 kubectl apply --filename https://storage.googleapis.com/tekton-releases/triggers/latest/interceptors.yaml
 ```
+Aguarde até todos os serviços estarem em `running`, conforme abaixo.
 
 ```bash
 kubectl get pods --namespace tekton-pipelines 
@@ -60,27 +80,51 @@ tekton-triggers-core-interceptors-55d8cfbd6-dq775   1/1     Running   0         
 tekton-triggers-webhook-55574b569b-nscvl            1/1     Running   0          46s
 ```
 
-# Instalando o gita
+## Instalando o gitea
+
+Nesse módulo vamos utilizar os eventos de origem como sendo um repositório do git. E para isso vamos utilizar o `gitea` que um repositório leve com as funcionalidades que precisamos.
+
+Entretanto, todos os conceitos e funcionamento funcionam para qualquer outro repositório de git.
+
+Vamos instalar o `gitea` dentro do `namespace` tools, e para isso é necessário criar, conforme o comando abaixo.  
+
+Os arquivo para instalar o `gitea` no kubernetes são:
+
+* [deployment.yaml](./proj/trigger/gitea/deployment.yaml): Utilizado para definir a imagem do `gitea` e os parâmetros de inicialização;
+* [service.yaml](./proj/trigger/gitea/service.yaml): Utilizado para criar o service do `gitea`
+
+O comando de `kubectl` abaixo aplica os 2 arquivos que estão no diretório do `gitea`.
 
 ```bash
 kubectl create namespace tools
 kubectl -n tools apply -f $TREINAMENTO_HOME/proj/trigger/gitea/
 ```
 
+Aguarde até o serviço ficar no status de `running`.
+
 ```bash
 kubectl get pods -n tools
 NAME                     READY   STATUS    RESTARTS   AGE
 gitea-8554476b8b-mm6gc   1/1     Running   0          27s
 ```
-http://localhost:30005/
+
+Agora você pode acessar o `gitea` na url: http://localhost:30005/.
+
+Ao acessar o `gitea` pela primeira vez, é necessário configurar. Abaixo temos as principais configurações que são:
+
+* Dominio do servicoe SSH: Nesse campo é necessário especificar o endereço IP da interface de rede. Não utilize o `localhost`.
+* Url base do gitea: Nesse campo é necessário informar a URL de acesso. É basicamente composto do endereço IP da interface de rede e a porta 30005 definido no `kind`.
+* Dados do administrador: Nome e senha do usuário administrador do gitea
 
 ![trigger](img/image40.png)
+
+Se estiver utilizando o `Linux`, para saber qual é o número IP da interface de rede, utilize o comando `ip address show`.
 
 ![trigger](img/image42.png)
 
 ## Criar os repositórios e WebHook
 
-Crie as variáveis de ambiente com o usuário e senha criado no gitea e o endereço de acesso.
+Crie as variáveis de ambiente com o usuário e senha criado no `gitea` e o endereço de acesso.
 
 ```bash
 export USER='XXXX'
@@ -99,7 +143,6 @@ Segue os parâmetros utilizados no `gitea_cli.py`:
 python3 $TREINAMENTO_HOME/proj/trigger/gitea/gitea_cli.py -n -r sharedlibrary -u $USER -p $PASS
 python3 $TREINAMENTO_HOME/proj/trigger/gitea/gitea_cli.py -n -r app1-python -u $USER -p $PASS
 ```
-
 
 ## Inicializando o repositório 
 
@@ -137,9 +180,80 @@ kubectl apply -f $TREINAMENTO_HOME/proj/trigger/rbac.yaml
 
 ## SharedLibrary
 
+
+```yaml
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: tekton-webhook-sharedlibrary
+spec:
+  serviceAccountName: tekton-triggers-sa
+  triggers:
+    - name: tekton-webhook-sharedlibrary
+      bindings:
+        - ref: tekton-triggerbinding-sharedlibrary
+      template:
+        ref: tekton-triggertemplate-sharedlibrary
+```
+
 ```bash
 kubectl apply -f $TREINAMENTO_HOME/proj/trigger/sharedlibrary/EventListener.yaml
+```
+
+```yaml
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerBinding
+metadata:
+  name: tekton-triggerbinding-sharedlibrary
+spec:
+  params:
+    - name: revision
+      value: $(body.repository.default_branch)
+    - name: repository
+      value: $(body.repository.clone_url)
+```
+
+```bash
 kubectl apply -f $TREINAMENTO_HOME/proj/trigger/sharedlibrary/trigger-bindings.yaml
+```
+
+```yaml
+---
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: tekton-triggertemplate-sharedlibrary
+spec:
+  params:
+    - name: revision
+      description: The git revision
+      default: master
+    - name: repository
+      description: The git repository url
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: TaskRun
+      metadata:
+        generateName: 'sharedlibrary-'
+        labels:
+          tekton.dev/task: 'source'
+      spec:
+        serviceAccountName: tekton-triggers-sa
+        taskRef:
+          name: source
+        params:
+          - name: revision
+            value: '$(tt.params.revision)'
+          - name: url
+            value: '$(tt.params.repository)'
+        workspaces:
+          - name: output
+            persistentVolumeClaim:
+               claimName: sharedlibrary
+
+```
+
+```bash
 kubectl apply -f $TREINAMENTO_HOME/proj/trigger/sharedlibrary/trigger-template.yaml
 ```
 
@@ -184,7 +298,7 @@ service/el-tekton-webhook-sharedlibrary   ClusterIP   10.96.25.243   <none>     
 service/kubernetes                        ClusterIP   10.96.0.1      <none>        443/TCP             69m
 ```
 
-# Criação do webhook.
+### Criação do webhook.
 ```bash
 python3 $TREINAMENTO_HOME/proj/trigger/gitea/gitea_cli.py -w el-tekton-webhook-microservice -r app1-python -u $USER -p $PASS
 ```
