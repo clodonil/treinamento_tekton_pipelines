@@ -188,8 +188,10 @@ service/kubernetes                        ClusterIP   10.96.0.1      <none>     
 ```bash
 python3 $TREINAMENTO_HOME/proj/trigger/gitea/gitea_cli.py -w el-tekton-webhook-microservice -r app1-python -u $USER -p $PASS
 ```
-![trigger](img/image43.png)
+![trigger](img/image46.png)
 
+
+![trigger](img/image47.png)
 
 
 
