@@ -157,6 +157,9 @@ service/el-tekton-webhook-sharedlibrary   ClusterIP   10.96.25.243   <none>     
 ```bash
 python3 $TREINAMENTO_HOME/proj/trigger/gitea/gitea_cli.py -w el-tekton-webhook-sharedlibrary -r sharedlibrary -u $USER -p $PASS
 ```
+![trigger](img/image45.png)
+
+
 ![trigger](img/image43.png)
 
 
