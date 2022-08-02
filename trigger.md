@@ -80,23 +80,34 @@ http://localhost:30005/
 
 ## Criar os repositórios e WebHook
 
+Crie as variáveis de ambiente com o usuário e senha criado no gitea e o endereço de acesso.
+
 ```bash
 export USER='XXXX'
 export PASS='XXXX'
 export GIT='http://xxx.xxx.xxx.xxx:30005'
+```
+Agora podemos criar os repositórios que utilizaremos para configurar a trigger. A criação dos repositórios podem ser realizados pela `interface web`, entretanto criamos o `script` abaixo para facilitar a utilização.   
+
+Segue os parâmetros utilizados no `gitea_cli.py`:
+* `-n`: Cria um novo repositório
+* `-r`: Especifica o nome do repositório
+* `-u`: Usuário utilizado para fazer o login no `gitea`
+* `-p`: Senha do usuário do `gitea`
+
+```bash
 python3 $TREINAMENTO_HOME/proj/trigger/gitea/gitea_cli.py -n -r sharedlibrary -u $USER -p $PASS
 python3 $TREINAMENTO_HOME/proj/trigger/gitea/gitea_cli.py -n -r app1-python -u $USER -p $PASS
 ```
 
 
+## Inicializando o repositório 
 
-# Create ServiceAccount, Roles and Role Bindings
+Com o respositórios criados, vamos popular com códigos de exemplos.
 
-```bash
-kubectl apply -f $TREINAMENTO_HOME/proj/trigger/rbac.yaml
-```
+### SharedLibrary
 
-# Inicializando o repositório da SharedLibrary
+
 
 ```bash
 cd $TREINAMENTO_HOME/src/sharedlibrary
@@ -107,36 +118,7 @@ git remote add origin $GIT/user1/sharedlibrary.git
 git push -u origin master
 ```
 
-
-```bash
-kubectl apply -f kubectl apply -f $TREINAMENTO_HOME/proj/trigger/EventListener.yaml
-```
-
-```bash
-kubectl get pods,svc
-NAME                                                 READY   STATUS    RESTARTS   AGE
-pod/el-gitea-webhook-67c697dc7-w6wwt   1/1     Running   0          2m43s
-
-NAME                                     TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)             AGE
-service/el-gitea-webhook   ClusterIP   10.96.20.246   <none>        8080/TCP,9000/TCP   2m43s
-```
-
-SharedLibrary
-
-```bash
-kubectl apply -f $TREINAMENTO_HOME/proj/trigger/sharedlibrary/EventListener.yaml
-kubectl apply -f $TREINAMENTO_HOME/proj/trigger/sharedlibrary/trigger-bindings.yaml
-kubectl apply -f $TREINAMENTO_HOME/proj/trigger/sharedlibrary/trigger-template.yaml
-```
-
-# Criação do webhook.
-```bash
- python3 $TREINAMENTO_HOME/proj/trigger/gitea/gitea_cli.py -w el-tekton-webhook-sharedlibrary -r sharedlibrary -u $USER -p $PASS
-```
-![trigger](img/image43.png)
-
-
-# Inicializando o repositório de uma aplicação
+### Aplicação
 
 ```bash
 cd $TREINAMENTO_HOME/src/app1-hello-python
@@ -147,12 +129,56 @@ git remote add origin $GIT/user1/app1-python.git
 git push -u origin master
 ```
 
-Pipelinede Microservice
+## Create ServiceAccount, Roles and Role Bindings
+
+```bash
+kubectl apply -f $TREINAMENTO_HOME/proj/trigger/rbac.yaml
+```
+
+## SharedLibrary
+
+```bash
+kubectl apply -f $TREINAMENTO_HOME/proj/trigger/sharedlibrary/EventListener.yaml
+kubectl apply -f $TREINAMENTO_HOME/proj/trigger/sharedlibrary/trigger-bindings.yaml
+kubectl apply -f $TREINAMENTO_HOME/proj/trigger/sharedlibrary/trigger-template.yaml
+```
+
+```bash
+kubectl get pods,svc
+NAME                                                   READY   STATUS    RESTARTS   AGE
+pod/el-tekton-webhook-sharedlibrary-7c57fcf9f8-779hr   1/1     Running   0          13s
+
+NAME                                      TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)             AGE
+service/el-tekton-webhook-sharedlibrary   ClusterIP   10.96.25.243   <none>        8080/TCP,9000/TCP   13s
+```
+
+## Criação do webhook.
+
+```bash
+python3 $TREINAMENTO_HOME/proj/trigger/gitea/gitea_cli.py -w el-tekton-webhook-sharedlibrary -r sharedlibrary -u $USER -p $PASS
+```
+![trigger](img/image43.png)
+
+
+
+## Pipelinede Microservice
 
 ```bash
 kubectl apply -f $TREINAMENTO_HOME/proj/trigger/pipeline-microservice/EventListener.yaml
 kubectl apply -f $TREINAMENTO_HOME/proj/trigger/pipeline-microservice/trigger-bindings.yaml
 kubectl apply -f $TREINAMENTO_HOME/proj/trigger/pipeline-microservice/trigger-template.yaml
+```
+
+```bash
+kubectl get pods,svc
+NAME                                                   READY   STATUS      RESTARTS   AGE
+pod/el-tekton-webhook-microservice-67bf667f45-vvxjp    1/1     Running     0          14s
+pod/el-tekton-webhook-sharedlibrary-7c57fcf9f8-779hr   1/1     Running     0          4m6s
+
+NAME                                      TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)             AGE
+service/el-tekton-webhook-microservice    ClusterIP   10.96.127.93   <none>        8080/TCP,9000/TCP   14s
+service/el-tekton-webhook-sharedlibrary   ClusterIP   10.96.25.243   <none>        8080/TCP,9000/TCP   4m6s
+service/kubernetes                        ClusterIP   10.96.0.1      <none>        443/TCP             69m
 ```
 
 # Criação do webhook.
@@ -164,7 +190,7 @@ python3 $TREINAMENTO_HOME/proj/trigger/gitea/gitea_cli.py -w el-tekton-webhook-m
 
 
 
-```yaml
+```json
 {
   "ref": "refs/heads/master",
   "before": "a4bfa24015149e24d501b6f99229d49ab121f629",
@@ -268,37 +294,3 @@ python3 $TREINAMENTO_HOME/proj/trigger/gitea/gitea_cli.py -w el-tekton-webhook-m
   "sender": {"id":1,"login":"user1","full_name":"","email":"user1@localhost","avatar_url":"http://localhost:3000/user/avatar/user1/-1","language":"","is_admin":false,"last_login":"0001-01-01T00:00:00Z","created":"2022-06-21T00:43:25Z","restricted":false,"active":false,"prohibit_login":false,"location":"","website":"","description":"","visibility":"public","followers_count":0,"following_count":0,"starred_repos_count":0,"username":"user1"}
 }
 ```
-# Verificando se o 
- kubectl get pods,svc -leventlistener=gitea-webhook
-NAME                                    READY   STATUS    RESTARTS   AGE
-pod/el-gitea-webhook-67988887b8-mfzjt   1/1     Running   0          37s
-
-NAME                       TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)             AGE
-service/el-gitea-webhook   ClusterIP   10.96.67.26   <none>        8080/TCP,9000/TCP   11m
-
-
-
-curl -X POST \
-  http://localhost:8080 \
-  -H 'Content-Type: application/json' \
-  -d '{ "commit_sha": "22ac84e04fd2bd9dce8529c9109d5bfd61678b29" }'
-
-http://el-gita-webhook.default.svc:8080/
-
-curl -X POST \
-  http://el-gita-webhook.default.svc:8080 \
-  -H 'Content-Type: application/json' \
-  -d '{ "commit_sha": "22ac84e04fd2bd9dce8529c9109d5bfd61678b29" }'
-
-tekton-pipelines-controller.tekton-pipelines.svc:9090
-
-tkn tb  list
-NAME                   AGE
-gitea-triggerbinding   1 minute ago
-
-
-kubectl get pods,svc -leventlistener=gitea-webhook
-
-
-
-kubectl port-forward service/el-gitea-webhook 8080

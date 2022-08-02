@@ -20,7 +20,7 @@ spec:
     - apiVersion: tekton.dev/v1beta1
       kind: PipelineRun
       metadata:
-        generateName: greeter-app-
+        generateName: microservice-api-$(tt.params.appname)-$(tt.params.runtime)
         labels:
           tekton.dev/pipeline: microservice-api
       spec:
