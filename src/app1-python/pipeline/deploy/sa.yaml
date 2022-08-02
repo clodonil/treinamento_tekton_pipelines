@@ -1,0 +1,12 @@
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: tiller-clusterrolebinding
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: pipelines-runs
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: ""
