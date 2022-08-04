@@ -551,7 +551,7 @@ A expressão para fazer isso é:
 
 No arquivo [EventListeer](proj/trigger/pipeline-microservice/EventListener.yaml) temos o arquivo completo:
 
----
+```yaml
 apiVersion: triggers.tekton.dev/v1alpha1
 kind: EventListener
 metadata:
@@ -574,6 +574,7 @@ spec:
         - ref: tekton-triggerbinding-microservice
       template:
         ref: tekton-triggertemplate-microservice 
+```
 
 Vamos aplicar o arquivo EventListener:
 
