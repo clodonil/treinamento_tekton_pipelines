@@ -112,9 +112,9 @@ Agora você pode acessar o `gitea` na url: http://localhost:30005/.
 
 Ao acessar o `gitea` pela primeira vez, é necessário configurar. Abaixo temos as principais configurações que são:
 
-* Dominio do servicoe SSH: Nesse campo é necessário especificar o endereço IP da interface de rede. Não utilize o `localhost`.
-* Url base do gitea: Nesse campo é necessário informar a URL de acesso. É basicamente composto do endereço IP da interface de rede e a porta 30005 definido no `kind`.
-* Dados do administrador: Nome e senha do usuário administrador do gitea
+* **Dominio do servicoe SSH:** Nesse campo é necessário especificar o endereço IP da interface de rede. Não utilize o `localhost`.
+* **Url base do gitea:** Nesse campo é necessário informar a URL de acesso. É basicamente composto do endereço IP da interface de rede e a porta 30005 definido no `kind`.
+* **Dados do administrador:** Nome e senha do usuário administrador do gitea
 
 ![trigger](img/image40.png)
 
@@ -144,9 +144,11 @@ python3 $TREINAMENTO_HOME/proj/trigger/gitea/gitea_cli.py -n -r sharedlibrary -u
 python3 $TREINAMENTO_HOME/proj/trigger/gitea/gitea_cli.py -n -r app1-python -u $USER -p $PASS
 ```
 
+Confirme no `gitea` se os repositórios foram de fato criados.
+
 ## Inicializando o repositório 
 
-Com o respositórios criados, vamos popular com códigos de exemplos.
+Com o respositórios criados, vamos popular com códigos de exemplos para serem utilizadas na pipelines do `tekton`.
 
 ### SharedLibrary
 
