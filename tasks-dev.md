@@ -18,19 +18,20 @@ cd $TREINAMENTO_HOME
 ```
 
 ## Conteúdo:
-> 1. Conceito
-> 2. Tasks e Step
-> 3. Parâmetros
-> 4. StepTemplate
-> 5. Timeout
-> 6. Volumes
-> 7. Workspaces
-> 8. Sidecars
-> 9. Results
-> 10. onError
+> 1. Estrutura da tasks do Projeto
+> 2. Ferramentas
+> 3. Workspace
+> 4. Tasks
+>  4.1. Criando a Tasks Source
+>  4.2. Criando a Tasks Sharedlibrary
+>  4.3. Criando a Tasks Quality
+>  4.4. Criando a Tasks Security
+>  4.5. Criando a Tasks Build
+>  4.6. Criando a Tasks Tests
+>  4.7. Criando a Tasks Deploy
 
 
-## 1. Criando a tasks do Projeto
+## 1. Estrutura da tasks do Projeto
 
 Para o desenvolvimento do nosso projeto vamos precisar criar **6** `Tasks`:
 
@@ -64,7 +65,7 @@ Nas Tasks vamos utilizar as seguintes ferramentas:
 * [Karate](https://github.com/karatelabs/karate): Ferramenta de teste de integração de API
 
 
-## Workspace
+## 3. Workspace
 
 Para desenvolvimento da pipeline vamos precisar de **2** `workspace`:
 
