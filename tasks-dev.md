@@ -21,13 +21,13 @@ cd $TREINAMENTO_HOME
 > 1. Estrutura da tasks do Projeto
 > 2. Ferramentas
 > 3. Workspace
-> 4. Tasks
->  4.1. Criando a Tasks Source
->  4.2. Criando a Tasks Sharedlibrary
->  4.3. Criando a Tasks Quality
->  4.4. Criando a Tasks Security
->  4.5. Criando a Tasks Build
->  4.6. Criando a Tasks Tests
+> 4. Tasks <br/>
+>  4.1. Criando a Tasks Source<br/>
+>  4.2. Criando a Tasks Sharedlibrary<br/>
+>  4.3. Criando a Tasks Quality<br/>
+>  4.4. Criando a Tasks Security<br/>
+>  4.5. Criando a Tasks Build<br/>
+>  4.6. Criando a Tasks Tests<br/>
 >  4.7. Criando a Tasks Deploy
 
 
