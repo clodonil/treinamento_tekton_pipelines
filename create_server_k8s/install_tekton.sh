@@ -15,7 +15,7 @@ if [ ! -z "$cluster_exist" ]; then
 fi   
 
 echo "Instalando o kubernetes"
-kind create cluster --config tekton-cluster.conf -q
+kind create cluster --config $TREINAMENTO_HOME/create_server_k8s/tekton-cluster.conf -q
 #kubectl cluster-info --context kind-$cluster_name 
 
 echo "Instalando o Tekton"

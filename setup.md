@@ -12,7 +12,7 @@ Ao final desse módulo você deve ter o ambiente preparado e com o `tekton` inst
 
 ## 1. Pré-requisito
 
-Para realização desse workshop é necessário que você tenha um computador com `docker` instalado e de preferência com o sistema operacional `Linux`. Se precisar de ajuda para instalar o `docker` utilize essa [documentação](https://docs.docker.com/desktop/).  
+Para realização desse treinamento é necessário que você tenha um computador com `docker` instalado e de preferência com o sistema operacional `Linux`. Se precisar de ajuda para instalar o `docker` utilize essa [documentação](https://docs.docker.com/desktop/).  
 Para validar se esta tudo certo com a sua instalação do `docker` execute o seguinte comando:
 
 ```bash
@@ -41,7 +41,7 @@ For more examples and ideas, visit:
 ```
 ## 2. Kubernetes
 
-O `tekton` é executado no cluster `kubernetes`. Portanto vamos precisamos instânciar um cluster para o workshop e podemos fazer isso de várias formas. Nesse workshop vamos utilizar o [kind](https://kind.sigs.k8s.io/).
+O `tekton` é executado no cluster `kubernetes`. Portanto vamos precisamos instânciar um cluster para o treinamento e podemos fazer isso de várias formas. Nesse treinamento vamos utilizar o [kind](https://kind.sigs.k8s.io/).  
 
 Para utilizar o `kind` é bastante simples. 
 
@@ -65,7 +65,7 @@ sudo mv ./kubectl /usr/local/bin/kubectl
 
 ### 3. Criando o cluster
 
-Agora que temos o `kind` e o `kubectl` instalado, estamos preparado para criar o cluster de `kubernetes`. Como vamos utilziar o dashboard do `tekton` exposto na porta `30000`, vamos criar o arquivo `tekton-cluster.conf` com todas as informações necessárias, conforme abaixo.
+Agora que temos o `kind` e o `kubectl` instalado, estamos preparado para criar o cluster de `kubernetes`. Como vamos utilizar o dashboard do `tekton` exposto na porta `30000`, vamos criar o arquivo [`tekton-cluster.conf`](create_server_k8s/tekton-cluster.conf) com todas as informações necessárias, conforme abaixo.
 
 
 
