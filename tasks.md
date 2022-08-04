@@ -21,7 +21,7 @@ cd $TREINAMENTO_HOME
 
 ## Conteúdo:
 > 1. Conceito
->> 1.1. Task e TaskRun
+>   1.1. Task e TaskRun
 > 2. Task e Step
 > 3. Entradas (Inputs)
 > 5. Instalação de tools
@@ -258,7 +258,7 @@ spec:
 
 Nesse exemplo, todos os `Steps` que não definir uma imagem base, vai utilizar a imagem do `ubuntu`, a mesma coisa para memória e cpu.
 
-### Configurações
+## 5. Configurações
 
 Outras configurações importantes para serem utilizadas  na `Tasks`:
 * `Timeout` : Definir o tempo máximo de execução do `Step`
@@ -281,7 +281,7 @@ Exemplo:
  > *  `onError: continue` : Em caso de falha, a execução continua e para saber o status da execução é necessário consultar o exit code.
  > *  `onerror: stopAndFail` : Em caso de falha, a execução dos `Steps` seguintes  é interrompida (padrão).
  
-## Volumes
+## 6. Volumes
 Para um `Task` pode ser definido um ou mais `volumes` para manipulação de dados entre os `Steps`.
 
 Por exemplo, podemos usar `volumes` para fazer o seguinte:
@@ -321,7 +321,7 @@ spec:
       emptyDir: {}
 ```
 
-## Workspaces
+## 7. Workspaces
 Workspaces permitem especificar um ou mais `volumes` nas Task necessários durante a execução.
 
 Os parâmetros para especificar um Workspace são:
@@ -383,7 +383,7 @@ Para executar a `tasks` é necessário passar o nome do workspace e o volume.
  tkn task start task-exemplo8  -w name=myworkspace,claimName=mypvc
 ```
 
-## Sidecars
+## 8. Sidecars
 Em uma `Task` é possível especificar o campo de `sidecars`, que basicamente instância um container ao lado dos `steps` que pode fornecer funções auxiliares.
 Você pode utilizar o `sidecars` para:
 * Utilizar Docker in Docker;
@@ -420,7 +420,7 @@ spec:
       name: server
 ```
 
-## Results
+## 9. Results
 
 Uma `Task` é capaz de emitir resultados em formato de `string` que podem ser visualizados pelos usuários e passados ​​para outras tarefas em um pipeline.
 Ao ser declarado um `result`, o path do arquivo é criado automaticamente.
@@ -460,7 +460,7 @@ spec:
       name: server
 ```
 
-## onError
+## 10. onError
 
 Uma `Task` pode finalizar com sucesso ou com falha. No fluxo de uma pipeline, uma `Tasks` com falha determina a paralização de toda a pipeline. Para casos especificos, podemos configurar o `onError` para determinar que mesmo com falha a `Tasks` deve ser finaliaza com sucesso para continuar a execução da pipeline.
 
