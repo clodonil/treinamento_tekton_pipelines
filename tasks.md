@@ -22,10 +22,15 @@ cd $TREINAMENTO_HOME
 ## Conteúdo:
 > 1. Conceito
 >   1.1. Task e TaskRun
-> 2. Task e Step
-> 3. Entradas (Inputs)
-> 5. Instalação de tools
-> 6. Automatizando a criação do cluster e instalação do kubernetes
+> 2. Tasks e Step
+> 3. Parâmetros
+> 4. StepTemplate
+> 5. Configurações
+> 6. Volumes
+> 7. Workspaces
+> 8. Sidecars
+> 9. Results
+> 10. onError
 
 ## 1. Conceito 
 
