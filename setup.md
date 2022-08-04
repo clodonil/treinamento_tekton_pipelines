@@ -15,16 +15,11 @@ cd $TREINAMENTO_HOME
 ```
 
 ## Conteúdo:
-> [1. Pré-requisitos](#1-pré-requisito)
-
-> [2. Kubernetes](#2-kubernetes)
-
-> [3. Criando o cluster](#3-criando-o-cluster)
-
-> [4. Instalação do Tekton](#4-instalação-do-tekton)
-
-> [5. Instalação de tools](#5-instalação-de-tools)
-
+> [1. Pré-requisitos](#1-pré-requisito)<br/>
+> [2. Kubernetes](#2-kubernetes)<br/>
+> [3. Criando o cluster](#3-criando-o-cluster)<br/>
+> [4. Instalação do Tekton](#4-instalação-do-tekton)<br/>
+> [5. Instalação de tools](#5-instalação-de-tools)<br/>
 > [6. Automatizando a criação do cluster e instalação do kubernetes](#6-automatizando-a-criação-do-cluster-e-instalação-do-kubernetes)
 
 ## 1. Pré-requisito
