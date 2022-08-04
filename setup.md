@@ -3,12 +3,24 @@
 ## Objetivo
 Ao final desse módulo você deve ter o ambiente preparado e com o `tekton` instalado juntamente com as ferramentas.
 
+
+## Clone do projeto
+
+Para execução desse módulo, é necessário clonar o repositório do treinamento e configurar a variável de ambiente, caso ainda não tenha feito.
+
+```bash
+git clone https://github.com/clodonil/treinamento_tekton_pipelines.git
+export TREINAMENTO_HOME="$(pwd)/treinamento_tekton_pipelines"
+cd $TREINAMENTO_HOME
+```
+
 ## Conteúdo:
-> 1. Pré-requisitos
-> 2. Kubernetes
-> 3. Criando o cluster
-> 4. Instalação do Tekton
-> 5. Instalação de tools
+> [1. Pré-requisitos](#1-pré-requisito)
+> [2. Kubernetes](#2-kubernetes)
+> [3. Criando o cluster](#3-criando-o-cluster)
+> [4. Instalação do Tekton](#4-instalação-do-tekton)
+> [5. Instalação de tools](#5-instalação-de-tools)
+> [6. Automatizando a criação do cluster e instalação do kubernetes](#6-automatizando-a-criação-do-cluster-e-instalação-do-kubernetes)
 
 ## 1. Pré-requisito
 
@@ -100,6 +112,7 @@ kubectl cluster-info --context kind-tekton
 Thanks for using kind! 😊
 ```
 
+
 ### 4. Instalação do Tekton
 
 Agora temos o cluster `kubernetes` instalado e integrado ao comando `kubectl` e assim podemos instalar os CDRs que compoem o `tekton`.
@@ -168,4 +181,20 @@ tkn version
 Client version: 0.21.0
 Pipeline version: v0.33.0
 Dashboard version: v0.24.1
+```
+
+### 6. Automatizando a criação do cluster e instalação do kubernetes
+
+No diretório `create_server_k8s` disponibilizamos o script [install_tekton.sh](create_server_k8s/install_tekton.sh) que instala o kubernetes e também o `tekton` com todas as configurações realizadas. Vamos precisar fazer isso todas as vezes que precisar limpar todas as configurações.
+
+```bash
+$TREINAMENTO_HOME/create_server_k8s/install_tekton.sh
+Cluster tekton já existe, deleta (y/n)?
+y
+Deletando o kubernetes
+Instalando o kubernetes
+Instalando o Tekton
+Iniciando o TekTon.....Done.
+Dashboard: http://localhost:30000
+tekton Configurado.
 ```

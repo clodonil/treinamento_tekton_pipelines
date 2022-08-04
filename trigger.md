@@ -6,7 +6,7 @@ Ao final deste modulo você será capaz de:
 * Entender como as triggers no tekton funcionam;
 * Como criar uma trigger baseado em evento do repositório;
 
-## Setup
+## Clone do projeto
 
 Para execução desse módulo, é necessário clonar o repositório do treinamento e configurar a variável de ambiente, caso ainda não tenha feito.
 

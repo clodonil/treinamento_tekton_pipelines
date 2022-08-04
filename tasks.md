@@ -9,7 +9,25 @@ Ao final deste modulo você será capaz de:
 * Crie uma task de build 
 * Como executar uma Tasks
 
-## Conceito  .
+## Clone do projeto
+
+Para execução desse módulo, é necessário clonar o repositório do treinamento e configurar a variável de ambiente, caso ainda não tenha feito.
+
+```bash
+git clone https://github.com/clodonil/treinamento_tekton_pipelines.git
+export TREINAMENTO_HOME="$(pwd)/treinamento_tekton_pipelines"
+cd $TREINAMENTO_HOME
+```
+
+## Conteúdo:
+> 1. Pré-requisitos
+> 2. Kubernetes
+> 3. Criando o cluster
+> 4. Instalação do Tekton
+> 5. Instalação de tools
+> 6. Automatizando a criação do cluster e instalação do kubernetes
+
+## 1. Conceito 
 
 A `Task` é uma coleção de `Steps` que são organizados em ordem de execução como parte de pipeline de `integração continua`. A `Task` é executado da mesma forma que um pod no cluster do Kubernetes, onde cada `Step` se torna um contêiner em execução do pod.
 
