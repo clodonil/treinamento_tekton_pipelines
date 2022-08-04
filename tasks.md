@@ -3,11 +3,11 @@ Criando Tasks
 ## Objetivo
 
 Ao final deste modulo você será capaz de:
-* Entenda o que é uma Task
-* Entenda como clonar um projeto git e compilação usando o Task
-* Entenda como funciona os Workspaces
-* Crie uma task de build 
-* Como executar uma Tasks
+* Entender o que é uma Task
+* Entender como clonar um projeto git e compilação usando o Task
+* Entender como funciona os Workspaces
+* Criar uma task de build 
+* Executar uma Tasks
 
 ## Clone do projeto
 
@@ -51,8 +51,15 @@ Dessa forma uma `Task` pode ser generica suficiente para executar a mesma tarefa
 ## 2. Tasks e Step
 
 Agora que já sabemos o que é `Task`, `Taskrun` e `Steps`, vamos executar o nossa primeira `Task`.
-Como primeiro exemplo, vamos criar um `Task` com o nome `task-exemplo1` que contém 3 `Steps`. Nesse exemplo, a `Task` não recebe nenhum parâmetro de entrada e não gera nenhum saída.
+Como primeiro exemplo, vamos criar um `Task` com o nome `task-exemplo1` que contém 3 `Steps`. Nesse exemplo, a `Task` não recebe nenhum parâmetro de entrada e não gera nenhum saída. Ela basicamente executa os comandos definidos dentro do campo `script`.
 
+Vamos começar pelo arquivo [task-exemplo1.yaml](src/task-exemplo1.yaml), conforme abaixo.
+
+Os campos que você deve observar dentro do steps:
+
+* name: Nome do steps
+* image: Imagem que será executada o steps
+* script: Comandos de execução
 
 ```yaml:src/task-exemplo1.yaml
 apiVersion: tekton.dev/v1beta1
@@ -90,7 +97,7 @@ A criação da `Task` no kubernetes, segue o mesmo padrão da aplicação de qua
 Conforme realizado abaixo
 
 ```bash
-kubectl apply -f task-exemplo1.yaml
+kubectl apply -f $TREINAMENTO_HOME/src/task-exemplo1.yaml
 ```
 Você pode visualziar a `Task` criada de 2 formas diferentes. 
 
@@ -116,10 +123,10 @@ tkn taskrun logs task-exemplo1-run-dhcxj -f -n default
 
 A criação do manifesto `yaml` permite você trabalhar nativamente com o `kubernetes`, sem a necessidade de instalação de outras ferramentas como o `tkn`.
 
-Exemplo do manifesto do `taskrun`.
+Exemplo do manifesto do `taskrun` no arquivo arquivo [taskrun-exemplo1.yaml](src/taskrun-exemplo1.yaml) .
 
 ```yaml:src/taskrun-exemplo1.yaml
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 kind: TaskRun
 metadata:
   name: taskrun-exemplo1
@@ -131,7 +138,7 @@ spec:
 E para executar utilize o comando do `kubectl`:
 
 ```bash
-kubectl apply -f taskrun-exemplo1.yaml
+kubectl apply -f $TREINAMENTO_HOME/srctaskrun-exemplo1.yaml
 taskrun.tekton.dev/taskrun-exemplo1 created
 ```
 
