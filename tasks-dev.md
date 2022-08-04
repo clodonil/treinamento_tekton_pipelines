@@ -23,12 +23,11 @@ cd $TREINAMENTO_HOME
 > 3. Workspace
 > 4. Tasks <br/>
 >  4.1. Criando a Tasks Source<br/>
->  4.2. Criando a Tasks Sharedlibrary<br/>
->  4.3. Criando a Tasks Quality<br/>
->  4.4. Criando a Tasks Security<br/>
->  4.5. Criando a Tasks Build<br/>
->  4.6. Criando a Tasks Tests<br/>
->  4.7. Criando a Tasks Deploy
+>  4.2. Criando a Tasks Quality<br/>
+>  4.3. Criando a Tasks Security<br/>
+>  4.4. Criando a Tasks Build<br/>
+>  4.5. Criando a Tasks Tests<br/>
+>  4.6. Criando a Tasks Deploy
 
 
 ## 1. Estrutura da tasks do Projeto
@@ -76,43 +75,31 @@ Para desenvolvimento da pipeline vamos precisar de **2** `workspace`:
 
 Os manifesto dos volumes foram criados no arquivo [proj/pv-workspaces.yaml](proj/pv-workspaces.yaml).
 
-```bash:proj/pv-workspaces.yaml
+Para criar os volumes, execute o seguinte comando:
+```bash
 kubectl apply -f pv-workspaces.yaml
-persistentvolumeclaim/app-source created
-persistentvolumeclaim/sharedlibrary created
 ```
 
-## 3 Tasks
+## 4 Tasks
 O nosso próximo passo vamos criar as `Tasks` necessario para o desenvolvimento da pipeline.
 
 ### 3.1 Criando a Tasks `Source`
 
 A Task `Source` vai ser responsável por realizar o clone do projeto do git. Podemos criar essa Task manualmente, entretanto o Tekton disponibiliza o [Tekton-Hub](https://hub.tekton.dev/) que já possui um catalago de Tasks disponibilizada pela comunidade.
 
-E para realisar o clone do projeto, vamos utilizar a Task [git-clone](https://hub.tekton.dev/tekton/task/git-clone) disponibilizado no Tekton-Hub.
+Realizamos uma cópia da tasks e salvamos no arquivo [task-source.yaml](proj/tasks/Source/task-source.yaml)
 
-Para instalar essa Task, podemos utilizar o CLI:
+Não vamos entrar em detalhe sobre a task `source`, consulte a [documentação](https://hub.tekton.dev/tekton/task/git-clone).
 
+Para criar a task source, execute:
 ```
-tkn hub install task git-clone
-```
-Ou podemos utilizar o `kubectl` passando o endereço do git-clone.
-
-```
-kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/git-clone/0.5/git-clone.yaml
-```
-Em seguida devemos aplicar o taskrun-source.yaml
-
-```
-kubectl apply -f taskrun-source.yaml
+kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Source/task-source.yaml
 ```
 
-Ambos tem o mesmo resultado.
-
-Com  Task instalada, vamos criar a `Taskrun` para realizar o clone do repositório do projeto. 
+Com Task instalada, vamos criar a `Taskrun`,[taskrun-source.yaml](proj/tasks/Source/taskrun-source.yaml), para realizar o clone do repositório do projeto. 
 
 ```yaml:proj/Source/taskrun-source.yaml
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 kind: TaskRun
 metadata:
   name: taskrun-source
@@ -129,6 +116,12 @@ spec:
   taskRef:
      name: git-clone
 ```
+Para executar a Task:
+
+```bash
+kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Source/taskrun-source.yaml
+```
+
 Podemos acompanhar a execução da Taskrun no dashboard do Tekton ou via CLi (tkn).
 
 ![sourcerun](img/image8.png)`
