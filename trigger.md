@@ -546,8 +546,8 @@ O `interceptors` vai criar dentro do [evento](#evento) 2 novos campos, sendo o `
 
 A expressão para fazer isso é:
 
-* runtime: "body.repository.name.split('-')[1]"    
-* appname: "body.repository.name.split('-')[0]"    
+* runtime: `body.repository.name.split('-')[1]`    
+* appname: `body.repository.name.split('-')[0]`    
 
 No arquivo [EventListeer](proj/trigger/pipeline-microservice/EventListener.yaml) temos o arquivo completo:
 
