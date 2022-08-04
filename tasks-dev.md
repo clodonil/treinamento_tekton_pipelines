@@ -7,7 +7,30 @@ Ao final deste modulo você será capaz de:
 * Ter validado cada tasks e seus passos;
 * Ter utilizado a sharedlibrary;
 
-## Criando a tasks do Projeto
+## Clone do projeto
+
+Para execução desse módulo, é necessário clonar o repositório do treinamento e configurar a variável de ambiente, caso ainda não tenha feito.
+
+```bash
+git clone https://github.com/clodonil/treinamento_tekton_pipelines.git
+export TREINAMENTO_HOME="$(pwd)/treinamento_tekton_pipelines"
+cd $TREINAMENTO_HOME
+```
+
+## Conteúdo:
+> 1. Conceito
+> 2. Tasks e Step
+> 3. Parâmetros
+> 4. StepTemplate
+> 5. Timeout
+> 6. Volumes
+> 7. Workspaces
+> 8. Sidecars
+> 9. Results
+> 10. onError
+
+
+## 1. Criando a tasks do Projeto
 
 Para o desenvolvimento do nosso projeto vamos precisar criar **6** `Tasks`:
 
@@ -30,9 +53,7 @@ Para o desenvolvimento do nosso projeto vamos precisar criar **6** `Tasks`:
 * `Deploy`: Essa Task vai ter apenas um `steps` para realização do deploy simples do container no cluster kubernetes.
 
 
-
-
-## Ferramentas
+## 2. Ferramentas
 
 Nas Tasks vamos utilizar as seguintes ferramentas:
 
@@ -60,10 +81,10 @@ persistentvolumeclaim/app-source created
 persistentvolumeclaim/sharedlibrary created
 ```
 
-## Tasks
+## 3 Tasks
 O nosso próximo passo vamos criar as `Tasks` necessario para o desenvolvimento da pipeline.
 
-### Criando a Tasks `Source`
+### 3.1 Criando a Tasks `Source`
 
 A Task `Source` vai ser responsável por realizar o clone do projeto do git. Podemos criar essa Task manualmente, entretanto o Tekton disponibiliza o [Tekton-Hub](https://hub.tekton.dev/) que já possui um catalago de Tasks disponibilizada pela comunidade.
 
@@ -112,7 +133,7 @@ Podemos acompanhar a execução da Taskrun no dashboard do Tekton ou via CLi (tk
 ![sourcerun](img/image8.png)`
 
 
-#### SharedLibary
+#### 3.1.1 SharedLibary
 
 A SharedLibary é um repositório que contém os comandos que são executados na pipelines, tornando a solução de pipeline com mais segurança e governança.
 
@@ -146,7 +167,7 @@ Para fazer o download/atualização da `sharedlibrary` para o workspace precisam
 kubectl apply -f taskrun-sharedlibrary.yaml
 ```
 
-### Criando a Tasks `Quality`
+### 3.2 Criando a Tasks `Quality`
 
 A próxima Task que vamos criar é a `quality`, que está relacionada a qualidade do código.
 
@@ -237,7 +258,7 @@ kubectl create secret generic sonar --from-literal=SONAR_TOKEN=$TOKEN
 * [Link do Task de QA](proj/tasks/QA/task-qa.yaml)
 * [Link do Taskrun de QA](proj/tasks/QA/taskrun-qa.yaml)
 
-### Criando a Tasks `Security`
+### 3.3 Criando a Tasks `Security`
 
 A próxima Task que vamos criar é a `Security`, que está relacionada a segurança do código e do container.
 
@@ -286,7 +307,7 @@ Nos links abaixo você pode acessar o `Task` completa de segurança.
 * [Link do Taskrun de Security](proj/tasks/Security/taskrun-security.yaml)
 
 
-### Criando a Tasks `Build`
+### 3.4 Criando a Tasks `Build`
 
 A próxima Task que vamos criar é a `Build`, que está relacionada compilação, empacotamento do software em container e publicação.
 
@@ -347,7 +368,7 @@ Nos links abaixo você pode acessar o `Task` completa.
 * [Link do Taskrun de Build](proj/tasks/Build/taskrun-build.yaml)
 
 
-### Criando a Tasks `Tests`
+### 3.5 Criando a Tasks `Tests`
 
 A próxima Task que vamos criar é a `Tests`, que está relacionada execução de teste de performance e de integração.
 
@@ -402,7 +423,7 @@ Nos links abaixo você pode acessar o `Task` completa.
 * [Link do Task de Test](proj/tasks/Tests/task-tests.yaml)
 * [Link do Taskrun de Test](proj/tasks/Tests/taskrun-tests.yaml)
 
-### Criando a Tasks `Deploy`
+### 3.6 Criando a Tasks `Deploy`
 
 E a última Task que vamos criar é a `Deploy`, que faz a entrega do sofware no kubernetes.
 
