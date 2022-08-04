@@ -138,15 +138,18 @@ spec:
 E para executar utilize o comando do `kubectl`:
 
 ```bash
-kubectl apply -f $TREINAMENTO_HOME/srctaskrun-exemplo1.yaml
+kubectl apply -f $TREINAMENTO_HOME/src/taskrun-exemplo1.yaml
 taskrun.tekton.dev/taskrun-exemplo1 created
 ```
+Pode consultar a execução utilizando o dashboard ou via `tkn`:
 
+```bash
+tkn taskrun list
+NAME               STARTED        DURATION     STATUS
+taskrun-exemplo1   1 minute ago   27 seconds   Succeeded
+```
 
-## 3. Entradas (Input)
-
-
-### 3.1  Parâmetros
+### 3  Parâmetros
 Para uma `Task`, pode ser especificado parâmetros de entradas, que são utilizados como flags de compilação ou para mudar o comportamento da `Task` conforme o seu valor.
 
 Os nomes dos parâmetros devem ser criados seguindo a seguinte regra:
@@ -184,7 +187,7 @@ spec:
 Aplique essa `Tasks` utilizando o comando do `kubectl`.
 
 ```bash
-kubectl apply -f task-exemplo2.yaml
+kubectl apply -f $TREINAMENTO_HOME/src/task-exemplo2.yaml
 ```
 
 Com o template da `Task`criado, vamos criar as `Tasksrun` para executar ações diferentes com a mesma `Tasks`.
@@ -198,7 +201,7 @@ Vamos usar a imagem docker do `centos` e executar o comando `ls` dentro do conta
 
 
 ```yaml:src/taskrun-exemplo2.yaml
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 kind: TaskRun
 metadata:
   name: taskrun-exemplo2
