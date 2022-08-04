@@ -1,13 +1,18 @@
 Introdução ao Tekton
 ==================
+## Conteúdo:
+> 1. Visão Geral
+> 2. Benificios de utilizar o Tekton
+> 3. Componentes do Tekton
+> 4. Terminologias
 
-## Visão Geral
+## 1. Visão Geral
 
 > O Tekton é um poderoso framework de código aberto nativo do Kubernetes, avançado e flexível para criar pipelines de integração e entrega contínuas (CI/CD). Como ele, é possível criar, testar e implantar em vários provedores de nuvem ou sistemas locais abstraindo os detalhes por trás da implementação. (google)
 
 Tekton faz parte da [CD Foundation](https://cd.foundation/) , é um projeto da [Linux Foundation](https://cd.foundation/).
 
-## Benificios de utilizar o Tekton
+## 2. Benificios de utilizar o Tekton
 
 O `Tekton` oferece os seguintes benefícios para desenvolvimento de pipelines de CI/CD.
 
@@ -21,7 +26,7 @@ O `Tekton` oferece os seguintes benefícios para desenvolvimento de pipelines de
 
 * **`Escalável`:**.Para aumentar sua capacidade de carga de trabalho, você pode simplesmente adicionar nós ao cluster. O Tekton é dimensionado com seu cluster sem a necessidade de redefinir suas alocações de recursos ou quaisquer outras modificações em seus pipelines.
 
-## Componentes do Tekton
+## 3. Componentes do Tekton
 
 Constuir pipeline de CI/CD com segurança, qualidade, governança e que gere escala de desenvolvimento, não é uma tarefa simples. Para tornar esse caminho mais tranquilo, a Tekton disponibiliza um conjunto de componetes.
 
@@ -43,7 +48,7 @@ Aqui estão os principais componentes que você obtém com o Tekton:
 
 
 
-# Terminologias
+# 4. Terminologias
 
 ![conceitos](https://tekton.dev/docs/concepts/concept-tasks-pipelines.png)
 

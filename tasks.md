@@ -20,10 +20,10 @@ cd $TREINAMENTO_HOME
 ```
 
 ## Conteúdo:
-> 1. Pré-requisitos
-> 2. Kubernetes
-> 3. Criando o cluster
-> 4. Instalação do Tekton
+> 1. Conceito
+>> 1.1. Task e TaskRun
+> 2. Task e Step
+> 3. Entradas (Inputs)
 > 5. Instalação de tools
 > 6. Automatizando a criação do cluster e instalação do kubernetes
 
@@ -35,7 +35,7 @@ A `Task` é uma coleção de `Steps` que são organizados em ordem de execução
 
 Os `Steps` são executados sequencialmente conforme foram criados e cada um deles pode conter uma imagem de pod diferente. Basicamente um `step` deve receber uma entrada, processar algo especifico e gerar um saída.
 
-### Task e TaskRun
+### 1.1. Task e TaskRun
 Enquanto as `Task` define um `template` de execução de tarefas e passos, o `TaskRun` é uma execução de uma `Tasks`. O histórico de execução e os logs estão registrados no `TaskRun` para rastreabilidade.
 
 ![taskrun](img/image5.png)
@@ -43,7 +43,7 @@ Enquanto as `Task` define um `template` de execução de tarefas e passos, o `Ta
 Dessa forma uma `Task` pode ser generica suficiente para executar a mesma tarefa para diferentes linguagens com regras de execução e históricos de execução individualizada para cada `TaskRun`.
 
 
-## Tasks e Step
+## 2. Tasks e Step
 
 Agora que já sabemos o que é `Task`, `Taskrun` e `Steps`, vamos executar o nossa primeira `Task`.
 Como primeiro exemplo, vamos criar um `Task` com o nome `task-exemplo1` que contém 3 `Steps`. Nesse exemplo, a `Task` não recebe nenhum parâmetro de entrada e não gera nenhum saída.
@@ -131,10 +131,10 @@ taskrun.tekton.dev/taskrun-exemplo1 created
 ```
 
 
-## Entradas (Input)
+## 3. Entradas (Input)
 
 
-### Parâmetros
+### 3.1  Parâmetros
 Para uma `Task`, pode ser especificado parâmetros de entradas, que são utilizados como flags de compilação ou para mudar o comportamento da `Task` conforme o seu valor.
 
 Os nomes dos parâmetros devem ser criados seguindo a seguinte regra:
@@ -217,7 +217,7 @@ Nessa execução, estamos utilizando uma imagem python para mostrar o  "Ola Mund
 
 Dessa forma vimos na prática como passar parâmetros para uma `Tasks`.
 
-## StepTemplate
+## 4. StepTemplate
 Um recurso muito interessante na `Tasks` para evitar repetição de código é o `StepTemplate`. Dessa forma podemos declarar as funções padrões para todos os `Steps`, evitando assim ficar repetindo código.
 
 Por exemplo, podemos declarar a imagem padrão dos `Steps` e também os recursos de cpu e memória.
