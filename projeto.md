@@ -11,17 +11,26 @@ A proposta é criar uma pipeline utilizando `TekTon` para publicação de APIs q
 A pipeline deve ter as seguintes caracteristicas:
 
 * Desenvolvimento em Template `yaml`; 
-* SharedLibrary exterminalizado para fácil manutenção;
+* SharedLibrary com comandos externalizado para fácil manutenção;
 * Controle de versão dos templates;
 * Possibilidade de build/testes e deploy customizado
 
+A pipeline deve ter as seguites tasks, conforme desenho abaixo:
+
+* **Source:** Utilizado para realizar o clone do repositório de código;
+* **CI:** Utilizado para realização do build, teste unitário e validação de segurança
+* **Tests:** Realização dos testes de performance e integração
+* **Deploy:** Realização do deploy no kubernetes
 
 ![projeto](img/image14.png)
 
 
 ## Stages Customizados
 
-A pipeline deve ter os comandos padrões de build, tests e deploy. Entretanto caso o desenvolver desejar ele pode sobrescrever esses comandos, através de um arquivo simples no seu repositório:
+A pipeline deve ter os comandos padrões de `build`, `tests` e `deploy`. Entretanto caso o desenvolver desejar ele pode sobrescrever esses comandos, através de um arquivo simples no seu repositório.
+
+Abaixo temos os arquivos que o usuário deve colocar no repositório da aplicação para sobrescrever o padrão da pipeline definido na sharedlibary.
+
 
 |stages| Repositório App |[SharedLibrary](https://github.com/clodonil/tekton-sharedlibrary)|
 |-------|------|-------------|
@@ -30,7 +39,6 @@ A pipeline deve ter os comandos padrões de build, tests e deploy. Entretanto ca
 | `performace` | pipeline/tests/performance/performance.sh  | [TESTS/performance/performance.sh](https://github.com/clodonil/tekton-sharedlibrary/blob/main/TESTS/performance/performance.sh)  |
 | `integration`| pipeline/tests/integration/integration.sh  | [TESTS/integration/integration.sh](https://github.com/clodonil/tekton-sharedlibrary/blob/main/TESTS/integration/integration.sh) |
 | `deploy`|pipeline/deploy.sh | [/CD/deploy.sh](https://github.com/clodonil/tekton-sharedlibrary/blob/main/CD/deploy.sh) |
-
 
 
 ## APIs
