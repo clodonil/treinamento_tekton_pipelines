@@ -131,7 +131,9 @@ export USER='XXXX'
 export PASS='XXXX'
 export GIT='http://xxx.xxx.xxx.xxx:30005'
 ```
-Agora podemos criar os repositórios que utilizaremos para configurar a trigger. A criação dos repositórios podem ser realizados pela `interface web`, entretanto criamos o `script` abaixo para facilitar a utilização.   
+Agora podemos criar os repositórios de código no `gitea` que será utilizado para armezanar os código da aplicação e da sharedlibrary do projetos. Nesses repositórios serão configurados as triggers e qualquer alteração no código as pipelines associadas será inicializada automaticamente.
+
+> A criação dos repositórios podem ser realizados pela `interface web`, entretanto criamos o `script` abaixo para facilitar a utilização.   
 
 Segue os parâmetros utilizados no `gitea_cli.py`:
 * `-n`: Cria um novo repositório
@@ -143,8 +145,10 @@ Segue os parâmetros utilizados no `gitea_cli.py`:
 python3 $TREINAMENTO_HOME/proj/trigger/gitea/gitea_cli.py -n -r sharedlibrary -u $USER -p $PASS
 python3 $TREINAMENTO_HOME/proj/trigger/gitea/gitea_cli.py -n -r app1-python -u $USER -p $PASS
 ```
+Confirme no `gitea` se os repositórios foram de fato criados corretamente, conforme a imagem abaixo.
 
-Confirme no `gitea` se os repositórios foram de fato criados.
+![trigger](img/image48.png)
+
 
 ## Inicializando o repositório 
 
@@ -152,7 +156,7 @@ Com o respositórios criados, vamos popular com códigos de exemplos para serem 
 
 ### SharedLibrary
 
-
+No repositório da `SharedLibrary` no `gitea` vamos armazenar os scripts de execução dos `steps` da pipeline. No diretório [src/sharedlibrary](src/sharedlibrary/) tem um exemplo de scripts e vamos utilizar eles para popular o repositório.
 
 ```bash
 cd $TREINAMENTO_HOME/src/sharedlibrary
@@ -163,10 +167,12 @@ git remote add origin $GIT/user1/sharedlibrary.git
 git push -u origin master
 ```
 
-### Aplicação
+### Aplicação (app1-python)
+
+No repositório da aplicação `app1-python` no `gitea` vamos armazenar uma aplicação de exemplo em python para execução na pipeline.
 
 ```bash
-cd $TREINAMENTO_HOME/src/app1-hello-python
+cd $TREINAMENTO_HOME/src/app1-python
 git init
 git add *
 git commit -m "first commit"
@@ -174,142 +180,21 @@ git remote add origin $GIT/user1/app1-python.git
 git push -u origin master
 ```
 
-## Create ServiceAccount, Roles and Role Bindings
+## Criando conta de serviço
+
+Precisamos criar uma conta de serviço no Kubernetes para atribuir as permissões necessárias para a triggers conseguirem acessar os objetos da pipelines.
+
+O arquivo [rbac.yaml](proj/trigger/rbac.yaml) contém o manifesto com as permissões definidas.
 
 ```bash
 kubectl apply -f $TREINAMENTO_HOME/proj/trigger/rbac.yaml
 ```
 
-## SharedLibrary
+## Evento
 
+O repositório de origem envia um evento no formato de `json` para o `tekton`. Abaixo temos um exemplo de evento que pode ser gerado. 
 
-```yaml
-apiVersion: triggers.tekton.dev/v1alpha1
-kind: EventListener
-metadata:
-  name: tekton-webhook-sharedlibrary
-spec:
-  serviceAccountName: tekton-triggers-sa
-  triggers:
-    - name: tekton-webhook-sharedlibrary
-      bindings:
-        - ref: tekton-triggerbinding-sharedlibrary
-      template:
-        ref: tekton-triggertemplate-sharedlibrary
-```
-
-```bash
-kubectl apply -f $TREINAMENTO_HOME/proj/trigger/sharedlibrary/EventListener.yaml
-```
-
-```yaml
-apiVersion: triggers.tekton.dev/v1alpha1
-kind: TriggerBinding
-metadata:
-  name: tekton-triggerbinding-sharedlibrary
-spec:
-  params:
-    - name: revision
-      value: $(body.repository.default_branch)
-    - name: repository
-      value: $(body.repository.clone_url)
-```
-
-```bash
-kubectl apply -f $TREINAMENTO_HOME/proj/trigger/sharedlibrary/trigger-bindings.yaml
-```
-
-```yaml
----
-apiVersion: triggers.tekton.dev/v1alpha1
-kind: TriggerTemplate
-metadata:
-  name: tekton-triggertemplate-sharedlibrary
-spec:
-  params:
-    - name: revision
-      description: The git revision
-      default: master
-    - name: repository
-      description: The git repository url
-  resourcetemplates:
-    - apiVersion: tekton.dev/v1beta1
-      kind: TaskRun
-      metadata:
-        generateName: 'sharedlibrary-'
-        labels:
-          tekton.dev/task: 'source'
-      spec:
-        serviceAccountName: tekton-triggers-sa
-        taskRef:
-          name: source
-        params:
-          - name: revision
-            value: '$(tt.params.revision)'
-          - name: url
-            value: '$(tt.params.repository)'
-        workspaces:
-          - name: output
-            persistentVolumeClaim:
-               claimName: sharedlibrary
-
-```
-
-```bash
-kubectl apply -f $TREINAMENTO_HOME/proj/trigger/sharedlibrary/trigger-template.yaml
-```
-
-```bash
-kubectl get pods,svc
-NAME                                                   READY   STATUS    RESTARTS   AGE
-pod/el-tekton-webhook-sharedlibrary-7c57fcf9f8-779hr   1/1     Running   0          13s
-
-NAME                                      TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)             AGE
-service/el-tekton-webhook-sharedlibrary   ClusterIP   10.96.25.243   <none>        8080/TCP,9000/TCP   13s
-```
-
-## Criação do webhook.
-
-```bash
-python3 $TREINAMENTO_HOME/proj/trigger/gitea/gitea_cli.py -w el-tekton-webhook-sharedlibrary -r sharedlibrary -u $USER -p $PASS
-```
-![trigger](img/image45.png)
-
-
-![trigger](img/image43.png)
-
-
-
-## Pipelinede Microservice
-
-```bash
-kubectl apply -f $TREINAMENTO_HOME/proj/trigger/pipeline-microservice/EventListener.yaml
-kubectl apply -f $TREINAMENTO_HOME/proj/trigger/pipeline-microservice/trigger-bindings.yaml
-kubectl apply -f $TREINAMENTO_HOME/proj/trigger/pipeline-microservice/trigger-template.yaml
-```
-
-```bash
-kubectl get pods,svc
-NAME                                                   READY   STATUS      RESTARTS   AGE
-pod/el-tekton-webhook-microservice-67bf667f45-vvxjp    1/1     Running     0          14s
-pod/el-tekton-webhook-sharedlibrary-7c57fcf9f8-779hr   1/1     Running     0          4m6s
-
-NAME                                      TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)             AGE
-service/el-tekton-webhook-microservice    ClusterIP   10.96.127.93   <none>        8080/TCP,9000/TCP   14s
-service/el-tekton-webhook-sharedlibrary   ClusterIP   10.96.25.243   <none>        8080/TCP,9000/TCP   4m6s
-service/kubernetes                        ClusterIP   10.96.0.1      <none>        443/TCP             69m
-```
-
-### Criação do webhook.
-```bash
-python3 $TREINAMENTO_HOME/proj/trigger/gitea/gitea_cli.py -w el-tekton-webhook-microservice -r app1-python -u $USER -p $PASS
-```
-![trigger](img/image46.png)
-
-
-![trigger](img/image47.png)
-
-
+O trigger pode utilizar todos os campos do evento para tomada de decisão ou como parâmetros da pipeline e também durante o `EventListener` pode ser manipulado esse evento adicionando novos campos que serão utilizados no binding.
 
 ```json
 {
@@ -415,3 +300,466 @@ python3 $TREINAMENTO_HOME/proj/trigger/gitea/gitea_cli.py -w el-tekton-webhook-m
   "sender": {"id":1,"login":"user1","full_name":"","email":"user1@localhost","avatar_url":"http://localhost:3000/user/avatar/user1/-1","language":"","is_admin":false,"last_login":"0001-01-01T00:00:00Z","created":"2022-06-21T00:43:25Z","restricted":false,"active":false,"prohibit_login":false,"location":"","website":"","description":"","visibility":"public","followers_count":0,"following_count":0,"starred_repos_count":0,"username":"user1"}
 }
 ```
+
+## Criando trigger para a SharedLibrary
+
+Primeiramente vamos criar a trigger para o repositório `sharedlibrary`. Assim toda vez que tiver alteração no repositório a `TaskRun` vai ser inicializada e atualizar o `workspace` da volume da `SharedLibrary` utilizada pelas pipelines. 
+
+
+### EventListener para SharedLibrary
+
+O primeiro componente que vamos criar é o `EventListener` que vai ouvir e receber os eventos de triggers. O `EventListener` cria um `pod` para essa finalidade.
+
+O `EventListener` pode conter o `Interceptor` para manipular o [evento](#evento) recebido. Nesse caso da `SharedLibrary` não vamos utilizar.
+
+No arquivo [EventListener](proj/trigger/sharedlibrary/EventListener.yaml) os pontos importantes são:
+
+* **bindings:** Define o componente do triggerbinding, que define os parâmetros utilizados do evento
+* **template:** Define o componente do template que inicializa a pipeline 
+
+```yaml
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: tekton-webhook-sharedlibrary
+spec:
+  serviceAccountName: tekton-triggers-sa
+  triggers:
+    - name: tekton-webhook-sharedlibrary
+      bindings:
+        - ref: tekton-triggerbinding-sharedlibrary
+      template:
+        ref: tekton-triggertemplate-sharedlibrary
+```
+
+Vamos aplicar o arquivo EventListener:
+
+```bash
+kubectl apply -f $TREINAMENTO_HOME/proj/trigger/sharedlibrary/EventListener.yaml
+```
+
+Agora vamos aguardar o `pod` do `EventListerner` subir. Também foi criado um service para expor o `EventListener` para o mundo externo (**el-tekton-webhook-sharedlibrary**). 
+
+```bash
+kubectl get pods,svc
+NAME                                                   READY   STATUS    RESTARTS   AGE
+pod/el-tekton-webhook-sharedlibrary-7c57fcf9f8-779hr   1/1     Running   0          13s
+
+NAME                                      TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)             AGE
+service/el-tekton-webhook-sharedlibrary   ClusterIP   10.96.25.243   <none>        8080/TCP,9000/TCP   13s
+```
+Você pode confirmar a criação do eventlisterner utilizando o `tkn`:
+
+```bash
+tkn el list
+NAME                           AGE              URL
+AVAILABLE
+tekton-webhook-sharedlibrary   43 minutes ago   http://el-tekton-webhook-sharedlibrary.default.svc.cluster.local:8080   True
+```
+
+### Binding para SharedLibrary
+ 
+O componente `Binding` da trigger define quais os campos do [evento](#evento) que serão utilizadas como variável para a pipeline.
+
+No caso da SharedLibrary vamos utilizar os parâmetro `revision` e o `repository` e o value define como obter esses valores no [evento](#evento), conforme definido abaixo.
+
+```yaml
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerBinding
+metadata:
+  name: tekton-triggerbinding-sharedlibrary
+spec:
+  params:
+    - name: revision
+      value: $(body.repository.default_branch)
+    - name: repository
+      value: $(body.repository.clone_url)
+```
+
+Vamos aplicar o arquivo [trigger-bindings.yaml](proj/trigger/sharedlibrary/trigger-bindings.yaml):
+
+```bash
+kubectl apply -f $TREINAMENTO_HOME/proj/trigger/sharedlibrary/trigger-bindings.yaml
+```
+
+Você pode confirmar a criação do binding utilizando o `tkn`:
+
+```bash
+tkn tb list
+NAME                                  AGE
+tekton-triggerbinding-sharedlibrary   9 minutes ago
+```
+
+
+### Template para SharedLibrary
+
+O componte `template` utiliza os parêmtros definidos no `binding` e inicializa a `TaskRun` com os valores definidos.
+
+Podemos dividir o arquivo de `template` em três partes:
+
+A primeira é a entrada dos parâmetros:
+```
+  params:
+    - name: revision
+      description: The git revision
+      default: master
+    - name: repository
+      description: The git repository url
+```
+A segunda parte é o resource template que vai ser inicializada, nesse caso vamos inicializar uma task com o nome `source`.  No campo `genereteName` é definido o prefixo do nome da `Task`. 
+
+```
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: TaskRun
+      metadata:
+        generateName: 'sharedlibrary-'
+        labels:
+          tekton.dev/task: 'source'
+```
+A terceira e última parte, define os parâmetros que serão utilizadas para inicializar a `task`. Os `values` utilizados deve ser definidos no campo `params` da primeira parte.
+
+```
+        taskRef:
+          name: source
+        params:
+          - name: revision
+            value: '$(tt.params.revision)'
+          - name: url
+            value: '$(tt.params.repository)'
+        workspaces:
+          - name: output
+            persistentVolumeClaim:
+               claimName: sharedlibrary
+```
+
+O arquivo [trigger-template.yaml](proj/trigger/sharedlibrary/trigger-template.yaml) completo com todas as partes.
+
+```yaml
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: tekton-triggertemplate-sharedlibrary
+spec:
+  params:
+    - name: revision
+      description: The git revision
+      default: master
+    - name: repository
+      description: The git repository url
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: TaskRun
+      metadata:
+        generateName: 'sharedlibrary-'
+        labels:
+          tekton.dev/task: 'source'
+      spec:
+        serviceAccountName: tekton-triggers-sa
+        taskRef:
+          name: source
+        params:
+          - name: revision
+            value: '$(tt.params.revision)'
+          - name: url
+            value: '$(tt.params.repository)'
+        workspaces:
+          - name: output
+            persistentVolumeClaim:
+               claimName: sharedlibrary
+```
+
+Vamos aplicar:
+
+
+```bash
+kubectl apply -f $TREINAMENTO_HOME/proj/trigger/sharedlibrary/trigger-template.yaml
+```
+Você pode confirmar a criação do binding utilizando o `tkn`:
+
+```bash
+tkn tt list
+NAME                                   AGE
+tekton-triggertemplate-sharedlibrary   10 minutes ago
+```
+
+## Criação do webhook e testando
+ Agora que temos as trigger criadas, vamos cadastrar o service da trigger no webhook do `gitea`, assim todo evento do repositório vai inicializar a pipeline.
+
+ Para consultar o service, execute o seguinte comando.
+
+ ```bash
+kubectl get svc
+NAME                              TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)             AGE
+el-tekton-webhook-sharedlibrary   ClusterIP   10.96.190.254   <none>        8080/TCP,9000/TCP   29m
+```
+Você pode cadastrar o webhook pelo console web do `gitea` ou pode utilizar o script abaixo para fazer isso.
+
+Segue os parâmetros utilizados no `gitea_cli.py`:
+* `-w`: Define o service do trigger para o webhook, nesse caso é o **el-tekton-webhook-sharedlibrary**
+* `-r`: Especifica o nome do repositório
+* `-u`: Usuário utilizado para fazer o login no `gitea`
+* `-p`: Senha do usuário do `gitea`
+
+```bash
+python3 $TREINAMENTO_HOME/proj/trigger/gitea/gitea_cli.py -w el-tekton-webhook-sharedlibrary -r sharedlibrary -u $USER -p $PASS
+```
+Consulte a interface web do `gitea` para confirmar que o webhook foi configurado corretamente, conforme abaixo.
+
+![trigger](img/image45.png)
+
+Para validar a configuração, você pode utilizar o campo de teste do webhook ou realizar qualquer `commit` no repositório da sharedlibrary.
+
+É possível acompanhar o log do `pod` `EvenListener` para consultar algum tipo de erro:
+
+```bash
+kubectl logs el-tekton-webhook-sharedlibrary-7c57fcf9f8-kst82
+```
+ E também pode consultar se a `TaskRun` foi criada e executada. Você pode fazer isso pela inteface web conforme a imagem abaixo.
+
+![trigger](img/image43.png)
+
+E também é possível ser feito utilizando o comando `tkn`, conforme abaixo:
+
+```
+tkn tr list
+NAME                  STARTED         DURATION     STATUS
+sharedlibrary-q47nj   3 minutes ago   26 seconds   Succeeded
+```
+
+## Pipeline de aplicação (microservice)
+
+Agora que temos a trigger da `sharedlibrary` configurado com sucesso, vamos realizar a configuração da trigger da pipeline de aplicação. É a pipeline que de fato entrega o código.
+
+
+### EventListener para pipeline de aplicação
+
+Muitos dos conceitos do `EventListener` já foram passadas na configuração anterior, o que muda que nesta configuração vamos utilizar o `interceptors` para adicionar novos campo no [evento](#evento) recebido.
+
+Alguns `interceptors` pré-configurados podem ser utilizados como `github`, `bitbucket` e `gitlab`. Consulte a [documentação](https://tekton.dev/docs/triggers/interceptors/) para mais detalhes.
+
+Em nosso caso, vamos utilizar a linguagem de definição [CEL](https://github.com/google/cel-spec/blob/master/doc/langdef.md) para manipular os eventos. Pode consultar a [documentação](https://tekton.dev/docs/triggers/cel_expressions/) do Tekton Interceptors para verificar todas as opções possível.
+
+Antes de mostrar o funcionando do `interceptors` vamos explicar o motivo que vamos utilizar. A pipeline tem como entrada o `runtime` para saber qual linguagem de programação vai ser utilizada. 
+E para isso definimos como nome do repositório a seguinte sintaxe, `[appname]-[runtime]`, por isso temos o nome do repositório com `app1-python`.
+O `interceptors` vai criar dentro do [evento](#evento) 2 novos campos, sendo o `runtime`e o `appname`.
+
+A expressão para fazer isso é:
+
+* runtime: "body.repository.name.split('-')[1]"    
+* appname: "body.repository.name.split('-')[0]"    
+
+No arquivo [EventListeer](proj/trigger/pipeline-microservice/EventListener.yaml) temos o arquivo completo:
+
+---
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: tekton-webhook-microservice
+spec:
+  serviceAccountName: tekton-triggers-sa
+  triggers:
+    - name: tekton-webhook-microservice
+      interceptors:
+        - ref:
+            name: cel
+          params:
+          - name: "overlays"
+            value:
+            - key: runtime
+              expression: "body.repository.name.split('-')[1]"    
+            - key: appname
+              expression: "body.repository.name.split('-')[0]"    
+      bindings:
+        - ref: tekton-triggerbinding-microservice
+      template:
+        ref: tekton-triggertemplate-microservice 
+
+Vamos aplicar o arquivo EventListener:
+
+```bash
+kubectl apply -f $TREINAMENTO_HOME/proj/trigger/pipeline-microservice/EventListener.yaml
+```
+
+Agora vamos aguardar o `pod` do `EventListerner` subir. Também foi criado um service para expor o `EventListener` para o mundo externo (**pod/el-tekton-webhook-microservice**). 
+
+
+```bash
+kubectl get pods,svc
+NAME                                                   READY   STATUS      RESTARTS   AGE
+pod/el-tekton-webhook-microservice-67bf667f45-ntqh8    1/1     Running     0          113s
+pod/el-tekton-webhook-sharedlibrary-7c57fcf9f8-kst82   1/1     Running     0          85m
+
+NAME                                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)             AGE
+service/el-tekton-webhook-microservice    ClusterIP   10.96.122.3     <none>        8080/TCP,9000/TCP   113s
+service/el-tekton-webhook-sharedlibrary   ClusterIP   10.96.190.254   <none>        8080/TCP,9000/TCP   85m
+```
+
+Você pode confirmar a criação do eventlisterner utilizando o `tkn`:
+
+```bash
+tkn el list
+NAME                           AGE             URL                                                                     AVAILABLE
+tekton-webhook-microservice    3 minutes ago   http://el-tekton-webhook-microservice.default.svc.cluster.local:8080    True
+tekton-webhook-sharedlibrary   1 hour ago      http://el-tekton-webhook-sharedlibrary.default.svc.cluster.local:8080   True
+```
+
+### Binding para pipeline de aplicação
+ 
+O componente `Binding` da trigger define quais os campos do [evento](#evento) que serão utilizadas como variável para a pipeline. Lembrando que agora no arquivo de evento tem também os campos do `interceptors`.
+
+Conforme o arquivo [binding](proj/trigger/pipeline-microservice/trigger-bindings.yaml).
+
+```yaml
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerBinding
+metadata:
+  name: tekton-triggerbinding-microservice
+spec:
+  params:
+    - name: revision
+      value: $(body.repository.default_branch)
+    - name: repository
+      value: $(body.repository.clone_url)
+    - name: runtime
+      value: $(extensions.runtime)
+    - name: appname
+      value: $(extensions.appname)
+```
+
+Vamos aplicar o arquivo de binding:
+
+```bash
+kubectl apply -f $TREINAMENTO_HOME/proj/trigger/pipeline-microservice/trigger-bindings.yaml
+```
+
+Você pode confirmar a criação do binding utilizando o `tkn`:
+
+```bash
+tkn tb list
+NAME                                  AGE
+tekton-triggerbinding-microservice    3 seconds ago
+tekton-triggerbinding-sharedlibrary   1 hour ago
+```
+
+### Template para pipeline de aplicação
+
+O arquivo de `template` é similar o anteriormente, com as 3 partes, sendo variável de entrada e o recurso a ser inicializado e os parâmetros de entrada na pipeline.
+
+Nesse caso não vamos inicializar uma `pipelineRun`. Um ponto importante é alterar o parâmetro de entreda registry.
+
+```yaml
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: tekton-triggertemplate-microservice
+spec:
+  params:
+    - name: revision
+      description: The git revision
+      default: master
+    - name: repository
+      description: The git repository url
+    - name: runtime
+      description: Runtime of app
+    - name: appname
+      description: Aplication name
+    - name: version
+      description: vesion of application
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: PipelineRun
+      metadata:
+        generateName: microservice-api-$(tt.params.appname)-$(tt.params.runtime)
+        labels:
+          tekton.dev/pipeline: microservice-api
+      spec:
+        serviceAccountName: tekton-triggers-sa
+        pipelineRef:
+          name: microservice-api
+        params:
+          - name: revision
+            value: '$(tt.params.revision)'
+          - name: url
+            value: '$(tt.params.repository)'
+          - name: runtime
+            value: '$(tt.params.runtime)'
+          - name: appname
+            value: '$(tt.params.appname)'
+          - name: registry
+            value: clodonil  
+        workspaces:
+          - name: sharedlibrary
+            persistentVolumeClaim:
+               claimName: sharedlibrary
+          - name: source
+            persistentVolumeClaim:
+               claimName: app-source
+```
+
+Vamos aplicar o arquivo de template:
+
+```bash
+kubectl apply -f $TREINAMENTO_HOME/proj/trigger/pipeline-microservice/trigger-template.yaml
+```
+
+Você pode confirmar a criação do binding utilizando o `tkn`:
+
+```bash
+tkn tt list
+NAME                                   AGE
+tekton-triggertemplate-microservice    7 seconds ago
+tekton-triggertemplate-sharedlibrary   1 hour ago
+```
+
+
+### Criação do webhook e testando
+
+ Agora que temos as trigger criadas, vamos cadastrar o service da trigger no webhook do `gitea`, assim todo evento do repositório vai inicializar a pipeline.
+
+ Para consultar o service, execute o seguinte comando.
+
+ ```bash
+kubectl get svc
+NAME                              TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)             AGE
+el-tekton-webhook-microservice    ClusterIP   10.96.122.3     <none>        8080/TCP,9000/TCP   33m
+el-tekton-webhook-sharedlibrary   ClusterIP   10.96.190.254   <none>        8080/TCP,9000/TCP   117m
+```
+Você pode cadastrar o webhook pelo console web do `gitea` ou pode utilizar o script abaixo para fazer isso.
+
+Segue os parâmetros utilizados no `gitea_cli.py`:
+* `-w`: Define o service do trigger para o webhook, nesse caso é o **el-tekton-webhook-microservice**
+* `-r`: Especifica o nome do repositório
+* `-u`: Usuário utilizado para fazer o login no `gitea`
+* `-p`: Senha do usuário do `gitea`
+
+```bash
+python3 $TREINAMENTO_HOME/proj/trigger/gitea/gitea_cli.py -w el-tekton-webhook-microservice -r app1-python -u $USER -p $PASS
+```
+Consulte a interface web do `gitea` para confirmar que o webhook foi configurado corretamente, conforme abaixo.
+
+![trigger](img/image46.png)
+
+Para validar a configuração, você pode utilizar o campo de teste do webhook ou realizar qualquer `commit` no repositório da `app1-python`.
+
+
+![trigger](img/image47.png)
+
+
+É possível acompanhar o log do `pod` `EvenListener` para consultar algum tipo de erro:
+
+```bash
+kubectl logs el-tekton-webhook-microservice-67bf667f45-ntqh8
+```
+ E também pode consultar se a `PipelineRun` foi criada e executada. Você pode fazer isso pela inteface web conforme a imagem abaixo.
+
+![trigger](img/image43.png)
+
+E também é possível ser feito utilizando o comando `tkn`, conforme abaixo:
+
+```
+tkn pr list
+NAME                                STARTED         DURATION   STATUS
+microservice-api-app1-pythonnpxzh   2 minutes ago   ---        Running
+```
+Assim temos as pipelines sendo inicializadas através de eventos do repositórios.
