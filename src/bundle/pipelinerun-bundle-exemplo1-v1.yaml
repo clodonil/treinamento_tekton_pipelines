@@ -4,5 +4,5 @@ metadata:
   name: pipelinerun-bundle-exemplo1-v1
 spec:
   pipelineRef:
-    name: pipeline-exemplo1
+    name: pipeline-exemplo1-v1
     bundle: docker.io/clodonil/pipeline-exemplo1:v1
