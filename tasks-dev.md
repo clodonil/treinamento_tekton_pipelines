@@ -276,10 +276,9 @@ E podemos utilizar o arquivo [taskrun-qa.yaml](proj/tasks/QA/taskrun-qa.yaml) pa
 ```bash
 kubectl apply -f $TREINAMENTO_HOME/proj/tasks/QA/taskrun-qa.yaml
 ```
+Acompanhe no dashboard do tekton ou via tkn a execução da taskrun.  
 
-
-
-### 3.3 Criando a Tasks `Security`
+### 4.3 Criando a Tasks `Security`
 
 A próxima Task que vamos criar é a `Security`, que está relacionada a segurança do código e do container.
 
@@ -288,8 +287,8 @@ A Task tem como entrada:
 * `sharedlibrary`: Workspace que contém os comandos para serem executados na pipeline.
 
 Teremos **2** `steps`:
-   * `horusec` : Executa o teste unitário;
-   * `trivy`: Executa a cobertura de qualidade do código;
+   * `horusec` : Executa analise de segurança estática do código (SAST);
+   * `trivy`: Executa analise de segurança do container;
 
 Nessa Task a solução do `horusec` e do `trivy` são disponibilizados via container e para execução usamos uma sidecard para iniciar o serviço do docker.
 
@@ -322,10 +321,22 @@ sidecars:
       privileged: true
 ```
 
-Nos links abaixo você pode acessar o `Task` completa de segurança.
+O arquivo completo da task pode ser consultado no arquivo [task-security.yaml](proj/tasks/Security/task-security.yaml).
 
-* [Link do Task de Security](proj/tasks/Security/task-security.yaml)
-* [Link do Taskrun de Security](proj/tasks/Security/taskrun-security.yaml)
+Agora podemos cria a task de `security`
+
+```bash
+kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Security/task-security.yaml
+```
+E podemos utilizar o arquivo [taskrun-security.yaml](proj/tasks/Security/taskrun-security.yaml) para validar a execução da task.
+
+> Importante ter executado a task de source para ter o projeto copiado no volume de source
+
+```bash
+kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Security/taskrun-security.yaml
+```
+
+Acompanhe no dashboard do tekton ou via tkn a execução da taskrun.  
 
 
 ### 3.4 Criando a Tasks `Build`
