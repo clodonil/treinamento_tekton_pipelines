@@ -7,7 +7,33 @@ Ao final deste módulo você será capaz de:
 * Criar métricas de tasks
 * Gerenciar os logs 
 
-# Habilitando Métricas no Tekton
+## Clone do projeto
+
+Para execução desse módulo, é necessário clonar o repositório do treinamento e configurar a variável de ambiente, caso ainda não tenha feito.
+
+```bash
+git clone https://github.com/clodonil/treinamento_tekton_pipelines.git
+export TREINAMENTO_HOME="$(pwd)/treinamento_tekton_pipelines"
+cd $TREINAMENTO_HOME
+```
+
+## Pré-Requisito
+
+Para realizar a criação das métricas é necessário ter as pipelines criadas, portanto realize o módulo [5.1. Desenvolvimento das pipelines](pipeline-dev.md).
+
+
+## Conteúdo:
+> 1. Habilitando Métricas no Tekton
+> 2. Instalação do Prometheus
+> 3. Gerando Execuções de Pipelines e Tasks
+> 4. Instalação do Grafana
+> 5. microservice-api
+> 6. Tekton-Operator
+> 7. Executando os Logs
+> 8. Elastic Observability
+> 9. Sanitização dos logs
+
+## 1. Habilitando Métricas no Tekton
 
 Para habilitar as métricas no Tekton é necessário alterar o `configmap`. O Tekton permite externalizar as métricas para o `stackdrier`ou `prometheus`. 
 
@@ -67,7 +93,7 @@ data:
 Para aplicar a configuração no `tekton`:
 
 ```bash
-kubectl apply -f proj/Configs/config-observability.yaml
+kubectl apply -f $TREINAMENTO_HOME/proj/Configs/config-observability.yaml
 ```
 
 Para visualizar a externalização das métricas, vamos expor a porta `9090` do `tekton`.
@@ -77,7 +103,7 @@ kubectl port-forward -n tekton-pipelines svc/tekton-pipelines-controller 9090
 ```
 As métricas podem ser acessadas pela url: `http://localhost:9090/metrics`
 
-# Instalação do Prometheus
+## 2. Instalação do Prometheus
 
 Agora que `Tekton` externalizou as métricas, vamos precisar instalar o `prometheus` para armazenamento das métricas.
 
@@ -116,7 +142,7 @@ Para aplicar a configuração no `prometheus`:
 
 ```bash
 kubectl create namespace observability
-kubectl -n observability apply -f proj/Metrics/prometeus/
+kubectl -n observability apply -f $TREINAMENTO_HOME/proj/Metrics/prometeus/
 ```
 
 Verifique se o serviço esta rodando corretamente:
@@ -142,17 +168,17 @@ Tipos de métricas:
 |tekton_{taskrun ou pipelinrun}_duration_seconds_count         |            |
 |tekton_{taskrun ou pipelinrun}_duration_seconds_sum         |            |
 
-## Gerando Execuções de Pipelines e Tasks
+## 3. Gerando Execuções de Pipelines e Tasks
 
 Agora que temos o `prometheus` configurado, vamos executar algumas pipelines para gerar dados e métricas.
 
 Para isso, temos o script [gerador_de_execucoes](./proj/pipeline/gerador_de_execucoes.sh).  Ao executar o sript, passe o número de execuções que deseja.
 
 ```bash
-proj/pipeline/gerador_de_execucoes.sh 2
+$TREINAMENTO_HOME/proj/pipeline/gerador_de_execucoes.sh 2
 ```
 
-## Instalação do Grafana
+## 4. Instalação do Grafana
 
 Para visualizar as métricas vamos utilizar o `grafana`. Na configuração é necessário definir o `datasource` que é o `prometheus` e os dasboard que contém os gráficos.  
 
@@ -185,8 +211,8 @@ Para implementar o `grafana` vamos aplicar os seguintes arquivo:
 
 Para aplicar a configuração do `grafana`: 
 
-``` 
-kubectl -n observability apply -f proj/Metrics/Grafana/
+```bash
+kubectl -n observability apply -f $TREINAMENTO_HOME/proj/Metrics/Grafana/
 ```
 
 Verifique se o serviço do `grafana` esta rodando corretamente:
@@ -204,7 +230,7 @@ Agora podemos criar os gráficos com as métricas desejadas. Nós criamos, como 
 
 ![template](img/image39.png)
 
-## microservice-api
+## 5. microservice-api
 
 As métricas do dashboard `microservice-api` são relacionadas as pipelines e foram criadas utilizando o padrão PromQL, para conforme abaixo:
 
@@ -236,14 +262,14 @@ As métricas do dashboard `microservice-api` são relacionadas as pipelines e fo
 ![template](img/image33.png)
 
 
-## Tekton-Operator
+## 6. Tekton-Operator
 
 As métricas do dashboard `Tekton-Operator` são relacionadas ao funcionamento do `Tekton` e ao processamento do operator.
 
 ![template](img/image34.png)
 
 
-## Executando os Logs
+## 7. Executando os Logs
 O Tekton armazena os logs de execução das TaskRuns e PipelineRuns dentro do `Pod` que contém os contêineres que executam os Steps. 
 
 Você pode obter logs de execução usando um dos seguintes métodos:
@@ -341,7 +367,7 @@ tkn taskrun logs microservice-api.app5-blgz5-tests
 [performance]      vus_max....................: 1       min=1      max=1
 ```
 
-## Elastic Observability
+## 8. Elastic Observability
 
 O Elastic Cloud on Kubernetes (ECK) é a ferramenta oficial para provisionar implantações do `Elastic Stack` no Kubernetes. Esse treinamento é focado no `Tekton`, portanto não vamos aprofundar no `Elastic`. Para saber mais sobre `Elastic`, confira a postagem de blog [Elastic Stack Monitoring with Elastic Cloud on Kubernetes](https://www.elastic.co/pt/blog/elastic-stack-monitoring-with-elastic-cloud-on-kubernetes).
 
@@ -366,8 +392,8 @@ Para aplicar a configuração do `Elastic`:
 
 ```bash
 kubectl apply -f https://download.elastic.co/downloads/eck/1.3.1/all-in-one.yaml
-kubectl -n elastic-system apply -f proj/Metrics/Elastic/monitoring-es-kb.yaml
-kubectl -n elastic-system apply -f proj/Metrics/Elastic/monitoring-filebeat-metricbeat.yaml
+kubectl -n elastic-system apply -f $TREINAMENTO_HOME/proj/Metrics/Elastic/monitoring-es-kb.yaml
+kubectl -n elastic-system apply -f $TREINAMENTO_HOME/proj/Metrics/Elastic/monitoring-filebeat-metricbeat.yaml
 ```
 Vamos aguardar até todos os serviços estejam rodando.
 
@@ -421,7 +447,7 @@ Ao clicar na linha do tempo à direita da tela, você pode acessar o painel "Reg
 
 
 
-# Sanitização dos logs
+## 9. Sanitização dos logs
 
 As execuções de `Taskrun` ficam armazenadas no kubernetes e com o uso o número de registro aumenta consideravelmente podendo gerar impacto na performance do kubernetes.
 

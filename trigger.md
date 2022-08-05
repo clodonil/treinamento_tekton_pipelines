@@ -16,38 +16,38 @@ export TREINAMENTO_HOME="$(pwd)/treinamento_tekton_pipelines"
 cd $TREINAMENTO_HOME
 ```
 
-## Conteúdo:
-> 1. Pré-Requisito
-> 2. Trigger<br/>
->  2.1 EventListener<br/>
->  2.1.1 Interceptor<br/>
->  2.2 Trigger-Bindings<br/>
->  2.3 Trigger-Template<br/>
-> 3. Instalação do trigger
-> 4. Instalando o gitea
-> 5. Criar os repositórios e WebHook
-> 6. Inicializando o repositório<br/> 
->  6.1 SharedLibrary<br/>
->  6.2 Aplicação (app1-python)<br/>
-> 7. Criando conta de serviço
-> 8. Evento
-> 9. Criando trigger para a SharedLibrary<br/>
->  9.1 EventListener para SharedLibrary<br/>
->  9.2 Binding para SharedLibrary<br/>
->  9.3 Template para SharedLibrary<br/>
->  9.4 Criação do webhook e testando<br/>
-> 10. Pipeline de aplicação (microservice)<br/>
->  10.1 EventListener para pipeline de aplicação<br/>
->  10.2 Binding para pipeline de aplicação<br/>
->  10.3 Template para pipeline de aplicação<br/>
->  10.4 Criação do webhook e testando<br/>
-
-
-## 1. Pré-Requisito
+## Pré-Requisito
 
 Para realizar a criação das triggers é necessário ter as pipelines criadas, portanto realize o módulo [5.1. Desenvolvimento das pipelines](pipeline-dev.md).
 
-## 2.Trigger
+## Conteúdo:
+> 1. Trigger<br/>
+>  1.1 EventListener<br/>
+>  1.1.1 Interceptor<br/>
+>  1.2 Trigger-Bindings<br/>
+>  1.3 Trigger-Template<br/>
+> 2. Instalação do trigger
+> 3. Instalando o gitea
+> 4. Criar os repositórios e WebHook
+> 5. Inicializando o repositório<br/> 
+>  5.1 SharedLibrary<br/>
+>  5.2 Aplicação (app1-python)<br/>
+> 6. Criando conta de serviço
+> 7. Evento
+> 8. Criando trigger para a SharedLibrary<br/>
+>  8.1 EventListener para SharedLibrary<br/>
+>  8.2 Binding para SharedLibrary<br/>
+>  8.3 Template para SharedLibrary<br/>
+>  8.4 Criação do webhook e testando<br/>
+> 9. Pipeline de aplicação (microservice)<br/>
+>  9.1 EventListener para pipeline de aplicação<br/>
+>  9.2 Binding para pipeline de aplicação<br/>
+>  9.3 Template para pipeline de aplicação<br/>
+>  9.4 Criação do webhook e testando<br/>
+
+
+
+## 1.Trigger
 
 As Triggers são componentes do Tekton que permite detectar e extrair informações de eventos de uma variedade de fontes, tais como `repositório git`, `Docker Registry` e `PubSub`. E com essas informações, executar `TasksRun` e `PipelineRun`.
 
@@ -61,22 +61,22 @@ A criação da trigger no tekton, envolve a criação dos seguintes componentes:
 
 Vamos ver cada um com mais detalhes.
 
-### 2.1 EventListener
+### 1.1 EventListener
 O componente de `EventListener` escuta eventos em uma porta especificada através de um `Pod` em execução. Também é no `EventListener` que são especificada os arquivos de `TriggerBinding` e `TriggerTemplate` que são acionados quandos um evento é detectado.
 
 Quando um evento é detectado, antes de passar para os processos de `TriggerBinding` e `TriggerTemplate` é possível passar pelo `Interceptor` que pode realizar filtros e manipulações no evento.
 
-#### 2.1.1 Interceptor
+#### 1.1.1 Interceptor
 O `Interceptor` é um processador de eventos que fica dentro do `EventListener`.  O `EventListener` recebe o eventos completo e antes de enviar para o `binding` é possível executar filtragem do evento, verificação (usando um segredo), transformação, defina e teste condições de trigger e outros processamentos úteis. 
 
 Depois que os dados do evento passam por um `interceptor`, eles vão para o `TriggerBinding` e `TriggerTemplate`.
 
-### 2.2 Trigger-Bindings
+### 1.2 Trigger-Bindings
 O `Trigger-Binding` especifica os campos do evento dos quais você deseja extrair dados. Esses dados entram no `TriggerTemplate` como parâmetros dos valores extraídos. 
 
 Você pode então usar os campos preenchidos no `TriggerTemplate` para preencher campos no arquivo associado `TaskRun` ou `PipelineRun`.
 
-### 2.3 Trigger-Template
+### 1.3 Trigger-Template
 O `TriggerTemplate` recebe os parâmetros do `Trigger-Binding` para inicializar os recursos de `TaskRun` ou `PipelineRun`. 
 
 Ele expõe parâmetros que você pode usar em qualquer lugar dentro do modelo do seu recurso.
@@ -86,7 +86,7 @@ Abaixo um modelo da estrutura da triggers.
 ![trigger](img/image44.png)
 
 
-## 3. Instalação do trigger
+## 2. Instalação do trigger
 
 Agora que sabemos o que são as triggers e os seus componentes, vamos instalar os componentes. E para isso execute os seguintes comandos:
 
@@ -107,7 +107,7 @@ tekton-triggers-core-interceptors-55d8cfbd6-dq775   1/1     Running   0         
 tekton-triggers-webhook-55574b569b-nscvl            1/1     Running   0          46s
 ```
 
-## 4. Instalando o gitea
+## 3. Instalando o gitea
 
 Nesse módulo vamos utilizar os eventos de origem como sendo um repositório do git. E para isso vamos utilizar o `gitea` que um repositório leve com as funcionalidades que precisamos.
 
@@ -149,7 +149,7 @@ Se estiver utilizando o `Linux`, para saber qual é o número IP da interface de
 
 ![trigger](img/image42.png)
 
-## 5. Criar os repositórios e WebHook
+## 4. Criar os repositórios e WebHook
 
 Crie as variáveis de ambiente com o usuário e senha criado no `gitea` e o endereço de acesso.
 
@@ -177,11 +177,11 @@ Confirme no `gitea` se os repositórios foram de fato criados corretamente, conf
 ![trigger](img/image48.png)
 
 
-## 6. Inicializando o repositório 
+## 5. Inicializando o repositório 
 
 Com o respositórios criados, vamos popular com códigos de exemplos para serem utilizadas na pipelines do `tekton`.
 
-  ### 6.1 SharedLibrary
+  ### 5.1 SharedLibrary
 
 No repositório da `SharedLibrary` no `gitea` vamos armazenar os scripts de execução dos `steps` da pipeline. No diretório [src/sharedlibrary](src/sharedlibrary/) tem um exemplo de scripts e vamos utilizar eles para popular o repositório.
 
@@ -194,7 +194,7 @@ git remote add origin $GIT/user1/sharedlibrary.git
 git push -u origin master
 ```
 
-### 6.2 Aplicação (app1-python)
+### 5.2 Aplicação (app1-python)
 
 No repositório da aplicação `app1-python` no `gitea` vamos armazenar uma aplicação de exemplo em python para execução na pipeline.
 
@@ -207,7 +207,7 @@ git remote add origin $GIT/user1/app1-python.git
 git push -u origin master
 ```
 
-## 7. Criando conta de serviço
+## 6. Criando conta de serviço
 
 Precisamos criar uma conta de serviço no Kubernetes para atribuir as permissões necessárias para a triggers conseguirem acessar os objetos da pipelines.
 
@@ -217,7 +217,7 @@ O arquivo [rbac.yaml](proj/trigger/rbac.yaml) contém o manifesto com as permiss
 kubectl apply -f $TREINAMENTO_HOME/proj/trigger/rbac.yaml
 ```
 
-## 8. Evento
+## 7. Evento
 
 O repositório de origem envia um evento no formato de `json` para o `tekton`. Abaixo temos um exemplo de evento que pode ser gerado. 
 
@@ -328,12 +328,12 @@ O trigger pode utilizar todos os campos do evento para tomada de decisão ou com
 }
 ```
 
-## 9. Criando trigger para a SharedLibrary
+## 8. Criando trigger para a SharedLibrary
 
 Primeiramente vamos criar a trigger para o repositório `sharedlibrary`. Assim toda vez que tiver alteração no repositório a `TaskRun` vai ser inicializada e atualizar o `workspace` da volume da `SharedLibrary` utilizada pelas pipelines. 
 
 
-### 9.1 EventListener para SharedLibrary
+### 8.1 EventListener para SharedLibrary
 
 O primeiro componente que vamos criar é o `EventListener` que vai ouvir e receber os eventos de triggers. O `EventListener` cria um `pod` para essa finalidade.
 
@@ -384,7 +384,7 @@ AVAILABLE
 tekton-webhook-sharedlibrary   43 minutes ago   http://el-tekton-webhook-sharedlibrary.default.svc.cluster.local:8080   True
 ```
 
-### 9.2 Binding para SharedLibrary
+### 8.2 Binding para SharedLibrary
  
 O componente `Binding` da trigger define quais os campos do [evento](#evento) que serão utilizadas como variável para a pipeline.
 
@@ -418,7 +418,7 @@ tekton-triggerbinding-sharedlibrary   9 minutes ago
 ```
 
 
-### 9.3 Template para SharedLibrary
+### 8.3 Template para SharedLibrary
 
 O componte `template` utiliza os parêmtros definidos no `binding` e inicializa a `TaskRun` com os valores definidos.
 
@@ -510,7 +510,7 @@ NAME                                   AGE
 tekton-triggertemplate-sharedlibrary   10 minutes ago
 ```
 
-### 9.4 Criação do webhook e testando
+### 8.4 Criação do webhook e testando
  Agora que temos as trigger criadas, vamos cadastrar o service da trigger no webhook do `gitea`, assim todo evento do repositório vai inicializar a pipeline.
 
  Para consultar o service, execute o seguinte comando.
@@ -554,12 +554,12 @@ NAME                  STARTED         DURATION     STATUS
 sharedlibrary-q47nj   3 minutes ago   26 seconds   Succeeded
 ```
 
-## 10. Pipeline de aplicação (microservice)
+## 9. Pipeline de aplicação (microservice)
 
 Agora que temos a trigger da `sharedlibrary` configurado com sucesso, vamos realizar a configuração da trigger da pipeline de aplicação. É a pipeline que de fato entrega o código.
 
 
-### 10.1 EventListener para pipeline de aplicação
+### 9.1 EventListener para pipeline de aplicação
 
 Muitos dos conceitos do `EventListener` já foram passadas na configuração anterior, o que muda que nesta configuração vamos utilizar o `interceptors` para adicionar novos campo no [evento](#evento) recebido.
 
@@ -632,7 +632,7 @@ tekton-webhook-microservice    3 minutes ago   http://el-tekton-webhook-microser
 tekton-webhook-sharedlibrary   1 hour ago      http://el-tekton-webhook-sharedlibrary.default.svc.cluster.local:8080   True
 ```
 
-### 10.2 Binding para pipeline de aplicação
+### 9.2 Binding para pipeline de aplicação
  
 O componente `Binding` da trigger define quais os campos do [evento](#evento) que serão utilizadas como variável para a pipeline. Lembrando que agora no arquivo de evento tem também os campos do `interceptors`.
 
@@ -670,7 +670,7 @@ tekton-triggerbinding-microservice    3 seconds ago
 tekton-triggerbinding-sharedlibrary   1 hour ago
 ```
 
-### 10.3 Template para pipeline de aplicação
+### 9.3 Template para pipeline de aplicação
 
 O arquivo de `template` é similar o anteriormente, com as 3 partes, sendo variável de entrada e o recurso a ser inicializado e os parâmetros de entrada na pipeline.
 
@@ -741,7 +741,7 @@ tekton-triggertemplate-sharedlibrary   1 hour ago
 ```
 
 
-### 10.4 Criação do webhook e testando
+### 9.4 Criação do webhook e testando
 
  Agora que temos as trigger criadas, vamos cadastrar o service da trigger no webhook do `gitea`, assim todo evento do repositório vai inicializar a pipeline.
 
