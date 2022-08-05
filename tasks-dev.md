@@ -506,7 +506,14 @@ Agora podemos cria a task de `Deploy`
 ```bash
 kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Deploy/task-deploy.yaml
 ```
-E podemos utilizar o arquivo [taskrun-deploy.yaml](proj/tasks/Deploy/taskrun-deploy.yaml) para validar a execução da task.
+
+Antes de criar a tasksrun, precisamos criar uma conta de serviço no kubernetes com permissão para realizar o deploy.
+
+```bash
+  kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Deploy/sa.yaml
+```
+
+Agora podemos utilizar o arquivo [taskrun-deploy.yaml](proj/tasks/Deploy/taskrun-deploy.yaml) para validar a execução da task.
 
 > Importante ter executado a task de build para gerar a imagem para realizar o deploy
 
@@ -515,3 +522,7 @@ kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Deploy/taskrun-deploy.yaml
 ```
 
 Acompanhe no dashboard do tekton ou via tkn a execução da taskrun.  
+
+Se a tasks finalizou com sucesso, você terá acesso aplicação no [http://localhost:30002/](http://localhost:30002/)
+
+Com isso finalizamos a criação das tasks para a pipeline. Um ponto importante que gostaria de destacar é o processo de criar cada `Tasks` individualmente e conseguir validar isoladamente, comprovando o conceito de `Building Blocks` do `tekton`.
