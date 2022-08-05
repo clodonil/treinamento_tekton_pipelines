@@ -16,6 +16,8 @@ spec:
     - name: runtime
       value: 'python'
     - name: tagimage
-      value: '0.0.2'  
+      value: '0.0.2'
+    - name: registry
+      value: 'clodonil'
   taskRef:
      name: build
