@@ -114,7 +114,7 @@ spec:
     - name: url
       value: 'https://github.com/clodonil/apphello'
   taskRef:
-     name: git-clone
+     name: source
 ```
 Para executar a Task:
 
