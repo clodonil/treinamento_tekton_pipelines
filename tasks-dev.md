@@ -357,7 +357,7 @@ A Task tem como entrada:
 
 ![build](img/image9.png)
 
-O step de build suporta customização. Se o desenvolver criar o arquivo `pipeline/build.sh` no repositório do código fonte e lá definir as regras de  build, a pipeline vai dar prioridade para o uild definido pelo desenvolvedor.
+O step de build suporta customização. Se o desenvolver criar o arquivo `pipeline/build.sh` no repositório do código fonte e lá definir as regras de  build, a pipeline vai dar prioridade para o build definido pelo desenvolvedor.
 A imagem de container utilizada no build é a mesma definida na variável de `runtime`, portanto é definido dinâmicamente, conforme a tecnologia.
 
 ```yaml
@@ -382,6 +382,15 @@ results:
 
 O `Publish` da imagem docker será feito no [docker hub](https://hub.docker.com/), portanto é necessário criar uma `secret` com os dados de login. Se você não tiver uma conta no dockerhub é necessário criar uma.
 
+Declare a variáveis abaixo com os seus dados do dockerhub:
+
+* `export DOCKER_REGISTRY_SERVER=https://index.docker.io/v1/`
+* `export DOCKER_USER=Seu usuário do dockerhub`
+* `export DOCKER_PASSWORD=Sua senha do dockerhub`
+* `export DOCKER_EMAIL=Seu email do dockerhub` 
+
+Agora crie o secret com os dados do dockerhub.
+
 ```bash
 kubectl create secret docker-registry dockerhub \
   --docker-server=$DOCKER_REGISTRY_SERVER \
@@ -394,11 +403,21 @@ Fazendo o `Patch` do secret com o service account utilizada pelo tekton.
 ```bash
 kubectl patch serviceaccount default -p '{"secrets": [{"name": "dockerhub"}]}'
 ```
-Nos links abaixo você pode acessar o `Task` completa.
 
-* [Link do Task de Build](proj/tasks/Build/task-build.yaml)
-* [Link do Taskrun de Build](proj/tasks/Build/taskrun-build.yaml)
+Agora podemos cria a task de `build`
 
+```bash
+kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Build/task-build.yaml
+```
+E podemos utilizar o arquivo [taskrun-build.yaml](proj/tasks/Build/taskrun-build.yaml) para validar a execução da task.
+
+> Importante ter executado a task de source para ter o projeto copiado no volume de source
+
+```bash
+kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Build/taskrun-build.yaml
+```
+
+Acompanhe no dashboard do tekton ou via tkn a execução da taskrun.  
 
 ### 3.5 Criando a Tasks `Tests`
 
