@@ -339,7 +339,7 @@ kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Security/taskrun-security.yaml
 Acompanhe no dashboard do tekton ou via tkn a execução da taskrun.  
 
 
-### 3.4 Criando a Tasks `Build`
+### 4.4 Criando a Tasks `Build`
 
 A próxima Task que vamos criar é a `Build`, que está relacionada compilação, empacotamento do software em container e publicação.
 
@@ -347,6 +347,7 @@ A Task tem como entrada:
 * `runtime`: Parâmetro que contém a tecnologia utilizada na aplicação
 * `appname`: Parâmetro que contém o nome da aplicação
 * `tagimage`: Parâmetro que contém o nome da tag da imagem docker criada
+* `registry`: Parâmetro que contém o registry para armazenamento da imagem docker
 * `source`: Workspace que contém o código fonte da aplicação
 * `sharedlibrary`: Workspace que contém os comandos para serem executados na pipeline.
 
@@ -419,7 +420,7 @@ kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Build/taskrun-build.yaml
 
 Acompanhe no dashboard do tekton ou via tkn a execução da taskrun.  
 
-### 3.5 Criando a Tasks `Tests`
+### 4.5 Criando a Tasks `Tests`
 
 A próxima Task que vamos criar é a `Tests`, que está relacionada execução de teste de performance e de integração.
 
@@ -434,7 +435,7 @@ A Task tem como entrada:
 
 ![build](img/image12.png)
 
-Nessa Task, vamos executar como sidecars aplicação compilada e nos steps vamos executar as ferramentas de testes. Os testes podem ser customizado pelo desenvolvedor ou pode utilizar o padrão entregue pela pipeline.
+Nessa Task, vamos executar como sidecars a imagem da aplicação compilada e nos steps vamos executar as ferramentas de testes. Os testes podem ser customizado pelo desenvolvedor ou pode utilizar o padrão entregue pela pipeline.
 
 No primeiro step vamos utilizar o [k6](https://k6.io/), que basicamente é uma ferramenta de teste de performance.
 
@@ -469,10 +470,21 @@ sidecars:
          cpu: 800m
 ```
 
-Nos links abaixo você pode acessar o `Task` completa.
+Agora podemos cria a task de `test`
 
-* [Link do Task de Test](proj/tasks/Tests/task-tests.yaml)
-* [Link do Taskrun de Test](proj/tasks/Tests/taskrun-tests.yaml)
+```bash
+kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Tests/task-tests.yaml
+```
+E podemos utilizar o arquivo [taskrun-tests.yaml](proj/tasks/Tests/taskrun-tests.yaml) para validar a execução da task.
+
+> Importante ter executado a task de source para ter o projeto copiado no volume de source
+
+```bash
+kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Tests/taskrun-tests.yaml
+```
+
+Acompanhe no dashboard do tekton ou via tkn a execução da taskrun.  
+
 
 ### 3.6 Criando a Tasks `Deploy`
 
