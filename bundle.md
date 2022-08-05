@@ -343,7 +343,7 @@ kubectl edit configmap feature-flags -n tekton-pipelines
 ```
 Procure disable-affinity-assistant. Altere seu valor para `true`.
 
-* Atualizar a workspace da sharedlibrary
+* Atualizar a workspace da sharedlibrary fazendo o clone do repositório de comandos e salvando no volume da sharedlibrary
 
 ```bash
 kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Source/taskrun-sharedlibrary-bundle.yaml
@@ -383,7 +383,7 @@ Adicionando o `secret` na service account `default` para fazer pull de imagem do
 kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Finally/secret.yaml
 ```
 
-* Permissão para o Tekton realizar o deploy
+* Criando a conta de serviço para dar permissão para o Tekton realizar o deploy
 
 ```bash
 kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Deploy/sa.yaml
