@@ -23,6 +23,7 @@ cd $TREINAMENTO_HOME
 > 3. Workspace
 > 4. Tasks <br/>
 >  4.1. Criando a Tasks Source<br/>
+>   4.1.1. Volume da SharedLibary <br/>
 >  4.2. Criando a Tasks Quality<br/>
 >  4.3. Criando a Tasks Security<br/>
 >  4.4. Criando a Tasks Build<br/>
@@ -77,13 +78,13 @@ Os manifesto dos volumes foram criados no arquivo [proj/pv-workspaces.yaml](proj
 
 Para criar os volumes, execute o seguinte comando:
 ```bash
-kubectl apply -f pv-workspaces.yaml
+kubectl apply -f $TREINAMENTO_HOME/proj/pv-workspaces.yaml
 ```
 
 ## 4 Tasks
 O nosso próximo passo vamos criar as `Tasks` necessario para o desenvolvimento da pipeline.
 
-### 3.1 Criando a Tasks `Source`
+### 4.1 Criando a Tasks `Source`
 
 A Task `Source` vai ser responsável por realizar o clone do projeto do git. Podemos criar essa Task manualmente, entretanto o Tekton disponibiliza o [Tekton-Hub](https://hub.tekton.dev/) que já possui um catalago de Tasks disponibilizada pela comunidade.
 
@@ -126,18 +127,27 @@ Podemos acompanhar a execução da Taskrun no dashboard do Tekton ou via CLi (tk
 
 ![sourcerun](img/image8.png)`
 
+Pelo tkn:
 
-#### 3.1.1 SharedLibary
+```bash
+tkn taskrun logs -L
+```
+Em caso de falha na execução, é necessário deletar o taskrun para uma nova execução ou alterar o nome da taskrun no arquivo [taskrun-source.yaml](proj/tasks/Source/taskrun-source.yaml).
+
+
+#### 4.1.1 Volume da SharedLibary
 
 A SharedLibary é um repositório que contém os comandos que são executados na pipelines, tornando a solução de pipeline com mais segurança e governança.
 
 A cada alteração no repositório da sharedlibrary no git, é necessário atualizar o `workspace` para a pipelines obter os novos comandos. Para esse controle, o ideal é ter um pipeline apenas para gerenciar a sharedlibrary.
 
-Para esse projeto, vamos criar apenas uma `TaskRun` para atualizar o `workspace`.
+O repositório no github da sharedlibrary é [https://github.com/clodonil/tekton-sharedlibrary](https://github.com/clodonil/tekton-sharedlibrary
+).
+Para esse projeto, vamos criar apenas uma `TaskRun`, com o nome [task-sharedlibrary.yaml](proj/tasks/Source/taskrun-sharedlibrary.yaml) para atualizar o `workspace`, conforme abaixo.
 
 
-```yaml:proj/tasks/Source/task-sharedlibrary.yaml
-apiVersion: tekton.dev/v1alpha1
+```yaml
+apiVersion: tekton.dev/v1beta1
 kind: TaskRun
 metadata:
   name: taskrun-sharedlibrary
@@ -152,7 +162,7 @@ spec:
     - name: url
       value: 'https://github.com/clodonil/tekton-sharedlibrary'
   taskRef:
-     name: git-clone
+     name: source
 ```
 
 Para fazer o download/atualização da `sharedlibrary` para o workspace precisamos executar a Taskrun. Esse processo deve ser feito toda vez que tiver alteração na `sharedlibrary`.
