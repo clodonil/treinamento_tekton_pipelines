@@ -607,10 +607,10 @@ A `PipelineRun` pode ser executado da seguinte forma para inicializar a pipeline
 ```bash
  kubectl apply -f $TREINAMENTO_HOME/src/pipeline/pipelinerun-exemplo1.yaml
  ```
-Também podemos passar parâmetros no `pipelineRun`, conforme o exemplo [src/pipeline/pipelinerun-exemplo2.yaml](./src/pipeline/pipelinerun-exemplo2.yaml) abaixo:
+Também podemos passar parâmetros no `pipelineRun`, conforme o exemplo [pipelinerun-exemplo2.yaml](./src/pipeline/pipelinerun-exemplo2.yaml) abaixo para passagem de parâmetros:
   
 ```yaml
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
   name: pipelinerun-exemplo2
@@ -625,10 +625,18 @@ spec:
   pipelineRef:
     name: pipeline-exemplo1
 ```
-Além de parâmetros podemos passar as `workspaces`, conforme o exemplo [src/pipeline/pipelinerun-exemplo3.yaml](./src/pipeline/pipelinerun-exemplo3.yaml) .
+
+A `PipelineRun` pode ser executado da seguinte forma para inicializar a pipeline:
+
+```bash
+ kubectl apply -f $TREINAMENTO_HOME/src/pipeline/pipelinerun-exemplo2.yaml
+```
+
+
+Além de parâmetros podemos passar as `workspaces`, conforme o exemplo [pipelinerun-exemplo3.yaml](./src/pipeline/pipelinerun-exemplo3.yaml) .
 
 ```yaml
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
   name: pipelinerun-exemplo3
@@ -639,4 +647,9 @@ spec:
         claimName: mypvc 
   pipelineRef:
     name: pipeline-exemplo9
+```
+A `PipelineRun` pode ser executado da seguinte forma para inicializar a pipeline:
+
+```bash
+ kubectl apply -f $TREINAMENTO_HOME/src/pipeline/pipelinerun-exemplo3.yaml
 ```
