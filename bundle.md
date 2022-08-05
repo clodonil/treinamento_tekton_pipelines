@@ -431,7 +431,7 @@ kubectl apply -f $TREINAMENTO_HOME/proj/pipeline/microservice-api-bundle-run.yam
 ```
 Podemos acompanhar a execução da pipeline no dashboard do `Tekton`:
 
-![template](img/image30.png)
+![template](img/image50.png)
 
 
 Uma proposta de gestão de pipeline, seria o controle atráves de `gitflow`, conforme mostra a figura abaixo.
