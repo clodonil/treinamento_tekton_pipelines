@@ -219,7 +219,7 @@ metadata:
   name: pipelinerun-bundle-exemplo1-v1
 spec:
   pipelineRef:
-    name: pipeline-exemplo1
+    name: pipeline-exemplo1-v1
     bundle: docker.io/clodonil/pipeline-exemplo1:v1
 ```
 
@@ -250,35 +250,48 @@ O sintaxe do nome que estamos utilizando é:
 Exemplo:
 * micrservice-api_source:v1
 
-Vamos para a execução:
+Vamos criar o bundle para a tasks de source:
 
 ```bash
-tkn bundle push index.docker.io/clodonil/microservice-api_tasks_source:v1 -f proj/tasks/Source/task-source.yaml
-tkn bundle push index.docker.io/clodonil/microservice-api_tasks_source:latest -f proj/tasks/Source/task-source.yaml
+tkn bundle push index.docker.io/clodonil/microservice-api_tasks_source:v1 -f $TREINAMENTO_HOME/proj/tasks/Source/task-source.yaml
+tkn bundle push index.docker.io/clodonil/microservice-api_tasks_source:latest -f $TREINAMENTO_HOME/proj/tasks/Source/task-source.yaml
+```
 
+Vamos criar o bundle para a tasks de build:
 
-tkn bundle push index.docker.io/clodonil/microservice-api_tasks_build:v1 -f proj/tasks/Build/task-build.yaml
-tkn bundle push index.docker.io/clodonil/microservice-api_tasks_build:latest -f proj/tasks/Build/task-build.yaml
+```bash
+tkn bundle push index.docker.io/clodonil/microservice-api_tasks_build:v1 -f $TREINAMENTO_HOME/proj/tasks/Build/task-build.yaml
+tkn bundle push index.docker.io/clodonil/microservice-api_tasks_build:latest -f $TREINAMENTO_HOME/proj/tasks/Build/task-build.yaml
+```
+Vamos criar o bundle para a tasks de Quality:
 
+```bash
+tkn bundle push index.docker.io/clodonil/microservice-api_tasks_qa:v1 -f $TREINAMENTO_HOME/proj/tasks/QA/task-qa.yaml
+tkn bundle push index.docker.io/clodonil/microservice-api_tasks_qa:latest -f $TREINAMENTO_HOME/proj/tasks/QA/task-qa.yaml
+```
+Vamos criar o bundle para a tasks de Security:
 
-tkn bundle push index.docker.io/clodonil/microservice-api_tasks_qa:v1 -f proj/tasks/QA/task-qa.yaml
-tkn bundle push index.docker.io/clodonil/microservice-api_tasks_qa:latest -f proj/tasks/QA/task-qa.yaml
+```bash
+tkn bundle push index.docker.io/clodonil/microservice-api_tasks_security:v1 -f $TREINAMENTO_HOME/proj/tasks/Security/task-security.yaml
+tkn bundle push index.docker.io/clodonil/microservice-api_tasks_security:latest -f $TREINAMENTO_HOME/proj/tasks/Security/task-security.yaml
+```
+Vamos criar o bundle para a tasks de Tests:
 
+```bash
+tkn bundle push index.docker.io/clodonil/microservice-api_tasks_tests:v1 -f $TREINAMENTO_HOME/proj/tasks/Tests/task-tests.yaml
+tkn bundle push index.docker.io/clodonil/microservice-api_tasks_tests:latest -f $TREINAMENTO_HOME/proj/tasks/Tests/task-tests.yaml
+```
+Vamos criar o bundle para a tasks de Deploy:
 
-tkn bundle push index.docker.io/clodonil/microservice-api_tasks_security:v1 -f proj/tasks/Security/task-security.yaml
-tkn bundle push index.docker.io/clodonil/microservice-api_tasks_security:latest -f proj/tasks/Security/task-security.yaml
+```bash
+tkn bundle push index.docker.io/clodonil/microservice-api_tasks_deploy:v1 -f $TREINAMENTO_HOME/proj/tasks/Deploy/task-deploy.yaml
+tkn bundle push index.docker.io/clodonil/microservice-api_tasks_deploy:latest -f $TREINAMENTO_HOME/proj/tasks/Deploy/task-deploy.yaml
+```
+Vamos criar o bundle para a tasks de Finally:
 
-
-tkn bundle push index.docker.io/clodonil/microservice-api_tasks_tests:v1 -f proj/tasks/Tests/task-tests.yaml
-tkn bundle push index.docker.io/clodonil/microservice-api_tasks_tests:latest -f proj/tasks/Tests/task-tests.yaml
-
-
-tkn bundle push index.docker.io/clodonil/microservice-api_tasks_deploy:v1 -f proj/tasks/Deploy/task-deploy.yaml
-tkn bundle push index.docker.io/clodonil/microservice-api_tasks_deploy:latest -f proj/tasks/Deploy/task-deploy.yaml
-
-
-tkn bundle push index.docker.io/clodonil/microservice-api_tasks_finally:v1 -f proj/tasks/Finally/task-finally.yaml
-tkn bundle push index.docker.io/clodonil/microservice-api_tasks_finally:latest -f proj/tasks/Finally/task-finally.yaml
+```bash
+tkn bundle push index.docker.io/clodonil/microservice-api_tasks_finally:v1 -f $TREINAMENTO_HOME/proj/tasks/Finally/task-finally.yaml
+tkn bundle push index.docker.io/clodonil/microservice-api_tasks_finally:latest -f $TREINAMENTO_HOME/proj/tasks/Finally/task-finally.yaml
 ```
 
 Podemos verificar no `docker.io` que os artefatos foram registrados.
@@ -288,7 +301,7 @@ Podemos verificar no `docker.io` que os artefatos foram registrados.
 
 Agora também vamos criar a pipeline como `Bundle`. Na pipeline, foi adicionado a referência para o `bundle` de cada tasks, como por exemplo do `Source`. Perceba que estamos apontando para a versão `latest`.
 
-O arquivo [proj/pipeline/microservice-api-bundle.yaml](./proj/pipeline/microservice-api-bundle.yaml) contém o arquivo completo da pipeline modificado para trabalhar com o `Bundle`.
+O arquivo [microservice-api-bundle.yaml](./proj/pipeline/microservice-api-bundle.yaml) contém o arquivo completo da pipeline modificado para trabalhar com o `Bundle`.
 
 
 ```yaml
@@ -311,7 +324,7 @@ O arquivo [proj/pipeline/microservice-api-bundle.yaml](./proj/pipeline/microserv
 Agora podemos subir a pipeline como bundle.
 
 ```bash
-tkn bundle push index.docker.io/clodonil/microservice-api_pipeline:v1 -f proj/pipeline/microservice-api-bundle.yaml
+tkn bundle push index.docker.io/clodonil/microservice-api_pipeline:v1 -f $TREINAMENTO_HOME/proj/pipeline/microservice-api-bundle.yaml
 ```
 
 Antes de executar a pipeline é necessário realizar as seguintes configurações no cluster:
@@ -319,7 +332,7 @@ Antes de executar a pipeline é necessário realizar as seguintes configuraçõe
 * Criar Workspaces
 
 ```bash
-kubectl apply -f proj/pv-workspaces.yaml
+kubectl apply -f $TREINAMENTO_HOME/proj/pv-workspaces.yaml
 ```
 
 * Desabilitando o Assistente de Afinidade:
@@ -333,7 +346,7 @@ Procure disable-affinity-assistant. Altere seu valor para `true`.
 * Atualizar a workspace da sharedlibrary
 
 ```bash
-kubectl apply -f proj/tasks/Source/taskrun-sharedlibrary-bundle.yaml
+kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Source/taskrun-sharedlibrary-bundle.yaml
 ```
 
 * Crie o `secret` com o token do SONAR
@@ -367,16 +380,16 @@ Adicionando o `secret` na service account `default` para fazer pull de imagem do
 * Criação do `secret` para notificação no discord
 
 ```bash
-kubectl apply -f proj/tasks/Finally/secret.yaml
+kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Finally/secret.yaml
 ```
 
 * Permissão para o Tekton realizar o deploy
 
 ```bash
-kubectl apply -f proj/tasks/Deploy/sa.yaml
+kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Deploy/sa.yaml
 ```
 
-Após finalizar a criação dos pré-requisitos, podemos executar a `PipelineRun` do arquivo [proj/pipeline/microservice-api-bundle-run.yaml](./proj/pipeline/microservice-api-bundle-run.yaml).
+Após finalizar a criação dos pré-requisitos, podemos executar a `PipelineRun` do arquivo [microservice-api-bundle-run.yaml](./proj/pipeline/microservice-api-bundle-run.yaml).
 
 ```yaml
 apiVersion: tekton.dev/v1alpha1
@@ -414,7 +427,7 @@ spec:
 Para executar o `PipelineRun`:
 
 ```bash
- kubectl apply -f proj/pipeline/microservice-api-bundle-run.yaml
+kubectl apply -f $TREINAMENTO_HOME/proj/pipeline/microservice-api-bundle-run.yaml
 ```
 Podemos acompanhar a execução da pipeline no dashboard do `Tekton`:
 
@@ -426,4 +439,3 @@ Uma proposta de gestão de pipeline, seria o controle atráves de `gitflow`, con
 ![template](img/image29.png)
 
 > Fica como exercício da criação de uma pipeline no `Tekton` para realizar a gestão dos templates e Tasks, conforme o exemplo acima.
-
