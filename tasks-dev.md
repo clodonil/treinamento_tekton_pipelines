@@ -261,9 +261,23 @@ Crie um secret para armazenar o Token criado no site [SonarCloud](https://sonarc
 ```bash
 kubectl create secret generic sonar --from-literal=SONAR_TOKEN=$TOKEN
 ```    
+O arquivo completo da tasks pode ser consultado no arquivo [task-qa.yaml](proj/task/QA/task-qa.yaml).
 
-* [Link do Task de QA](proj/tasks/QA/task-qa.yaml)
-* [Link do Taskrun de QA](proj/tasks/QA/taskrun-qa.yaml)
+Agora podemos criar a tasks de `quality`.
+
+```bash
+kubectl apply -f $TREINAMENTO_HOME/proj/tasks/QA/task-qa.yaml
+```
+
+E podemos utilizar o arquivo [taskrun-qa.yaml](proj/tasks/QA/taskrun-qa.yaml) para validar a execução da tasks. 
+
+> Importante ter executado a task de source para ter o projeto copiado no volume de source.
+
+```bash
+kubectl apply -f $TREINAMENTO_HOME/proj/tasks/QA/taskrun-qa.yaml
+```
+
+
 
 ### 3.3 Criando a Tasks `Security`
 
