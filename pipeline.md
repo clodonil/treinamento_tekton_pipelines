@@ -9,13 +9,38 @@ Ao final deste modulo você será capaz de:
 * Entenda como criar pipeline com workspaces
 * Entenda como criar e controlar o fluxo da pipeline
 
+## Clone do projeto
 
-## Conceito
+Para execução desse módulo, é necessário clonar o repositório do treinamento e configurar a variável de ambiente, caso ainda não tenha feito.
 
-No Tekton, uma pipeline é uma coleção de task organizada por ordem específica de execução como parte da entrega de software. As tasks podem ser executadas em paralelo ou sequencial.
+```bash
+git clone https://github.com/clodonil/treinamento_tekton_pipelines.git
+export TREINAMENTO_HOME="$(pwd)/treinamento_tekton_pipelines"
+cd $TREINAMENTO_HOME
+```
+
+## Conteúdo:
+> 1. Conceito
+> 1.1. Pipeline e PipelineRun
+> 2. Entradas
+> 2.1. Parameters
+> 2.2. Workspaces
+> 3. Runafter
+> 4. Params e Result
+> 5. Timeout
+> 6. Retry
+> 7. Result
+> 8. When
+> 9. Finally
+> 10. Custom Tasks
+> 11. PipelineRun
+
+## 1. Conceito
+
+No Tekton, uma pipeline é uma coleção de tasks organizada por ordem específica de execução como parte da entrega de software. As tasks podem ser executadas em paralelo ou sequencial.
 
 
-### Pipeline e PipelineRun
+### 1.1. Pipeline e PipelineRun
 Enquanto as `Pipeline` define um `template` com o fluxo definido, o `PipelineRun` é uma execução de uma `Pipeline`. O histórico de execução e os logs estão registrados no `PipelineRun` para rastreabilidade.
 
 ![template](img/image16.png)
@@ -31,13 +56,13 @@ Segue um exemplo bem simples.
 
 É importante sempre desenvolver `Pipeline` parametrizável para atender multiplas linguagens e situações.
 
-## Entradas
+## 2. Entradas
 
 Como entrada de informação na `Pipeline`, podemos utilizar `parameters` ou `workspaces`.
 
 E durante o desenvolvimento da `Pipeline` temos que definir os parâmetros de entrada. Esse parâmetros podem ser utilizadas de vários formas, como executar ou não uma `Tasks` ou como passagem de parâmentro para uma `Tasks`.
 
-### Parameters
+### 2.1. Parameters
 
 Como entrada de dados na `Pipeline` vamos começar pelo parâmetro. No exemplo abaixo, temos o primeiro bloco que definir o parâmetro de entrada da pipeline. Portanto ao executar a pipeline é obrigarório a sua declaração.
 
@@ -45,7 +70,7 @@ Esse parâmetro pode ser utilizado como entrada em uma `Tasks` conforme o exempl
 
 ![template](img/image17.png)
 
-No arquivo [src/pipeline/pipeline-exemplo1.yaml](./src/pipeline/pipeline-exemplo1.yaml), temos um exemplo funcional da pipeline e como receber o parâmetro e passar para as `Tasks`.
+No arquivo [pipeline-exemplo1.yaml](src/pipeline/pipeline-exemplo1.yaml), temos um exemplo funcional da pipeline e como receber o parâmetro e passar para as `Tasks`.
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
@@ -73,12 +98,15 @@ spec:
       taskRef:
         name:   task-exemplo2
 ```
-Para esse exemplo funcionar, é necessário criar as tasks [src/task-exemplo1.yaml](./src/task-exemplo1.yaml) e [src/task-exemplo2.yaml](./src/task-exemplo2.yaml).
+Para esse exemplo funcionar, é necessário criar as tasks [task-exemplo1.yaml](src/task-exemplo1.yaml) e [task-exemplo2.yaml](src/task-exemplo2.yaml).
 
 ```bash
-kubectl apply -f src/task-exemplo1.yaml
-kubectl apply -f src/task-exemplo2.yaml
-kubectl apply -f src/pipeline/pipeline-exemplo1.yaml
+kubectl apply -f $TREINAMENTO_HOME/src/task-exemplo1.yaml
+kubectl apply -f $TREINAMENTO_HOME/src/task-exemplo2.yaml
+```
+Com as `tasks` criadas, vamos criar a pipeline que utiliza essas tasks.
+```bash
+kubectl apply -f $TREINAMENTO_HOME/src/pipeline/pipeline-exemplo1.yaml
 ```
 E para executar a pipeline, podemos utilizar o comando `tkn`:
 
@@ -89,11 +117,11 @@ Execução da pipeline.
 
 ![template](img/image18.png)
 
-### Workspaces
+### 2.2 Workspaces
 
 Igualmente como definidos os parâmetros, a pipeline pode definir a declaração das `Workspaces` que podem ser passadas para as `Tasks`.
 
-No exemplo abaixo, a pipeline [src/pipeline/pipeline-exemplo9.yaml](./src/pipeline/pipeline-exemplo9.yaml) define o workspace `pipeline-ws` que é passada para a task [src/task-exemplo8.yaml](./src/task-exemplo8.yaml)com o nome `myworkspace`.
+No exemplo abaixo, a pipeline [pipeline-exemplo9.yaml](./src/pipeline/pipeline-exemplo9.yaml) define o workspace `pipeline-ws` que é passada para a task [task-exemplo8.yaml](./src/task-exemplo8.yaml) com o nome `myworkspace`.
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
@@ -112,12 +140,19 @@ spec:
         name: task-exemplo8
 ```
 
-Para executar esse exemplo:
+Para executar esse exemplo funcionar precisarmos criar o volume para o workspace e as tasks:
 
+Criando o volume:
 ```bash
-kubectl apply -f src/pv-exemplo8.yaml
-kubectl apply -f src/task-exemplo8.yaml
-kubectl apply -f src/pipeline/pipeline-exemplo9.yaml
+kubectl apply -f $TREINAMENTO_HOME/src/pv-exemplo8.yaml
+```
+Criando a tasks.
+```bash
+kubectl apply -f $TREINAMENTO_HOME/src/task-exemplo8.yaml
+```
+Criando a pipeline definido acima:
+```bash
+kubectl apply -f $TREINAMENTO_HOME/src/pipeline/pipeline-exemplo9.yaml
 ```
 E para executar a pipeline, podemos utilizar o comando `tkn`:
 
@@ -125,7 +160,7 @@ E para executar a pipeline, podemos utilizar o comando `tkn`:
 tkn pipeline  start pipeline-exemplo9 -w name=pipeline-ws,claimName=mypvc --showlog
 ```
 
-## Runafter
+## 3. Runafter
 
 A configuração de `Runafter` permite criar fluxo de execução em ordem específica. Com ele você define que uma `Task` só pode ser executada após outra ter finalizado.
 
@@ -133,7 +168,7 @@ No exemplo abaixo, temos a task2 e a task3 sendo executado após a execução da
 
 ![fluxo](img/image19.png)
 
-Um exemplo de código que realiza essa implementação [src/pipeline/pipeline-exemplo2.yaml](./src/pipeline/pipeline-exemplo2.yaml).
+Um exemplo de código que realiza essa implementação [pipeline-exemplo2.yaml](./src/pipeline/pipeline-exemplo2.yaml).
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
@@ -165,19 +200,25 @@ spec:
          - task2
          - task3  
 ```
-
-Para executar esse exemplo:
+ 
+Para executar esse exemplo precisamos criar a [task-exemplo3.yaml](src/task-exemplo3.yaml):
 
 ```bash
-kubectl apply -f src/task-exemplo3.yaml
-kubectl apply -f src/pipeline/pipeline-exemplo2.yaml
+kubectl apply -f $TREINAMENTO_HOME/src/task-exemplo3.yaml
+```
+Agora podemos criar a pipeline definido acima que aponta para as tasks.
+
+```bash
+kubectl apply -f $TREINAMENTO_HOME/src/pipeline/pipeline-exemplo2.yaml
 ```
 E para executar a pipeline, podemos utilizar o comando `tkn`:
 
 ```bash
 tkn pipeline  start pipeline-exemplo2 --showlog
 ```
-## Params e Result
+Pelo dashboard web é possível visualizar melhor a execução das tasks em paralelo.
+
+## 4. Params e Result
 
 Durante o fluxo da pipeline é normal uma `Task` precisar utilizar a saída de outra `Task` processada anteriormente. 
 A melhor forma de fazer isso é utilizar o recurso `result` de uma `Task` e informar como parâmetro de entrada na `Task` seguinte.
@@ -189,7 +230,7 @@ A sintaxe para utilizar o `result` na pipeline é a seguinte:
 
 > $(tasks.<task-name>.results.<result-name>)
 
-No exemplo abaixo temos uma pipeline [src/pipeline/pipeline-exemplo3.yaml](./src/pipeline/pipeline-exemplo3.yaml) com controle de fluxo igual ao exemplo anterior, entretanto a saída de um `result` entra como entrada de parâmetro na `Task` seguinte. 
+No exemplo abaixo temos uma pipeline [pipeline-exemplo3.yaml](./src/pipeline/pipeline-exemplo3.yaml) com controle de fluxo igual ao exemplo anterior, entretanto a saída de um `result` entra como entrada de parâmetro na `Task` seguinte. 
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
@@ -208,8 +249,7 @@ spec:
            value: "$(tasks.task1.results.saida)"  
       taskRef:
         name: task2
-      
-      
+
     - name: task3
       params:
          - name: parametro  
@@ -230,11 +270,15 @@ spec:
          - task3  
 ```
 
-Para executar esse exemplo:
+Para executar esse exemplo, precisamos criar a [task-exemplo3.yaml](src/task-exemplo3.yaml)
 
 ```bash
-kubectl apply -f src/task-exemplo3.yaml
-kubectl apply -f src/pipeline/pipeline-exemplo3.yaml
+kubectl apply -f $TREINAMENTO_HOME/src/task-exemplo3.yaml
+```
+Agora podemos criar a pipeline definida acima.
+
+```bash
+kubectl apply -f $TREINAMENTO_HOME/src/pipeline/pipeline-exemplo3.yaml
 ```
 
 E para executar a pipeline, podemos utilizar o comando `tkn`:
@@ -243,13 +287,13 @@ E para executar a pipeline, podemos utilizar o comando `tkn`:
 tkn pipeline  start pipeline-exemplo3 --showlog
 ```
 
-## Timeout
+## 5. Timeout
 
 Durante a criação da pipeline é possível definir o tempo máximo de execução `timeout`. Esse recurso é interessante para não deixar uma `Tasks` executando infinitamente.
 
 Lembrando que na configuração da `Task` também é possível configurar o `timeout` e aconselhamos deixar a configuração do `timeout` diretamente na `Task`. Para o recurso de `Custom Tasks` faz todo o sentido a configuração do `timeout` na pipeline.
 
-No exemplo abaixo [src/pipeline/pipeline-exemplo4.yaml](.src/pipeline/pipeline-exemplo4.yaml) temos uma pipeline com a configuração `timeout`:
+No exemplo abaixo [pipeline-exemplo4.yaml](.src/pipeline/pipeline-exemplo4.yaml) temos uma pipeline com a configuração `timeout`:
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
@@ -267,18 +311,21 @@ spec:
       taskRef:
         name:   task2
 ```
-Para executar esse exemplo:
+Para executar esse exemplo vamos precisar a criar [task-exemplo4.yaml](src/task-exemplo4.yaml):
 
 ```bash
-kubectl apply -f src/task-exemplo4.yaml
-kubectl apply -f src/pipeline/pipeline-exemplo4.yaml
+kubectl apply -f $TREINAMENTO_HOME/src/task-exemplo4.yaml
+```
+Agora podemos criar a pipeline.
+```bash
+kubectl apply -f $TREINAMENTO_HOME/src/pipeline/pipeline-exemplo4.yaml
 ```
 E para executar a pipeline, podemos utilizar o comando `tkn`:
 
 ```bash
 tkn pipeline  start pipeline-exemplo4 --showlog
 ```
-## Retry
+## 6. Retry
 
 O recurso `Retry` você especifica para o `Tekton` quantas vezes deve tentar novamente a execução de uma `Task` em caso de falha.
 
@@ -286,7 +333,7 @@ Esse recurso é interessante para as tasks que podem ter interferência de conex
 
 Dentro da `Tasks`, utilizando a variável `$(context.task.retry-count)`, é possível saber quantas `Retry`foram executados e com isso determinar regras de escalonamento de execução.
 
-No próximo exemplo vamos utilizar uma `Task`, [src/task-exemplo9.yaml](.src/task-exemplo9.yaml) , que verifica quantos `Retry` foram executados e na 3 tentativa é finalizada com sucesso.
+No próximo exemplo vamos utilizar uma `Task`, [task-exemplo9.yaml](.src/task-exemplo9.yaml) , que verifica quantos `Retry` foram executados e na 3 tentativa é finalizada com sucesso.
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
@@ -306,7 +353,7 @@ spec:
            exit 1   
         fi
 ```
-Já no desenvolvimento da pipeline, [src/pipeline/pipeline-exemplo5.yaml](.src/pipeline/pipeline-exemplo5.yaml) , é bastante simples, adicionamos o recurso de `retries` e número de tentativas desejadas.
+Já no desenvolvimento da pipeline, conforme a [pipeline-exemplo5.yaml](.src/pipeline/pipeline-exemplo5.yaml), é bastante simples, adicionamos o recurso de `retries` e número de tentativas desejadas.
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
@@ -321,11 +368,14 @@ spec:
         name: task-exemplo9
 ```
 
-Para executar esse exemplo:
+Para executar esse exemplo primeiro cria a [task-exemplo9.yaml](src/task-exemplo9.yaml):
 
 ```bash
-kubectl apply -f src/task-exemplo5.yaml
-kubectl apply -f src/pipeline/pipeline-exemplo5.yaml
+kubectl apply -f $TREINAMENTO_HOME/src/task-exemplo9.yaml
+```
+Agora pode criar a pipeline para validar o `retry`.
+```bash
+kubectl apply -f $TREINAMENTO_HOME/src/pipeline/pipeline-exemplo5.yaml
 ```
 
 E para executar a pipeline, podemos utilizar o comando `tkn`:
@@ -338,13 +388,13 @@ No Dashboard é possível verificar o número de tentativas.
 
 ![retry](img/image21.png)
 
-## Result
+## 7. Result
 
 A `Pipeline` pode emitir `Results` como string de saída da pipeline após todss as `Tasks` tenham sido concluída. O `Result` pode ser utilizado para consulta de usuário ou para consulta sistêmico. 
 
 No `Result` pode ser informado o status de alguma `Taks`, pode informar o result retornada de uma `Task` ou qualquer string desejada.
 
-No exemplo abaixo [src/pipeline/pipeline-exemplo6.yaml](.src/pipeline/pipeline-exemplo6.yaml) temos uma pipeline com a configuração `result`:
+No exemplo abaixo [pipeline-exemplo6.yaml](.src/pipeline/pipeline-exemplo6.yaml) temos uma pipeline com a configuração `result`:
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
@@ -376,11 +426,14 @@ spec:
       description: resultado da task3
       value: $(tasks.task3.results.saida)
 ```
-Para executar esse exemplo:
+Para executar esse exemplo precisamos criar a [task-exemplo6.yaml](src/task-exemplo6.yaml):
 
 ```bash
-kubectl apply -f src/task-exemplo6.yaml
-kubectl apply -f src/pipeline/pipeline-exemplo6.yaml
+kubectl apply -f $TREINAMENTO_HOME/src/task-exemplo6.yaml
+```
+Agora podemos criar a pipeline para gerar os `results`.
+```bash
+kubectl apply -f $TREINAMENTO_HOME/src/pipeline/pipeline-exemplo6.yaml
 ```
 E para executar a pipeline, podemos utilizar o comando `tkn`:
 
@@ -393,9 +446,9 @@ Para verificar o `Result` da pipeline utilize o `tkn`.  Substitua o `pipeline-ex
 ```bash
 tkn pipelinerun  describe pipeline-exemplo6-run-1648347657260-r-thg5s
 ```
+ Também é possível verificar pelo dashboard.
 
-
-## When
+## 8. When
 
 O recurso `when` determina atráves de uma expressão se uma `Task` pode ser executada ou não. Existem muitos casos de uso que podemos utilizar o `when`.
 
@@ -411,14 +464,14 @@ when:
     values: ["master"]
 ```
 
-Se todas as expressões `when`forem avaliadas como verdadeira, a `Task` será executado. Se qualquer uma das expressões for avaliada como falso, a Task não será executado.
+Se todas as expressões `when`forem avaliadas como verdadeira, a `Task` será executado. Se qualquer uma das expressões for falso, a Task não será executado.
 
 A expressão `when` suporta apenas 2 operadores:
 
 * **in**:  Contém
 * **notin**: Não contém
 
-No exemplo [src/pipeline/pipeline-exemplo8.yaml](.src/pipeline/pipeline-exemplo8.yaml) abaixo estamos recebemos como parâmentro a variável branch e verificando se ela é `master`. Se for será executado a `Task` de deploy.
+No exemplo [pipeline-exemplo8.yaml](.src/pipeline/pipeline-exemplo8.yaml) abaixo estamos recebemos como parâmentro a variável branch e verificando se ela é `master`. Se for será executado a `Task` de deploy.
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
@@ -441,22 +494,31 @@ spec:
         name: task2
 ```
 
-Para executar esse exemplo:
+Para executar esse exemplo precisamos cria a [task-exemplo8.yaml](src/task-exemplo8.yaml):
 
 ```bash
-kubectl apply -f src/task-exemplo8.yaml
-kubectl apply -f src/pipeline/pipeline-exemplo8.yaml
+kubectl apply -f $TREINAMENTO_HOME/src/task-exemplo8.yaml
+```
+Agora podemos criar a pipeline para validar a expressão `when`.
+```bash
+kubectl apply -f $TREINAMENTO_HOME/src/pipeline/pipeline-exemplo8.yaml
 ```
 E para executar a pipeline, podemos utilizar o comando `tkn`:
 
+A primeira execução é passando como parâmetro a branch feature e dessa forma não será executado a tasks de deploy.
+
 ```bash
 tkn pipeline  start pipeline-exemplo8 -p branch=feature --showlog
+```
+A segunda execução vamos passar como parâmetro a branch master, que deve executar a task de deploy.
+
+```bash
 tkn pipeline  start pipeline-exemplo8 -p branch=master --showlog
 ```
 
-## Finally
+## 9. Finally
 
-O `Tekton` permite adicionar uma lista de `Tasks` ao final da pipeline. Todas as `Tasks` configuradas no `Finally` são executadas em paralelo independente do resultado da pipeline. Portanto mesmo uma pipeline sendo finalizada com falha, as `Tasks` declarada no `Finally` são executadas.
+O `Tekton` permite adicionar uma lista de `Tasks` ao final da pipeline. Todas as `Tasks` configuradas no `Finally` são executadas em paralelo independente do resultado da pipeline. Portanto mesmo uma pipeline sendo finalizada com falha, as `Tasks` declarada no `Finally` serão executadas.
 
 Algumas variáveis interessante para utilizar no `Finally` como entrada de parâmetro para as `Tasks`:
 
@@ -466,7 +528,7 @@ Algumas variáveis interessante para utilizar no `Finally` como entrada de parâ
 
 Os recursos de parâmetros e workspace também estão disponíveis no `Finally`.
 
-No exemplo abaixo [src/pipeline/pipeline-exemplo7.yaml](.src/pipeline/pipeline-exemplo7.yaml) temos uma pipeline com a configuração `finnaly`:
+No exemplo abaixo [pipeline-exemplo7.yaml](.src/pipeline/pipeline-exemplo7.yaml) temos uma pipeline com a configuração `finnaly`:
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
@@ -497,12 +559,15 @@ spec:
       taskRef:
         name: limpeza
 ```
-Para executar esse exemplo:
+Para executar esse exemplo é necessário cria a [task-exemplo7.yaml](src/task-exemplo7.yaml) e a [task-exemplo10.yaml](src/task-exemplo10.yaml):
 
 ```bash
-kubectl apply -f src/task-exemplo7.yaml
-kubectl apply -f src/task-exemplo10.yaml
-kubectl apply -f src/pipeline/pipeline-exemplo7.yaml
+kubectl apply -f $TREINAMENTO_HOME/src/task-exemplo7.yaml
+kubectl apply -f $TREINAMENTO_HOME/src/task-exemplo10.yaml
+```
+Agora podemos criar a pipeline para validar o `finally`.
+```bash
+kubectl apply -f $TREINAMENTO_HOME/src/pipeline/pipeline-exemplo7.yaml
 ```
 E para executar a pipeline, podemos utilizar o comando `tkn`:
 
@@ -514,7 +579,7 @@ No Dashboard é possível verificar a execução do `finally`.
 
 ![finally](img/image22.png)
 
-## Custom Tasks
+## 10. Custom Tasks
 
 Até agora vimos um padrão da pipeline chamar uma `Tasks` que executa um pod no kubernetes para execução de uma série de comandos. Sabemos que esse modelo atende muitos casos de uso, entretanto tem muitos outros que não necessita da execução de um pod ou a execução de um pod não é adquado.
 
@@ -522,14 +587,14 @@ Por exemplo, imagine uma execução de um `Tasks` que envolve aprovação de uma
 
 Para esses casos que a execução de um pod não faz sentido, podemos utilizar o `Custom Tasks`.
 
-## PipelineRun
+## 11. PipelineRun
 
 Até esse momento iniciamos a pipeline utilizando o `tkn` que cria o `PipelineRun` dinamicamente. Entretanto podemos criar o manifesto do `PipelinRun` e executar utilizando o `kubectl`.
 
-Abaixo temos um exemplo [src/pipeline/pipelinerun-exemplo1.yaml](./src/pipeline/pipelinerun-exemplo1.yaml) simples do `pipelinerun` 
+Abaixo temos um exemplo do arquivo [pipelinerun-exemplo1.yaml](./src/pipeline/pipelinerun-exemplo1.yaml) que é bastante simples do `pipelinerun` 
 
 ```yaml
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
   name: pipelinerun-exemplo
@@ -540,7 +605,7 @@ spec:
 A `PipelineRun` pode ser executado da seguinte forma para inicializar a pipeline:
 
 ```bash
- kubectl apply -f src/pipeline/pipelinerun-exemplo1.yaml
+ kubectl apply -f $TREINAMENTO_HOME/src/pipeline/pipelinerun-exemplo1.yaml
  ```
 Também podemos passar parâmetros no `pipelineRun`, conforme o exemplo [src/pipeline/pipelinerun-exemplo2.yaml](./src/pipeline/pipelinerun-exemplo2.yaml) abaixo:
   
