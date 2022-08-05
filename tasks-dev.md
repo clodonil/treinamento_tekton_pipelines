@@ -477,7 +477,7 @@ kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Tests/task-tests.yaml
 ```
 E podemos utilizar o arquivo [taskrun-tests.yaml](proj/tasks/Tests/taskrun-tests.yaml) para validar a execução da task.
 
-> Importante ter executado a task de source para ter o projeto copiado no volume de source
+> Importante ter executado a task de build para gerar a imagem para ser utilizado no tests
 
 ```bash
 kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Tests/taskrun-tests.yaml
@@ -486,7 +486,7 @@ kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Tests/taskrun-tests.yaml
 Acompanhe no dashboard do tekton ou via tkn a execução da taskrun.  
 
 
-### 3.6 Criando a Tasks `Deploy`
+### 4.6 Criando a Tasks `Deploy`
 
 E a última Task que vamos criar é a `Deploy`, que faz a entrega do sofware no kubernetes.
 
@@ -501,7 +501,17 @@ Essa Task vai ter apenas um `steps` para realização do deploy simples do conta
 
 ![build](img/image13.png)
 
-Nos links abaixo você pode acessar o `Task` completa.
+Agora podemos cria a task de `Deploy`
 
-* [Link do Task de Deploy](proj/tasks/Deploy/task-deploy.yaml)
-* [Link do Taskrun de Deploy](proj/tasks/Deploy/taskrun-deploy.yaml)
+```bash
+kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Deploy/task-deploy.yaml
+```
+E podemos utilizar o arquivo [taskrun-deploy.yaml](proj/tasks/Deploy/taskrun-deploy.yaml) para validar a execução da task.
+
+> Importante ter executado a task de build para gerar a imagem para realizar o deploy
+
+```bash
+kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Deploy/taskrun-deploy.yaml
+```
+
+Acompanhe no dashboard do tekton ou via tkn a execução da taskrun.  
