@@ -168,10 +168,11 @@ spec:
 Para fazer o download/atualização da `sharedlibrary` para o workspace precisamos executar a Taskrun. Esse processo deve ser feito toda vez que tiver alteração na `sharedlibrary`.
 
 ```bash
-kubectl apply -f taskrun-sharedlibrary.yaml
+kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Source/taskrun-sharedlibrary.yaml
 ```
+Acompanhe no dashboard do tekton ou via tkn a execução da taskrun.  
 
-### 3.2 Criando a Tasks `Quality`
+### 4.2 Criando a Tasks `Quality`
 
 A próxima Task que vamos criar é a `quality`, que está relacionada a qualidade do código.
 
@@ -223,6 +224,8 @@ volumes:
 Agora vamos definir os `steps`. 
 
 O primeiro step é o teste unitário. A imagem utilizada no step é definida no parâmetro `runtime`. Esse step pode ser customizado pelo desenvolver.
+
+O comando abaixo faz a lógica de olhar primeiramente no repositório de código, se existir o arquivo `pipeline/unittest.sh` será usado esse, caso contrario vai ser utilizado o definido na sharedlibrary.
 
 ```bash
 [ -f "pipeline/unittest.sh" ] && sh pipeline/unittest.sh || sh $(workspaces.sharedlibrary.path)/CI$runtime/tests/unittest.sh 
