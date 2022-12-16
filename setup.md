@@ -60,7 +60,7 @@ Para utilizar o `kind` é bastante simples.
 Esses comandos instala o `kind` no linux.
 
 ```bash
-curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64
+curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.17.0/kind-linux-amd64
 chmod +x ./kind
 sudo mv ./kind /usr/local/bin/kind
 ```
@@ -96,10 +96,10 @@ nodes:
 Execute o comando abaixo para criação do cluster.
 
 ```bash
-kind create cluster --config tekton-cluster.conf
+kind create cluster --config $TREINAMENTO_HOME/create_server_k8s/tekton-cluster.conf
 Creating cluster "tekton" ...
  ✓ Ensuring node image (kindest/node:v1.21.1) 🖼
- ✓ Preparing nodes 📦
+    ✓ Preparing nodes 📦
  ✓ Writing configuration 📜
  ✓ Starting control-plane 🕹️
  ✓ Installing CNI 🔌
@@ -168,8 +168,8 @@ O tekton CLI é uma ferramenta de linha de comando para interagir com o `tekton`
 Faça download do `tekton` cli e adicione no seu path:
 
 ```bash
-curl -LO https://github.com/tektoncd/cli/releases/download/v0.21.0/tkn_0.21.0_Linux_x86_64.tar.gz
-sudo tar xvzf tkn_0.21.0_Linux_x86_64.tar.gz -C /usr/local/bin/ tkn
+curl -LO https://github.com/tektoncd/cli/releases/download/v0.28.0/tkn_0.28.0_Linux_x86_64.tar.gz
+sudo tar xvzf tkn_0.28.0_Linux_x86_64.tar.gz -C /usr/local/bin/ tkn
 ```
 
 # Verificando o Tekton cli

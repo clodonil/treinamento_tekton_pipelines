@@ -114,7 +114,7 @@ task-exemplo1                 6 seconds ago
 Para executar uma `Task` precisamos da criação do manifesto chamado `TaskRun`. O manifesto pode ser criado atráves de um arquivo `yaml` ou criado dinamicamente através do dashboard ou utilizando o cli `tkn`.
 
 ```bash
-tkn task start task-exemplo1
+tkn task start task-exemplo1 --showlog
 TaskRun started: task-exemplo1-run-dhcxj
 
 In order to track the TaskRun progress run:
@@ -152,7 +152,7 @@ taskrun-exemplo1   1 minute ago   27 seconds   Succeeded
 ### 3  Parâmetros
 Para uma `Task`, pode ser especificado parâmetros de entradas, que são utilizados como flags de compilação ou para mudar o comportamento da `Task` conforme o seu valor.
 
-Os nomes dos parâmetros devem ser criados seguindo a seguinte regra:
+Os nomes dos parâmetros devem ser criados seguindo as regra:
 
 * Deve conter apenas caracteres alfanuméricos, hifens (-), sublinhados (_) e pontos (.).
 * Deve começar com uma letra ou um sublinhado (_).
@@ -229,7 +229,7 @@ Na segunda execução, vamos criar a `Taskrun` pelo CLI (tkn) e passar os seguin
 
 
 ```bash
-tkn task  start task-exemplo2 -p buildImage='python' -p build-args='-c','import sys; print("Ola Mundo"); print(sys.version)'
+tkn task  start task-exemplo2 -p buildImage='python' -p build-args='-c','import sys; print("Ola Mundo"); print(sys.version)'  --showlog
 ```
 
 Nessa execução, estamos utilizando uma imagem python para mostrar o  "Ola Mundo" e mostrar a versão.
@@ -309,7 +309,7 @@ Exemplo:
 
  
 ## 6. Volumes
-Para um `Task` pode ser definido um ou mais `volumes` para manipulação de dados entre os `Steps`.
+Para uma `Task` pode ser definido um ou mais `volumes` para manipulação de dados entre os `Steps`.
 
 Podemos usar `volumes` para o seguinte propósito:
 
@@ -448,7 +448,7 @@ Em uma `Task` é possível especificar o campo de `sidecars`, que basicamente in
 
 Você pode utilizar o `sidecars` para:
 * Utilizar Docker in Docker;
-* Executar um servidor de API simulado que seu aplicativo pode acessar durante o testes;
+* Executar um servidor de API simulando que seu aplicativo pode acessar durante o testes;
 
 O `Sidecars` é iniciado antes dos `Steps` e excluidos após a conclusão da execução das tasks.
 
