@@ -23,7 +23,22 @@ cd $TREINAMENTO_HOME
 
 ![projeto](img/image14.png)
 
+## Configurações
 
+$ kubectl edit configmap feature-flags -n tekton-pipelines
+Procure disable-affinity-assistant. Altere seu valor para true.
+
+```
+kubectl apply -f $TREINAMENTO_HOME/proj/Configs/feature-flags.yaml
+```
+
+## Volumes
+
+```bash
+kubectl apply -f $TREINAMENTO_HOME/proj/pv-workspaces.yaml
+```
+
+## Criandos as Tasks
 
 ```bash
 kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Source/task-source.yaml
@@ -33,12 +48,12 @@ kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Security/task-security.yaml
 kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Tests/task-tests.yaml
 kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Deploy/task-deploy.yaml
 kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Deploy/sa.yaml
-kubectl apply -f $TREINAMENTO_HOME/proj/pv-workspaces.yaml
+
 kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Finally/secret.yaml
 kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Finally/task-finally.yaml
-kubectl apply -f $TREINAMENTO_HOME/proj/pipeline/microservice-api.yaml
-kubectl apply -f $TREINAMENTO_HOME/proj/Configs/feature-flags.yaml
 ```
+
+
 
 ```bash
 kubectl apply -f $TREINAMENTO_HOME/proj/tasks/Source/taskrun-sharedlibrary.yaml
@@ -60,6 +75,7 @@ kubectl create secret docker-registry myregistrykey \
 kubectl patch serviceaccount default -p '{"secrets": [{"name": "myregistrykey"}]}'
 ```
 
+``` Pipeline
+kubectl apply -f $TREINAMENTO_HOME/proj/pipeline/microservice-api.yaml
+```
 
-$ kubectl edit configmap feature-flags -n tekton-pipelines
-Procure disable-affinity-assistant. Altere seu valor para true.
