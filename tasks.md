@@ -149,7 +149,7 @@ NAME               STARTED        DURATION     STATUS
 taskrun-exemplo1   1 minute ago   27 seconds   Succeeded
 ```
 
-### 3  Parâmetros
+### 3.  Parâmetros
 Para uma `Task`, pode ser especificado parâmetros de entradas, que são utilizados como flags de compilação ou para mudar o comportamento da `Task` conforme o seu valor.
 
 Os nomes dos parâmetros devem ser criados seguindo as regra:
@@ -232,7 +232,7 @@ Na segunda execução, vamos criar a `Taskrun` pelo CLI (tkn) e passar os seguin
 tkn task  start task-exemplo2 -p buildImage='python' -p build-args='-c','import sys; print("Ola Mundo"); print(sys.version)'  --showlog
 ```
 
-Nessa execução, estamos utilizando uma imagem python para mostrar o  "Ola Mundo" e mostrar a versão.
+Nessa execução, estamos utilizando uma imagem python para mostrar o  "Ola Mundo" e mostrar a versão. Acompanhe as execuções no dashboard do Tekton para verificar o resultado.
 
 Dessa forma vimos na prática como passar parâmetros para uma `Tasks`.
 
@@ -369,7 +369,7 @@ Workspaces permitem especificar um ou mais `volumes` nas Task necessários duran
 Os parâmetros para especificar um Workspace são:
 
 * `name`: Esse campo é requirido, é o nome da Workspace;
-* `description`: Descrição do uso da workspacd
+* `description`: Descrição do uso da workspace
 * `readOnly`: Um campo `boolean` que define que o Workspace vai ser apenas para leitura (não permite gravar). Por padrão é falso.
 * `optional`: Um campo `boolean` que indica que a Taskrun pode omitir a declaração da workspace. Por padrão é falso.
 * `mountPath`: É o path a onde o workspace vai estar localizado no disco. Se um path não foi atribuido o padrão é/workspace/<name>.
@@ -602,3 +602,83 @@ tkn task start task-exemplo11 --showlog
 No Dashboard é possível verificar o status da execução da tasks:
 
 ![onError](img/image23.png)
+
+Através da variável `$(steps.step-<step-name>.exitCode.path)` é possível obter o código de erro dos steps anteriores. Essa informação é importante para tomada de decisão no step atual.
+
+No exemplo [task-exemplo12.yaml](/src/task-exemplo11.yaml), temos uma situação que o step2 mostra o resultado do step de acordo com variável `$(steps.step-<step-name>.exitCode.path)`. Para o exemplo ficar mais interessante, estamos passando como parâmetro o status code do step1. Assim podemos simular o sucesso (status code = 0) e a falha (status code = 1).
+
+Segue o código do [task-exemplo12.yaml](/src/task-exemplo11.yaml).
+
+```yaml
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: task-exemplo12
+spec:
+  params:
+     - name: step1_status_code
+       type: string
+  steps:
+    - name: step1
+      onError: continue
+      image: ubuntu      
+      script: |
+        #!/usr/bin/env bash
+        echo "Execunto Step1"
+        echo "Finalizado"
+        exit $(params.step1_status_code)
+    - name: step2
+      image: ubuntu      
+      script: |
+        #!/usr/bin/env bash
+        echo "Execunto Step2"
+        step1="Finalizou com sucesso"
+        result_step1=`cat $(steps.step-step1.exitCode.path)`
+        if [ ${result_step1} -ne 0 ]; then step1="Finalizou com falha"; fi
+        echo "O step 1 finalizou com $step1"
+        echo "Finalizado"        
+```
+
+Vamos criar a task:
+
+```bash
+kubectl apply -f $TREINAMENTO_HOME/src/task-exemplo12.yaml
+```
+Primeiramente vamos executar a task passando o `status code` do step1 como sucesso (0).
+
+```bash
+ tkn task start task-exemplo12 -p step1_status_code=0 --showlog
+```
+Como resultado da execução:
+
+```bash
+TaskRun started: task-exemplo12-run-rhqtq
+Waiting for logs to be available...
+[step1] Execunto Step1
+[step1] Finalizado
+
+[step2] Execunto Step2
+[step2] O step 1 finalizou com Finalizou com sucesso
+[step2] Finalizado
+```
+O step2 consultou o `status code` do step1 e afirmou que o mesmo finalizou com sucesso.
+
+Agora vamos simular uma falha no step1.
+
+```bash
+ tkn task start task-exemplo12 -p step1_status_code=1 --showlog
+```
+
+Como resultado da execução:
+
+```bash
+TaskRun started: task-exemplo12-run-k4lfk
+Waiting for logs to be available...
+[step1] Execunto Step1
+[step1] Finalizado
+
+[step2] Execunto Step2
+[step2] O step 1 finalizou com Finalizou com falha
+[step2] Finalizado
+```
+Agora o step2 consultou o resultado do `status code` do step1 e afirmou que o mesmo finalizou com falha.

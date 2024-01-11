@@ -60,7 +60,7 @@ Para utilizar o `kind` é bastante simples.
 Esses comandos instala o `kind` no linux.
 
 ```bash
-curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.17.0/kind-linux-amd64
+curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
 chmod +x ./kind
 sudo mv ./kind /usr/local/bin/kind
 ```
@@ -81,7 +81,7 @@ Agora que temos o `kind` e o `kubectl` instalado, estamos preparado para criar o
 
 
 
-```yaml:exemplos/tekton-cluster.conf
+```yaml:create_server_k8s/tekton-cluster.conf
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 name: tekton
@@ -98,7 +98,7 @@ Execute o comando abaixo para criação do cluster.
 ```bash
 kind create cluster --config $TREINAMENTO_HOME/create_server_k8s/tekton-cluster.conf
 Creating cluster "tekton" ...
- ✓ Ensuring node image (kindest/node:v1.21.1) 🖼
+ ✓ Ensuring node image (kindest/node:v1.27.3) 🖼
     ✓ Preparing nodes 📦
  ✓ Writing configuration 📜
  ✓ Starting control-plane 🕹️
@@ -121,31 +121,32 @@ O camando abaixo instala o motor do `tekton` e também o dashboard para visualiz
 
 ```bash
 kubectl apply --filename https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
-kubectl apply --filename https://github.com/tektoncd/dashboard/releases/latest/download/tekton-dashboard-release.yaml
+kubectl apply --filename https://storage.googleapis.com/tekton-releases/dashboard/latest/release.yaml
 ```
 Podemos acompanhar se os pods do `tekton` estão rodando e prontos.
 
 ```bash
 kubectl -n tekton-pipelines get pods
 NAME                                           READY   STATUS    RESTARTS   AGE
-tekton-dashboard-5d44ff59bd-cdg7l              1/1     Running   0          34s
-tekton-pipelines-controller-7b649d7747-q5zmx   1/1     Running   0          50s
-tekton-pipelines-webhook-684968f9c5-s8bg2      1/1     Running   0          50s
+tekton-dashboard-b6c655bd9-bhc8z               1/1     Running   0          13s
+tekton-events-controller-79d6f7bdf5-6wz8q      1/1     Running   0          2m18s
+tekton-pipelines-controller-5bfc89c554-lckp4   1/1     Running   0          2m18s
+tekton-pipelines-webhook-56f8b9f44b-5lfcb      1/1     Running   0          2m18s
 ```
 
 Certifique que o `tekton` está instalado e as API estão disponível para uso:
 
 ```bash
 kubectl api-resources --api-group='tekton.dev'
-NAME                SHORTNAMES   APIVERSION            NAMESPACED   KIND
-clustertasks                     tekton.dev/v1beta1    false        ClusterTask
-conditions                       tekton.dev/v1alpha1   true         Condition
-pipelineresources                tekton.dev/v1alpha1   true         PipelineResource
-pipelineruns        pr,prs       tekton.dev/v1beta1    true         PipelineRun
-pipelines                        tekton.dev/v1beta1    true         Pipeline
-runs                             tekton.dev/v1alpha1   true         Run
-taskruns            tr,trs       tekton.dev/v1beta1    true         TaskRun
-tasks                            tekton.dev/v1beta1    true         Task
+NAME                   SHORTNAMES   APIVERSION            NAMESPACED   KIND
+clustertasks                        tekton.dev/v1beta1    false        ClusterTask
+customruns                          tekton.dev/v1beta1    true         CustomRun
+pipelineruns           pr,prs       tekton.dev/v1         true         PipelineRun
+pipelines                           tekton.dev/v1         true         Pipeline
+stepactions                         tekton.dev/v1alpha1   true         StepAction
+taskruns               tr,trs       tekton.dev/v1         true         TaskRun
+tasks                               tekton.dev/v1         true         Task
+verificationpolicies                tekton.dev/v1alpha1   true         VerificationPolicy
 ```
 
 E para finalizar vamos remover o `service` do dashboard que está no modelo de `ClusterIP` e criar um novo do tipo `NodePort`.
@@ -168,8 +169,8 @@ O tekton CLI é uma ferramenta de linha de comando para interagir com o `tekton`
 Faça download do `tekton` cli e adicione no seu path:
 
 ```bash
-curl -LO https://github.com/tektoncd/cli/releases/download/v0.28.0/tkn_0.28.0_Linux_x86_64.tar.gz
-sudo tar xvzf tkn_0.28.0_Linux_x86_64.tar.gz -C /usr/local/bin/ tkn
+curl -LO https://github.com/tektoncd/cli/releases/download/v0.33.0/tkn_0.33.0_Linux_x86_64.tar.gz
+sudo tar xvzf tkn_0.33.0_Linux_x86_64.tar.gz -C /usr/local/bin tkn
 ```
 
 # Verificando o Tekton cli
@@ -178,9 +179,9 @@ Vamos verificar se o `tkn` esta instalado e funcionando.
 
 ```
 tkn version
-Client version: 0.21.0
-Pipeline version: v0.33.0
-Dashboard version: v0.24.1
+Client version: 0.33.0
+Pipeline version: v0.55.0
+Dashboard version: v0.42.0
 ```
 
 ### 6. Automatizando a criação do cluster e instalação do kubernetes

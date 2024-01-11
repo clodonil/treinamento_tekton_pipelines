@@ -2,6 +2,8 @@
 
 cluster_name="tekton"
 logs="tekton.log"
+pipeline_url="https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml"
+dashboard_url="https://storage.googleapis.com/tekton-releases/dashboard/latest/release.yaml"
 
 cluster_exist=$(kind get clusters | grep $cluster_name)
 
@@ -19,8 +21,8 @@ kind create cluster --config $TREINAMENTO_HOME/create_server_k8s/tekton-cluster.
 #kubectl cluster-info --context kind-$cluster_name 
 
 echo "Instalando o Tekton"
-kubectl apply --filename https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml 2>&1 > $logs
-kubectl apply --filename https://github.com/tektoncd/dashboard/releases/latest/download/tekton-dashboard-release.yaml 2>&1 >> $logs
+kubectl apply --filename $pipeline_url 2>&1 > $logs
+kubectl apply --filename $dashboard_url 2>&1 >> $logs
 sleep 5
 #kubectl apply -f metrics.yaml 2>&1 > $logs
 

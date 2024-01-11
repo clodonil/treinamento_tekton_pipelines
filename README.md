@@ -20,12 +20,6 @@ Construa pipelines modernas, escalável e 100% cloud native com Tekton.
 * [7. Trigger](trigger.md)
 * [8. Observability](observability.md)
 
-## Comunidade
-
-Temos um canal para você tirar as suas dúvidas:
-
-[Link para o grupo no Discord](https://discord.gg/k2RWWCjBN4)
-
 ## Contribuindo
 1. Primeiramente realize um `Fork` do projeto;
 2. Crie sua feature branch: `git checkout -b my-new-feature`

@@ -27,7 +27,7 @@ A pipeline deve ter as seguites tasks, conforme desenho abaixo:
 
 ## Stages Customizados
 
-A pipeline deve ter os comandos padrões de `build`, `tests` e `deploy`. Entretanto caso o desenvolver desejar ele pode sobrescrever esses comandos, através de um arquivo simples no seu repositório.
+A pipeline deve ter os comandos padrões de `build`, `tests` e `deploy`. Entretanto caso o desenvolvedor desejar, ele pode sobrescrever esses comandos, através de um arquivo simples no seu repositório.
 
 Abaixo temos os arquivos que o usuário deve colocar no repositório da aplicação para sobrescrever o padrão da pipeline definido na sharedlibary.
 
@@ -40,13 +40,14 @@ Abaixo temos os arquivos que o usuário deve colocar no repositório da aplicaç
 | `integration`| pipeline/tests/integration/integration.sh  | [TESTS/integration/integration.sh](https://github.com/clodonil/tekton-sharedlibrary/blob/main/TESTS/integration/integration.sh) |
 | `deploy`|pipeline/deploy.sh | [/CD/deploy.sh](https://github.com/clodonil/tekton-sharedlibrary/blob/main/CD/deploy.sh) |
 
+O repositório com os comandos padrões de execução estão aqui: [SharedLibrary](https://github.com/clodonil/tekton-sharedlibrary)
 
 ## APIs
 
-Segue o link das aplicações que será utilizada para build durante o desenvolvimento da pipeline.
+Segue o link das aplicações que serão utilizadas para build durante o desenvolvimento da pipeline.São aplicações simples de API.
 
-* [Hello World - Python]()
-* [Hello World - Node]()
-* [Hello World - Goland]()
-* [Hello World - Maven]()
+* [Hello World - Python](https://github.com/clodonil/Hello-World-Python)
+* [Hello World - Node](https://github.com/clodonil/Hello-World-Node)
+* [Hello World - Goland](https://github.com/clodonil/Hello-World-Goland)
+* [Hello World - Maven](https://github.com/clodonil/Hello-World-Maven)
 

@@ -7,7 +7,7 @@ spec:
     - name: build-args
       value:
         - 'ls'
-        - '- l /'
+        - '-l /'
     - name: buildImage
       value: centos
   taskRef:
